@@ -100,6 +100,17 @@ int TouchControlsContainer::draw ()
 		}
 	}
 
+	glDisable(GL_ALPHA_TEST);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY );
+
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glEnable (GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_CULL_FACE);
+
 	if (editingControls == 0)
 	{
 		openGL_start.emit();

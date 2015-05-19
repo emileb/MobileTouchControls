@@ -64,7 +64,7 @@ void showTouchSettings()
 {
 	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/QuakeTouchControlsSettings");
+	jclass myClass =  env->FindClass("com/beloko/touchcontrols/TouchControlsSettings");
 	jmethodID myMethod = env->GetStaticMethodID(myClass, "showSettings", "()V");
 	env->CallStaticVoidMethod(myClass, myMethod);
 }
@@ -73,27 +73,19 @@ void showEditButtons()
 {
 	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/TouchControlsEditing");
+	jclass myClass =  env->FindClass("com/beloko/touchcontrols/TouchControlsEditing");
 	jmethodID myMethod = env->GetStaticMethodID(myClass, "show", "()V");
 	env->CallStaticVoidMethod(myClass, myMethod);
 }
 
 
-void showCustomCommands()
-{
-	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/QuakeCustomCommands");
-	jmethodID myMethod = env->GetStaticMethodID(myClass,  "showCommands", "()V");
-	env->CallStaticVoidMethod(myClass, myMethod);
-
-}
 
 void toggleKeyboard()
 {
 	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/ShowKeyboard");
+	jclass myClass =  env->FindClass("com/beloko/touchcontrols/ShowKeyboard");
 	jmethodID myMethod = env->GetStaticMethodID(myClass,  "toggleKeyboard", "()V");
 	env->CallStaticVoidMethod(myClass, myMethod);
 
@@ -103,7 +95,7 @@ void showKeyboard(int val)
 {
 	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/ShowKeyboard");
+	jclass myClass =  env->FindClass("com/beloko/touchcontrols/ShowKeyboard");
 	jmethodID myMethod = env->GetStaticMethodID(myClass,  "showKeyboard", "(I)V");
 	env->CallStaticVoidMethod(myClass, myMethod, val);
 
