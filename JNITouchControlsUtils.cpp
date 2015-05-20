@@ -130,7 +130,7 @@ void setControlsContainer(touchcontrols::TouchControlsContainer * cc)
     controlsContainer = cc;
 }
 
-jint EXPORT_ME Java_com_beloko_idtech_TouchControlsEditing_JNIGetNbrControls(JNIEnv *env, jobject obj)
+jint EXPORT_ME Java_com_beloko_touchcontrols_TouchControlsEditing_JNIGetNbrControls(JNIEnv *env, jobject obj)
 {
     if (!controlsContainer)
         return 0;
@@ -153,7 +153,7 @@ jint EXPORT_ME Java_com_beloko_idtech_TouchControlsEditing_JNIGetNbrControls(JNI
     return editiableControls.size();
 }
 
-void EXPORT_ME Java_com_beloko_idtech_TouchControlsEditing_JNIGetControlInfo(JNIEnv *env, jobject obj,
+void EXPORT_ME Java_com_beloko_touchcontrols_TouchControlsEditing_JNIGetControlInfo(JNIEnv *env, jobject obj,
         jint pos,jobject info)
 {
     jclass clazz;
@@ -183,7 +183,7 @@ void EXPORT_ME Java_com_beloko_idtech_TouchControlsEditing_JNIGetControlInfo(JNI
    // env->SetIntField()
 }
 
-void EXPORT_ME Java_com_beloko_idtech_TouchControlsEditing_JNISetHidden(JNIEnv *env, jobject obj,
+void EXPORT_ME Java_com_beloko_touchcontrols_TouchControlsEditing_JNISetHidden(JNIEnv *env, jobject obj,
         jint pos,jboolean hidden)
 {
     editiableControls.at(pos)->setHidden(hidden);
