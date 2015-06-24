@@ -79,7 +79,15 @@ void showEditButtons()
 }
 
 
+void showCustomCommands()
+{
+	JNIEnv * env = getEnv();
 
+	jclass myClass =  env->FindClass("com/beloko/touchcontrols/CustomCommands");
+	jmethodID myMethod = env->GetStaticMethodID(myClass,  "showCommands", "()V");
+	env->CallStaticVoidMethod(myClass, myMethod);
+
+}
 
 void toggleKeyboard()
 {
@@ -108,11 +116,12 @@ void appShutdown()
 	android_app_is_shutting_down = 1;
 }
 
+//This should not be here
 void ChangeDroidMusic(int action,int param1,int param2)
 {
 	JNIEnv * env = getEnv();
 
-	jclass myClass =  env->FindClass("com/beloko/idtech/CDAudioPlayer");
+	jclass myClass =  env->FindClass("com/beloko/opengames/CDAudioPlayer");
 	jmethodID myMethod = env->GetStaticMethodID(myClass,  "callback", "(III)V");
 	env->CallStaticVoidMethod(myClass, myMethod, action,param1,param2);
 }
