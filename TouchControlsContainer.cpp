@@ -100,6 +100,7 @@ int TouchControlsContainer::draw ()
 		}
 	}
 
+#ifndef USE_GLES2
 	glDisable(GL_ALPHA_TEST);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -110,6 +111,7 @@ int TouchControlsContainer::draw ()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_CULL_FACE);
+#endif
 
 	if (editingControls == 0)
 	{
