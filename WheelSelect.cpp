@@ -147,6 +147,8 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 		}
 		return false;
 	}
+    
+    return false;
 }
 
 bool WheelSelect::initGL()
@@ -155,6 +157,8 @@ bool WheelSelect::initGL()
 	glTex = loadTextureFromPNG(image,x,y);
 
 	glTexFade  = loadTextureFromPNG("red_cross",x,y);
+    
+    return true;
 }
 
 bool WheelSelect::drawGL(bool forEditor)
@@ -191,6 +195,8 @@ bool WheelSelect::drawGL(bool forEditor)
 			}
 		}
 	}
+    
+    return false;
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
 }
 

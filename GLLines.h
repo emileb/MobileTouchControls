@@ -1,8 +1,4 @@
-#ifdef USE_GLES2
-#include <GLES2/gl2.h>
-#else
-#include <GLES/gl.h>
-#endif
+#include "GLheader.h"
 
 #ifndef _GLLines_H_
 #define _GLLines_H_

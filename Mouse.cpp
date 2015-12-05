@@ -1,5 +1,6 @@
 #include "Mouse.h"
 #include "TouchControlsConfig.h"
+#include <sys/time.h>
 
 #define TAP_SPEED 10
 using namespace touchcontrols;
@@ -134,12 +135,16 @@ bool Mouse::processPointer(int action, int pid, float x, float y)
 		}
 		return false;
 	}
+    
+    return false;
 }
 
 bool Mouse::initGL()
 {
 	int x,y;
 	glTex = loadTextureFromPNG(image,x,y);
+    
+    return false;
 }
 
 bool Mouse::drawGL(bool editor)
@@ -158,6 +163,7 @@ bool Mouse::drawGL(bool editor)
 
 	tapCounter++;
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
+    return false;
 }
 
 void Mouse::reset()

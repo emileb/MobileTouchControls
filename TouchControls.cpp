@@ -1,5 +1,5 @@
+#include "GLheader.h"
 
-#include <GLES/gl.h>
 #include "TouchControls.h"
 #include <math.h>
 
@@ -404,6 +404,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		}
 	}
 
+    return false;
 }
 
 void TouchControls::editorButtonPress(int state,int code)

@@ -148,12 +148,16 @@ bool MultitouchMouse::processPointer(int action, int pid, float x, float y)
 		}
 		return false;
 	}
+    
+    return false;
 }
 
 bool MultitouchMouse::initGL()
 {
 	int x,y;
 	glTex = loadTextureFromPNG(image,x,y);
+    
+    return false;
 }
 
 bool MultitouchMouse::drawGL(bool editor)
@@ -181,6 +185,8 @@ bool MultitouchMouse::drawGL(bool editor)
 		}
 	}
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
+    
+    return false;
 }
 
 void MultitouchMouse::reset()

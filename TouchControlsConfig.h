@@ -9,6 +9,11 @@
 #define LOGTOUCH_E(...)  __android_log_print(ANDROID_LOG_ERROR,"TouchCntrl",__VA_ARGS__)
 #endif
 
+#ifdef __IOS__
+#define LOGTOUCH printf
+#define LOGTOUCH_E printf
+#endif
+
 #define P_DOWN 1
 #define P_UP   2
 #define P_MOVE 3

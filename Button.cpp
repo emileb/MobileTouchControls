@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "TouchControlsConfig.h"
+#include <sys/time.h>
 
 #define REPEAT_START_TIME 500
 #define REPEAT_INTERVAL   150
@@ -94,6 +95,8 @@ bool Button::processPointer(int action, int pid, float x, float y)
 	{
 		return false;
 	}
+    
+    return false;
 }
 
 
@@ -102,6 +105,8 @@ bool Button::initGL()
 	int x,y;
 	glTex = loadTextureFromPNG(image,x,y);
 	glTexHidden = loadTextureFromPNG("red_cross",x,y);
+
+    return false;
 }
 
 bool Button::drawGL(bool forEditor)
@@ -144,6 +149,8 @@ bool Button::drawGL(bool forEditor)
 			}
 		}
 	}
+    
+    return false;
 }
 
 void Button::saveXML(TiXmlDocument &doc)
