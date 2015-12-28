@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <vector>
 
+#include "TouchControlsInterface.h"
 #include "TouchControlsConfig.h"
 #include "TouchControls.h"
 
@@ -15,7 +16,7 @@ namespace touchcontrols
 {
 
 
-class TouchControlsContainer
+class TouchControlsContainer: public TouchControlsInterface
 {
 
 	std::vector<TouchControls *> controls;

@@ -10,6 +10,8 @@
 #include "Mouse.h"
 #include "WheelSelect.h"
 #include "MultitouchMouse.h"
+#include "PolarSelect.h"
+#include "JoyStick.h"
 
 #ifndef _TouchControls_H_
 #define _TouchControls_H_
@@ -161,6 +163,7 @@ public:
 
     std::vector<ControlSuper *> * getControls();
 
+    void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
 };
 
 }

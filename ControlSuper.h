@@ -12,7 +12,7 @@
 #define TC_TYPE_MOUSE    3
 #define TC_TYPE_WHEELSEL 4
 #define TC_TYPE_MULTITOUCHMOUSE 5
-
+#define TC_TYPE_JOYSTICK 6
 
 
 namespace touchcontrols

@@ -132,12 +132,6 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 			if (angle < 0)
 				angle = (2*PI) + angle;
 
-
-			//LOGTOUCH("angle %f ",angle);
-
-
-			//LOGTOUCH("seg %d ",selectedSeg);
-
 			if (distCentre(x,y) > CENTRE_SIZE) //Only update if moved out of circle
 			{
 				selectedSeg =  angle * nbrSegs/(2*PI) ;

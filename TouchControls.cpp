@@ -234,9 +234,10 @@ void TouchControls::addControl(ControlSuper *cntrl)
 
 bool TouchControls::processPointer(int action, int pid, float x, float y)
 {
+#ifdef __ANDROID__
 	if (android_app_is_shutting_down)
 		return 0;
-
+#endif
 	if (editorButton)
 		editorButton->processPointer(action,pid, x, y);
 
@@ -679,7 +680,7 @@ void TouchControls::saveXML(std::string filename)
 
 void TouchControls::loadXML(std::string filename)
 {
-	TiXmlDocument doc(filename);
+	TiXmlDocument doc(filename.c_str());
 	if (!doc.LoadFile()) return;
 
 	for (int n=0;n< controls.size();n++) //draw
@@ -695,5 +696,17 @@ std::vector<ControlSuper *> * TouchControls::getControls()
 {
 	return &controls;
 
+}
+
+void *TouchControls::getControl(std::string name)
+{
+	for (int n=0;n< controls.size();n++) //draw
+	{
+		ControlSuper *c = controls.at(n);
+		if (c->tag == name)
+			return c;
+	}
+
+	return NULL;
 }
 

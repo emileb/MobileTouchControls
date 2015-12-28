@@ -27,7 +27,14 @@ class Button : public ControlSuper
 	bool repeat;
 	double repeatTime;
 
+	bool flash;
+	bool flashDir;
+	int long long  flashCount;
+
 	double getMS();
+
+	int long long current_timestamp();
+
 public:
 	std::string image;
 	sigc::signal<void, int> signal_buttonDown;
@@ -39,6 +46,8 @@ public:
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 
 	void setRepeat(bool v);
+
+	void setFlash(bool v);
 
 	void resetOutput();
 

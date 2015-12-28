@@ -1,9 +1,10 @@
 
 #ifndef _TouchControlsConfig_H_
 #define _TouchControlsConfig_H_
-#include <string>
+//#include <string>
 
-#ifdef ANDROID_NDK
+
+#ifdef __ANDROID__
 #include <android/log.h>
 #define LOGTOUCH(...)  __android_log_print(ANDROID_LOG_INFO,"TouchCntrl",__VA_ARGS__)
 #define LOGTOUCH_E(...)  __android_log_print(ANDROID_LOG_ERROR,"TouchCntrl",__VA_ARGS__)
@@ -17,6 +18,8 @@
 #define P_DOWN 1
 #define P_UP   2
 #define P_MOVE 3
+#define P_ALLUP 4
+
 namespace touchcontrols
 {
 const int ScaleX = 26;

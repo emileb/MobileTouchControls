@@ -1,6 +1,9 @@
 #include "Button.h"
 #include "TouchControlsConfig.h"
+
+#ifdef __IOS__
 #include <sys/time.h>
+#endif
 
 #define REPEAT_START_TIME 500
 #define REPEAT_INTERVAL   150
@@ -42,6 +45,10 @@ Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,b
 	hidden = hidden_;
 	updateSize();
 
+	flash = false;
+	flashDir = false;
+	flashCount = 0;
+
 }
 
 double Button::getMS()
@@ -51,9 +58,22 @@ double Button::getMS()
 	return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
 }
 
+int long long Button::current_timestamp() {
+    struct timeval te;
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // caculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
+    return milliseconds;
+}
+
 void Button::updateSize()
 {
 	glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
+}
+
+void Button::setFlash(bool v)
+{
+	flash = v;
 }
 
 void Button::resetOutput()
@@ -104,8 +124,7 @@ bool Button::initGL()
 {
 	int x,y;
 	glTex = loadTextureFromPNG(image,x,y);
-	glTexHidden = loadTextureFromPNG("red_cross",x,y);
-
+	
     return false;
 }
 
@@ -122,6 +141,22 @@ bool Button::drawGL(bool forEditor)
 	{
 		if (!hidden)
 		{
+
+			if (flash)
+			{
+				//LOGTOUCH("fc = %lld",flashCount);
+				//LOGTOUCH("flashDir = %d",flashDir);
+
+				if (current_timestamp() > flashCount)
+				{
+					flashCount = current_timestamp() + 300;
+					flashDir = !flashDir;
+				}
+
+				if (flashDir)
+					return false;
+			}
+
 			if (id==-1)
 				drawRect(glTex,controlPos.left,controlPos.top,glRect);
 			else //Highlight buttons if pressed
@@ -155,7 +190,7 @@ bool Button::drawGL(bool forEditor)
 
 void Button::saveXML(TiXmlDocument &doc)
 {
-	TiXmlElement * root = new TiXmlElement(tag);
+	TiXmlElement * root = new TiXmlElement(tag.c_str());
 	doc.LinkEndChild( root );
 
 	ControlSuper::saveXML(*root);
