@@ -8,6 +8,10 @@
 #include "TouchControlsConfig.h"
 #include "TouchControls.h"
 
+#ifdef USE_LIBROCKET
+#include "TouchGui.h"
+#endif
+
 #ifndef _TouchControlsContainer_H_
 #define _TouchControlsContainer_H_
 
@@ -21,24 +25,25 @@ class TouchControlsContainer: public TouchControlsInterface
 
 	std::vector<TouchControls *> controls;
 
-	TouchControls * editingControls;
+	TouchControls * editingControls = NULL;
 
 	//For when we have an edit group
 	Button *editorButton;
 	void editorButtonPress(int state,int code);
 	int drawEditButton;
+    
+
 
 public:
 
-	int dukeHack;
 	float editButtonAlpha;
 
-	sigc::signal<void> openGL_start;
-	sigc::signal<void> openGL_end;
 
 	sigc::signal<void,int> signal_settings;
 
-
+    sigc::signal<void> openGL_start;
+    sigc::signal<void> openGL_end;
+    
 	TouchControlsContainer();
 
 	void addControlGroup(TouchControls *cntrl);
@@ -47,7 +52,7 @@ public:
 
 	int draw ();
 
-	void initGL ();
+	void initGL (const char * root_path = NULL);
 
 	bool processPointer(int action, int pid, float x, float y);
 
@@ -57,6 +62,11 @@ public:
 	void resetDefaults();
 
 	TouchControls* getEditingControls();
+    
+    //Needs to be here for IOS, breaks otherwise. Memory or compiler bug
+#ifdef USE_LIBROCKET
+    TouchGui *touchGui;
+#endif
 
 };
 

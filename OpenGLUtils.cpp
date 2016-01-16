@@ -200,7 +200,7 @@ void initGLES2()
 	//COLOR
 	mPositionLocColor            = glGetAttribLocation(mProgramObjectColor, "a_position");
 	mColorLocColor               = glGetUniformLocation ( mProgramObjectColor, "u_color" );
-	mPositionTranslateLocColor   =glGetUniformLocation ( mProgramObjectColor, "u_translate" );
+	mPositionTranslateLocColor   = glGetUniformLocation ( mProgramObjectColor, "u_translate" );
 }
 #endif
 

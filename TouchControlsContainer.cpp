@@ -4,6 +4,8 @@
 #include "TouchControlsContainer.h"
 
 
+
+
 using namespace touchcontrols;
 
 
@@ -12,7 +14,6 @@ TouchControlsContainer::TouchControlsContainer()
 	//Just for if we have an edit group
 	editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(11,0,13,2),"settings",0);
 	editorButton->signal_button.connect(  sigc::mem_fun(this,&TouchControlsContainer::editorButtonPress) );
-	dukeHack = 0;
 	editButtonAlpha = 0;
 }
 
@@ -59,7 +60,10 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 	if (drawEditButton)
 		editorButton->processPointer(action,pid, x, y);
 
-
+#ifdef USE_LIBROCKET
+    touchGui->processPointer(action, pid, x, y);
+#endif
+    
 	if (editingControls == 0)
 	{
 		int size = controls.size();
@@ -70,8 +74,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 			if (cs->enabled)
 				if (cs->processPointer(action,pid, x, y))//The only things which return true is if it hit a touchjoy or mouse
 				{
-					if (dukeHack)
-						break;
+
 				}
 		}
 		//if (!under) downInSpace = true;
@@ -114,8 +117,10 @@ int TouchControlsContainer::draw ()
 	glDisable(GL_CULL_FACE);
 #endif
 
+    
 	if (editingControls == 0)
 	{
+    
 		openGL_start.emit();
 
 		int drawEditButton_ = 0;
@@ -152,6 +157,9 @@ int TouchControlsContainer::draw ()
 			editorButton->drawGL();
 		}
 
+#ifdef USE_LIBROCKET
+        touchGui->update();
+#endif
 		openGL_end.emit();
 		return 0;
 	}
@@ -174,12 +182,16 @@ int TouchControlsContainer::draw ()
 			editorButton->drawGL();
 
 		}
+#ifdef USE_LIBROCKET
+        touchGui->update();
+#endif
 		openGL_end.emit();
 		return 1;
 	}
+
 }
 
-void TouchControlsContainer::initGL ()
+void TouchControlsContainer::initGL (const char * root_path)
 {
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
@@ -190,6 +202,10 @@ void TouchControlsContainer::initGL ()
 
 	if (editorButton)
 		editorButton->initGL();
+    
+#ifdef USE_LIBROCKET
+    touchGui = new TouchGui(root_path,640,480);
+#endif
 
 }
 
