@@ -11,7 +11,9 @@ GLLines::GLLines(int nbr)
 {
 	len = nbr*2;
 	vertices = new GLfloat[len * 3];
-	memset(vertices,0,len * 3 * sizeof(GLfloat));
+    for (int n=0; n < len * 3; n++)
+        vertices[n] = 0;
+    
 	//int * p1 = new int[5];
 }
 

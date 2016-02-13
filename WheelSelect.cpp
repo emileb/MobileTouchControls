@@ -216,7 +216,7 @@ void WheelSelect::doUpdate()
 
 void WheelSelect::saveXML(TiXmlDocument &doc)
 {
-	TiXmlElement * root = new TiXmlElement(tag);
+	TiXmlElement * root = new TiXmlElement(tag.c_str());
 	doc.LinkEndChild( root );
 
 	ControlSuper::saveXML(*root);

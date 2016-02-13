@@ -495,8 +495,10 @@ int TouchControls::draw ()
 		{
 			glLoadIdentity();
 			glScalef(GLScaleWidth, GLScaleHeight, 1);
+            
 			if (animating)
 				glTranslatef(0, -slidePos, 0);
+            
 			c->drawGL();
 		}
 	}
@@ -680,16 +682,22 @@ void TouchControls::saveXML(std::string filename)
 
 void TouchControls::loadXML(std::string filename)
 {
-	TiXmlDocument doc(filename.c_str());
-	if (!doc.LoadFile()) return;
 
-	for (int n=0;n< controls.size();n++) //draw
+    //The hell..crashes on destructor when on stack..
+	//TiXmlDocument doc(filename.c_str());
+    TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
+    
+
+	if (!doc->LoadFile()) return;
+
+	for (int n=0; n < controls.size();n++) //draw
 	{
 		ControlSuper *c = controls.at(n);
-		c->loadXML(doc);
+		c->loadXML(*doc);
 		c->updateSize();
 	}
-
+    
+    delete doc;
 }
 
 std::vector<ControlSuper *> * TouchControls::getControls()

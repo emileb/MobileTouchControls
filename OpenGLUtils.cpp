@@ -5,7 +5,8 @@ namespace touchcontrols
 {
 float GLScaleWidth = 400;
 float GLScaleHeight = -300;
-
+    
+bool fixAspect = true;
 
 #ifdef USE_GLES2
 extern "C"
@@ -103,12 +104,12 @@ int loadShader(int shaderType,const char * source) {
 		if ( length ) {
 			char* buffer  =  new char [ length ];
 			glGetShaderInfoLog ( shader , length , NULL , buffer );
-			LOGTOUCH("shader = %s", buffer);
+			LOGTOUCH("shader = %s\n", buffer);
 			delete [] buffer;
 
 			GLint success;
 			glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
-			if ( success != GL_TRUE )  LOGTOUCH("ERROR compiling shader");
+			if ( success != GL_TRUE )  LOGTOUCH("ERROR compiling shader\n");
 		}
 
 
@@ -239,20 +240,39 @@ void drawRect(GLuint texture, float x, float y, GLRect &rect)
 #else
 void drawRect(GLuint texture, float x, float y, GLRect &rect)
 {
+    glPushMatrix();
 
     if (texture == -1)
         return;
-
+    
 	//LOGTOUCH("drawRect %d",texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-
 	glVertexPointer(3, GL_FLOAT, 0, rect.vertices);
 	glTexCoordPointer(2, GL_FLOAT, 0, rect.texture);
 
-	glTranslatef(x, -y, 0);
+   
+    glTranslatef(x, -y, 0);
+
+    if (fixAspect)
+    {
+        float nominal = (float)ScaleX/(float)ScaleY;
+        float actual = GLScaleWidth/-GLScaleHeight;
+        
+        //printf("%f     %f\n",nominal,actual);
+        float yScale = actual/nominal;
+        
+
+        glScalef(1, yScale, 1);
+        glTranslatef(0, -(1-yScale) * rect.height / 2, 0);
+
+    }
+  
+    
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    
+    glPopMatrix();
 	//Move back to original pos in case other rects to draw
-	glTranslatef(-x, y, 0);
+	//glTranslatef(-x, y*(1.2), 0);
 
 }
 #endif
@@ -362,7 +382,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 
     if (filename == "")
     {
-        LOGTOUCH("Blank texture name");
+        LOGTOUCH("Blank texture name\n");
         return -1;
     }
 
@@ -378,14 +398,14 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 	if(it != tc_gl_textures.end())
 	{
 	   //element found;
-	   LOGTOUCH("PNG %s is already loaded", filename.c_str());
+	   LOGTOUCH("PNG %s is already loaded\n", filename.c_str());
 	   return it->second;
 	}
 
 	std::string full_file = graphicsBasePath + filename + ".png";
 	file = fopen(full_file.c_str(), "r");
 	if (!file) {
-		LOGTOUCH_E("Error opening %s from APK", full_file.c_str());
+		LOGTOUCH_E("Error opening %s from APK\n", full_file.c_str());
 		return TEXTURE_LOAD_ERROR;
 	}
 
@@ -408,7 +428,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 			NULL, NULL);
 	if (!png_ptr) {
 		fclose(file);
-		LOGTOUCH_E("Unable to create png struct : %s", full_file.c_str());
+		LOGTOUCH_E("Unable to create png struct : %s\n", full_file.c_str());
 		return (TEXTURE_LOAD_ERROR);
 	}
 
@@ -416,7 +436,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 	png_infop info_ptr = png_create_info_struct(png_ptr);
 	if (!info_ptr) {
 		png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
-		LOGTOUCH_E("Unable to create png info : %s", full_file.c_str());
+		LOGTOUCH_E("Unable to create png info : %s\n", full_file.c_str());
 		fclose(file);
 		return (TEXTURE_LOAD_ERROR);
 	}
@@ -425,7 +445,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 	png_infop end_info = png_create_info_struct(png_ptr);
 	if (!end_info) {
 		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-		LOGTOUCH_E("Unable to create png end info : %s", full_file.c_str());
+		LOGTOUCH_E("Unable to create png end info : %s\n", full_file.c_str());
 		fclose(file);
 		return (TEXTURE_LOAD_ERROR);
 	}
@@ -433,7 +453,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 	//png error stuff, not sure libpng man suggests this.
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		fclose(file);
-		LOGTOUCH_E("Error during setjmp : %s", full_file.c_str());
+		LOGTOUCH_E("Error during setjmp : %s\n", full_file.c_str());
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		return (TEXTURE_LOAD_ERROR);
 	}
@@ -471,7 +491,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 	if (!image_data) {
 		//clean up memory and close stuff
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-		LOGTOUCH_E("Unable to allocate image_data while loading %s ", full_file.c_str());
+		LOGTOUCH_E("Unable to allocate image_data while loading %s\n", full_file.c_str());
 		fclose(file);
 		return TEXTURE_LOAD_ERROR;
 	}
@@ -482,7 +502,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 		//clean up memory and close stuff
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		delete[] image_data;
-		LOGTOUCH_E("Unable to allocate row_pointer while loading %s ", full_file.c_str());
+		LOGTOUCH_E("Unable to allocate row_pointer while loading %s\n ", full_file.c_str());
 		fclose(file);
 		return TEXTURE_LOAD_ERROR;
 	}
@@ -495,6 +515,8 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height)
 
 	//Now generate the OpenGL texture object
 	GLuint texture = texNumber++;
+    //GLuint texture;
+    //glGenTextures(1,&texture);
 
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
