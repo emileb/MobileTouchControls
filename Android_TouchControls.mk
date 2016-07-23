@@ -25,8 +25,10 @@ LOCAL_SRC_FILES:= \
  	TouchControlsContainer.cpp \
  	GLLines.cpp \
  	JNITouchControlsUtils.cpp \
+ 	AssetFileAccess.cpp \
+ 	android_fopen.c
  	
-LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog -lOpenSLES 
+LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog  -landroid
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
 
 include $(BUILD_SHARED_LIBRARY)

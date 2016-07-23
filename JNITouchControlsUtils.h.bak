@@ -1,7 +1,4 @@
 
-
-#include "TouchControlsContainer.h"
-
 #ifdef __cplusplus
 extern "C"
 {
