@@ -6,12 +6,20 @@
 
 #include "TouchControlsConfig.h"
 #include "Button.h"
+#include "ButtonExt.h"
 #include "TouchJoy.h"
 #include "Mouse.h"
 #include "WheelSelect.h"
 #include "MultitouchMouse.h"
 #include "PolarSelect.h"
 #include "JoyStick.h"
+
+#include "UI_Window.h"
+#include "UI_Slider.h"
+#include "UI_TextBox.h"
+#include "UI_Button.h"
+#include "UI_Switch.h"
+
 
 #ifndef _TouchControls_H_
 #define _TouchControls_H_
@@ -136,6 +144,8 @@ public:
 	void setAlpha(float a);
 
 	void addControl(Button *cntrl);
+
+    void addControl(ButtonExt *cntrl);
 
 	void addControl(ControlSuper *cntrl);
 

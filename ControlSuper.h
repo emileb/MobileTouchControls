@@ -7,12 +7,19 @@
 #ifndef _ControlSuper_H_
 #define _ControlSuper_H_
 
-#define TC_TYPE_BUTTON   1
-#define TC_TYPE_TOUCHJOY 2
-#define TC_TYPE_MOUSE    3
-#define TC_TYPE_WHEELSEL 4
+#define TC_TYPE_BUTTON          1
+#define TC_TYPE_TOUCHJOY        2
+#define TC_TYPE_MOUSE           3
+#define TC_TYPE_WHEELSEL        4
 #define TC_TYPE_MULTITOUCHMOUSE 5
-#define TC_TYPE_JOYSTICK 6
+#define TC_TYPE_JOYSTICK        6
+#define TC_TYPE_BUTTONEXT       7
+
+#define TC_TYPE_UI_WINDOW       20
+#define TC_TYPE_UI_SLIDER       21
+#define TC_TYPE_UI_TEXTBOX      22
+#define TC_TYPE_UI_BUTTON       23
+#define TC_TYPE_UI_SWITCH       24
 
 
 namespace touchcontrols

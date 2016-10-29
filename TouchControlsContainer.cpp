@@ -48,14 +48,31 @@ void TouchControlsContainer::finishEditing()
 {
 	if (editingControls)
 	{
-		editingControls->stopEdit();
-		editingControls = 0;
-		signal_settings.emit(0);
+	    if( uiControls != NULL && uiControls->enabled )
+        {
+            uiControls->setEnabled( false );
+        }
+        else
+        {
+            editingControls->stopEdit();
+            editingControls = 0;
+            signal_settings.emit(0);
+        }
 	}
 }
 
 bool TouchControlsContainer::processPointer(int action, int pid, float x, float y)
 {
+
+    // Check if the UI is active
+    if( uiControls != NULL )
+	{
+        if( uiControls->enabled )
+        {
+            uiControls->processPointer(action,pid, x, y);
+            return false;
+        }
+	}
 
 	if (drawEditButton)
 		editorButton->processPointer(action,pid, x, y);
@@ -72,10 +89,13 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 		{
 			TouchControls *cs = controls.at(n);
 			if (cs->enabled)
-				if (cs->processPointer(action,pid, x, y))//The only things which return true is if it hit a touchjoy or mouse
+			{
+				if ( cs->processPointer(action,pid, x, y) == true )
 				{
-
+				    // Don't pass touch if returns true
+                    break;
 				}
+		    }
 		}
 		//if (!under) downInSpace = true;
 		return false;
@@ -83,6 +103,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 	else
 	{
 		editingControls->processPointer(action,pid, x, y);
+
 		return false;
 	}
 }
@@ -117,14 +138,11 @@ int TouchControlsContainer::draw ()
 	glDisable(GL_CULL_FACE);
 #endif
 
-    
+	openGL_start.emit();
+
 	if (editingControls == 0)
 	{
-    
-		openGL_start.emit();
-
 		int drawEditButton_ = 0;
-
 
 		for (int n=0;n<size;n++) //draw
 		{
@@ -160,12 +178,9 @@ int TouchControlsContainer::draw ()
 #ifdef USE_LIBROCKET
         touchGui->update();
 #endif
-		openGL_end.emit();
-		return 0;
 	}
 	else
 	{
-		openGL_start.emit();
 
 		if (!editingControls->drawEditor()) //Check if finished editing..
 		{
@@ -185,10 +200,28 @@ int TouchControlsContainer::draw ()
 #ifdef USE_LIBROCKET
         touchGui->update();
 #endif
-		openGL_end.emit();
-		return 1;
 	}
 
+    if( uiControls != NULL )
+	{
+        if( uiControls->enabled )
+        {
+            //Grey out background
+            GLRect rect;
+            rect.resize(1,1);
+            glLoadIdentity();
+            glScalef(GLScaleWidth, GLScaleHeight, 1);
+            drawRect((GLfloat)0, (GLfloat)0, (GLfloat)0, (GLfloat)0.7, 0.f, 0.f, rect );
+
+            setFixAspect ( false );
+            uiControls->draw();
+            setFixAspect ( true );
+        }
+	}
+
+    openGL_end.emit();
+
+    return 0;
 }
 
 void TouchControlsContainer::initGL (const char * root_path)

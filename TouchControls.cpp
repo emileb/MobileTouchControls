@@ -227,6 +227,13 @@ void TouchControls::addControl(Button *cntrl)
 	controls.push_back((cntrl));
 }
 
+void TouchControls::addControl(ButtonExt *cntrl)
+{
+	cntrl->signal_button.connect(  sigc::mem_fun(this,&TouchControls::button) );
+	controls.push_back((cntrl));
+}
+
+
 void TouchControls::addControl(ControlSuper *cntrl)
 {
 	controls.push_back((cntrl));
@@ -244,25 +251,23 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 	if (!editing)
 	{
 		int size = controls.size();
-		bool under=false;
+
 		for (int n=0;n<size;n++)
 		{
 			ControlSuper *cs = controls.at(n);
 			if (cs->isEnabled())
 				if (cs->processPointer(action,pid, x, y))
 				{
-					if (!passThroughTouch) //Only the top control gets the pointer data
-						return true;
-
 					//If it is a touch pad or mouse, break out so nothing under it gets data
-					if ((cs->type == TC_TYPE_TOUCHJOY) || (cs->type == TC_TYPE_MOUSE) )
-						return true;
-
-					under=true;
+					if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
+						break;
 				}
 		}
-		//if (!under) downInSpace = true;
-		return false;
+
+		if ( !passThroughTouch ) // If not passing through return true
+			return true;
+	    else
+		    return false;
 	}
 	else
 	{
@@ -310,13 +315,12 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			if (pid < 2)
 			{
-
 				//This is to deselect all controls if you tap in a clear space
-				if ( tapDeselect)
+				if ( tapDeselect )
 				{
 					if ((pid == 0) && (totalFingerMove <  0.03))
 					{
-						selectedCtrl = 0;
+					//	selectedCtrl = 0;
 					}
 				}
 
@@ -335,7 +339,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			if ((finger1.enabled) && (!finger2.enabled)) //drag
 			{
-
 				totalFingerMove += fabs(x - finger1.x) + fabs(y - finger1.y);
 
 				if (selectedCtrl != 0)
@@ -387,7 +390,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 					snapControl(selectedCtrl);
 					windowControl(selectedCtrl);
-
 				}
 
 				if (pid == 0)
@@ -400,7 +402,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					finger2.x = x;
 					finger2.y = y;
 				}
-
 			}
 		}
 	}
@@ -444,7 +445,6 @@ void TouchControls::windowControl(ControlSuper *ctrl)
 
 void  TouchControls::snapControl(ControlSuper *ctrl)
 {
-
 	int t = floor((ctrl->controlPos.left * (float)ScaleX) + 0.5);
 	ctrl->controlPos.left = (float)t/(float)ScaleX;
 	t = floor((ctrl->controlPos.right * (float)ScaleX) + 0.5);
@@ -454,13 +454,11 @@ void  TouchControls::snapControl(ControlSuper *ctrl)
 	t = floor((ctrl->controlPos.bottom * (float)ScaleY) + 0.5);
 	ctrl->controlPos.bottom = (float)t/(float)ScaleY;
 	ctrl->updateSize();
-
 }
 
 
 int TouchControls::draw ()
 {
-
 	if (fading)
 	{
 		if (fadeDir == FADE_IN) //Fading in
@@ -503,14 +501,15 @@ int TouchControls::draw ()
 		}
 	}
 
+    // This is here is disable scissor test if UI_Window enabled it..will this be OK??
+    glDisable( GL_SCISSOR_TEST );
+
 	if (editorButton)
 	{
 		glLoadIdentity();
 		glScalef(GLScaleWidth, GLScaleHeight, 1);
 		editorButton->drawGL();
 	}
-
-
 
 	if (animating)
 	{
@@ -531,8 +530,6 @@ int TouchControls::draw ()
 			}
 		}
 	}
-
-
 
 	if (editing)
 		return 1;

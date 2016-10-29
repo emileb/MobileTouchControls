@@ -10,30 +10,7 @@
 
 
 using namespace touchcontrols;
-/*
-Button::Button(std::string tag,RectF pos,std::string image_filename,int value_):
-														ControlSuper(tag,pos)
-{
-	value = value_;
-	image = image_filename;
-	glTex = 0;
-	id = -1;
-	repeat = false;
-	updateSize();
-};
 
-Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_):
-																ControlSuper(tag,pos)
-{
-	value = value_;
-	image = image_filename;
-	glTex = 0;
-	id = -1;
-	repeat = repeat_;
-	updateSize();
-
-}
- */
 Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_):
 																						ControlSuper(TC_TYPE_BUTTON,tag,pos)
 {

@@ -15,6 +15,7 @@ LOCAL_SRC_FILES:= \
  	ControlSuper.cpp \
  	RectF.cpp \
  	Button.cpp \
+ 	ButtonExt.cpp \
  	OpenGLUtils.cpp \
  	GLRect.cpp \
  	TouchJoy.cpp \
@@ -26,7 +27,16 @@ LOCAL_SRC_FILES:= \
  	GLLines.cpp \
  	JNITouchControlsUtils.cpp \
  	AssetFileAccess.cpp \
- 	android_fopen.c
+ 	AssetFileCache.cpp \
+ 	android_fopen.cpp \
+ 	UI_Window.cpp \
+ 	UI_Slider.cpp \
+ 	UI_TextBox.cpp \
+ 	UI_Button.cpp \
+ 	UI_Switch.cpp \
+    UI_TouchDefaultSettings.cpp
+
+
  	
 LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog  -landroid
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 

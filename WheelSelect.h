@@ -13,64 +13,64 @@ namespace touchcontrols
 
 class WheelSelect : public ControlSuper
 {
-	bool pressed;
-	bool hideGraphics;
+    bool pressed;
+    bool hideGraphics;
 
-	int id;
+    int id;
 
-	std::string image;
+    std::string image;
 
-	GLuint glTex;
-	GLuint glTexFade;
+    GLuint glTex;
+    GLuint glTexFade;
 
-	GLRect glRect;
-	GLRect glRectFade;
+    GLRect glRect;
+    GLRect glRectFade;
 
 
-	PointF last;
-	PointF fingerPos;
-	PointF anchor;
+    PointF last;
+    PointF fingerPos;
+    PointF anchor;
 
-	PointF centre;
+    PointF centre;
 
-	int nbrSegs;
+    int nbrSegs;
 
-	int selectedSeg;
+    int selectedSeg;
 
-	bool useFadeSegs; //default no
-	int enabledSegs;
+    bool useFadeSegs; //default no
+    int enabledSegs;
 public:
 
-	sigc::signal<void, int> signal_selected;
-	sigc::signal<void, int> signal_enabled;
-	sigc::signal<void, int> signal_scroll;
+    sigc::signal<void, int> signal_selected;
+    sigc::signal<void, int> signal_enabled;
+    sigc::signal<void, int> signal_scroll;
 
-	WheelSelect(std::string tag,RectF pos,std::string image_filename, int segments);
+    WheelSelect ( std::string tag, RectF pos, std::string image_filename, int segments );
 
-	void setSegmentEnabled(int seg, bool v);
+    void setSegmentEnabled ( int seg, bool v );
 
-	void setHideGraphics(bool v);
+    void setHideGraphics ( bool v );
 
-	void resetOutput();
+    void resetOutput();
 
-	bool processPointer(int action, int pid, float x, float y);
+    bool processPointer ( int action, int pid, float x, float y );
 
-	bool drawGL(bool forEditor = false);
+    bool drawGL ( bool forEditor = false );
 
-	bool initGL();
+    bool initGL();
 
-	void updateSize();
+    void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+    void saveXML ( TiXmlDocument &doc );
 
-	void loadXML(TiXmlDocument &doc);
+    void loadXML ( TiXmlDocument &doc );
 private:
 
-	void reset();
-	void calcNewValue();
-	void doUpdate();
-	float distCentre(float x, float y);
-	bool inCentre(float x, float y);
+    void reset();
+    void calcNewValue();
+    void doUpdate();
+    float distCentre ( float x, float y );
+    bool inCentre ( float x, float y );
 };
 
 }

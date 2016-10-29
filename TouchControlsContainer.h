@@ -27,6 +27,7 @@ class TouchControlsContainer: public TouchControlsInterface
 
 	TouchControls * editingControls = NULL;
 
+
 	//For when we have an edit group
 	Button *editorButton;
 	void editorButtonPress(int state,int code);
@@ -38,6 +39,8 @@ public:
 
 	float editButtonAlpha;
 
+   // Set to UI control group
+	TouchControls * uiControls = NULL;
 
 	sigc::signal<void,int> signal_settings;
 
