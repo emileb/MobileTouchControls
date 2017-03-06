@@ -31,7 +31,7 @@ void TouchJoy::resetOutput(){
 void TouchJoy::updateSize()
 {
 	//glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
-	glRect.resize(0.1, 0.16);
+	glRect.resize(1 * 0.1, 1.6 * 0.1);
 }
 
 double TouchJoy::getMS()

@@ -11,7 +11,7 @@ Mouse::Mouse(std::string tag,RectF pos,std::string image_filename):
 	image = image_filename;
 	id = -1;
 	id2 = -1;
-	glLines = new GLLines(2);
+
 	hideGraphics = false;
 	updateSize();
 	glitchFix = 0;
@@ -28,21 +28,7 @@ void Mouse::resetOutput(){
 
 void Mouse::updateSize()
 {
-
-	//glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
 	glRect.resize(0.1, 0.16);
-
-
-	glLines->vertices[0] = controlPos.left;
-	glLines->vertices[1] = -controlPos.top;
-	glLines->vertices[3] = controlPos.right;
-	glLines->vertices[4] = -controlPos.top;
-
-
-	glLines->vertices[6] =  controlPos.right ;
-	glLines->vertices[7] =  -controlPos.top;
-	glLines->vertices[9] =  controlPos.right;
-	glLines->vertices[10] = -controlPos.bottom ;
 }
 
 double Mouse::getMS()
@@ -168,13 +154,22 @@ bool Mouse::drawGL(bool editor)
 
 void Mouse::reset()
 {
+    if( id != -1 )
+    {
+        signal_action.emit(TOUCHMOUSE_UP,fingerPos.x,fingerPos.y,0,0);
+    }
+
+    if( id2 != -1 )
+    {
+        signal_action.emit(TOUCHMOUSE_2_UP,fingerPos.x,fingerPos.y,0,0);
+    }
+
 	id = -1;
 	id2 = -1;
 	valueRel.x = 0;
 	valueRel.y = 0;
 
 	doUpdate();
-
 }
 
 void Mouse::calcNewValue()
@@ -192,7 +187,6 @@ void Mouse::calcNewValue()
 
 
 	doUpdate();
-
 }
 
 void Mouse::doUpdate()

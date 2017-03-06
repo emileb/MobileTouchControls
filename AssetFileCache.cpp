@@ -65,7 +65,7 @@ uint32_t AssetFileCache::read ( char* buf, int size )
     // Out 'time' is incremented everytime we get a read
     time++;
 
-    LOGI ( "READ %p pos = %ld, size = %d", asset, pos, size );
+    //LOGI ( "READ %p pos = %ld, size = %d", asset, pos, size );
 
     uint32_t written = 0;
     while ( written < size )
@@ -176,7 +176,7 @@ uint32_t AssetFileCache::readDataFromPage ( char* buf, uint32_t size )
     // Check if page is already cached
     if ( page->pageData )
     {
-        LOGI ( "USING CACHE asset = %p, data = %p", asset, page->pageData->data );
+        // LOGI ( "USING CACHE asset = %p, data = %p", asset, page->pageData->data );
     }
     else
     {
@@ -185,7 +185,7 @@ uint32_t AssetFileCache::readDataFromPage ( char* buf, uint32_t size )
         PageData *data = getPage();
         AAsset_seek ( asset, pageNbr * pageSize, SEEK_SET );
         AAsset_read ( asset, data->data, pageSize );
-        LOGI ( "CACHE MISS asset = %p, Cached data at %p", asset,  data->data );
+        // LOGI ( "CACHE MISS asset = %p, Cached data at %p", asset,  data->data );
         page->pageData = data;
         //printBytes( data->data, 50 );
     }

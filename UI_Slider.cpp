@@ -4,7 +4,7 @@
 
 using namespace touchcontrols;
 
-UI_Slider::UI_Slider( std::string tag, RectF pos, std::string bg_texture, std::string handle_texture, uint32_t uid ):ControlSuper( TC_TYPE_UI_SLIDER, tag, pos )
+UI_Slider::UI_Slider( std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture ):ControlSuper( TC_TYPE_UI_SLIDER, tag, pos )
 {
 
 	this->bg_texture = bg_texture;
@@ -18,6 +18,17 @@ UI_Slider::UI_Slider( std::string tag, RectF pos, std::string bg_texture, std::s
     touchId = -1;
 
 	updateSize();
+}
+
+
+float UI_Slider::getValue()
+{
+    return value;
+}
+
+void UI_Slider::setValue( float v )
+{
+    value = v;
 }
 
 void UI_Slider::updateSize()
@@ -43,7 +54,7 @@ void UI_Slider::updateValue( float x )
 
     value = v;
 
-    signal_valueChange.emit( uid, value );
+    signal.emit( uid, value );
 }
 
 bool UI_Slider::processPointer(int action, int pid, float x, float y)

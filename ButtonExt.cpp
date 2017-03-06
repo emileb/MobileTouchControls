@@ -65,7 +65,7 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 {
 	if (hidden) //Hidden controls do not respond to inputs
 		return false;
-    LOGTOUCH("state = %d, count = %lld",doubleTapState,doubleTapCounter);
+
 	if (action == P_DOWN)
 	{
 		if (controlPos.contains(x,y))

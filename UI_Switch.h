@@ -16,6 +16,8 @@ class UI_Switch : public ControlSuper
 
     int touchId;
 
+    uint32_t uid;
+
     GLuint glTexOn;
     GLuint glTexOff;
 
@@ -28,7 +30,12 @@ class UI_Switch : public ControlSuper
 
 public:
 
-    UI_Switch ( std::string tag, RectF pos, std::string on_image, std::string off_image );
+    UI_Switch ( std::string tag, RectF pos, uint32_t uid, std::string on_image, std::string off_image );
+
+    sigc::signal<void, uint32_t, bool> signal;
+
+    bool getValue();
+    void setValue( bool );
 
     bool processPointer ( int action, int pid, float x, float y );
 

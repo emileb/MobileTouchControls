@@ -22,17 +22,21 @@ class UI_Slider : public ControlSuper
 	GLRect glRect;
     GLRect glRectHandle;
 
+    std::string bg_texture;
+    std::string handle_texture;
+
     float value;
     uint32_t uid;
 
     void updateValue( float x );
 public:
-	std::string bg_texture;
-    std::string handle_texture;
 
-	UI_Slider( std::string tag, RectF pos, std::string bg_texture, std::string handle_texture, uint32_t uid );
+	UI_Slider( std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture );
 
-    sigc::signal<void, uint32_t, float> signal_valueChange;
+    float getValue();
+    void setValue( float );
+
+    sigc::signal<void, uint32_t, float> signal;
 
 	bool processPointer(int action, int pid, float x, float y);
 

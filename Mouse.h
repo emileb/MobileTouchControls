@@ -32,7 +32,7 @@ class Mouse : public ControlSuper
 	GLuint glTex;
 
 	GLRect glRect;
-	GLLines *glLines;
+	//GLLines *glLines;
 
 	PointF valueRel;
 

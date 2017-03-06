@@ -452,7 +452,7 @@ void calcFontSpacing( const unsigned char *imageData, int width, int height, std
                             alpha[48+0],alpha[48+1],alpha[48+2],alpha[48+3],alpha[48+4],alpha[48+5],alpha[48+6],alpha[48+7],alpha[48+8],alpha[48+9],alpha[48+10],alpha[48+11],alpha[48+12],alpha[48+13],alpha[48+14],alpha[48+15]);
                             */
         }
-        LOGTOUCH( "%c l=%d, r =%d", c, leftMost, rightMost );
+       // LOGTOUCH( "%c l=%d, r =%d", c, leftMost, rightMost );
     }
 }
 
@@ -494,26 +494,33 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
         initGLES2();
         gles2InitDone = 1;
     }
-
 #endif
-
 
     //Check if already loaded
     std::map<std::string, GLuint>::iterator it = glTextureCache.find( filename );
     if( it != glTextureCache.end() )
     {
-
         if( fontInfoVec != NULL )
         {
             (*fontInfoVec).insert((*fontInfoVec).begin(), fontInfoCache[filename].begin(), fontInfoCache[filename].end());
         }
-
         //element found;
         LOGTOUCH( "PNG %s is already loaded\n", filename.c_str() );
         return it->second;
     }
 
-    std::string full_file = graphicsBasePath + filename + ".png";
+    std::string filename_stripped;
+
+    if( filename.find('?') != std::string::npos )
+    {
+        filename_stripped =filename.substr( 0, filename.find('?') );
+    }
+    else //No extra info in the filename
+    {
+        filename_stripped = filename;
+    }
+
+    std::string full_file = graphicsBasePath + filename_stripped + ".png";
     file = fopen( full_file.c_str(), "r" );
     if( !file )
     {
@@ -644,12 +651,16 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                   GL_UNSIGNED_BYTE, ( GLvoid* ) image_data );
 
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
+    if( filename.find("F=N") != std::string::npos )// Only option so far
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+    else
+    {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    }
     //Add to cache
     glTextureCache[filename] = texture;
 

@@ -4,10 +4,11 @@
 
 using namespace touchcontrols;
 
-UI_Switch::UI_Switch ( std::string tag, RectF pos, std::string on_image, std::string off_image ) : ControlSuper ( TC_TYPE_UI_SWITCH, tag, pos )
+UI_Switch::UI_Switch ( std::string tag, RectF pos, uint32_t uid, std::string on_image, std::string off_image ) : ControlSuper ( TC_TYPE_UI_SWITCH, tag, pos )
 {
     this->on_image = on_image;
     this->off_image = off_image;
+    this->uid = uid;
 
     glTexOn = glTexOff = 0;
 
@@ -16,12 +17,20 @@ UI_Switch::UI_Switch ( std::string tag, RectF pos, std::string on_image, std::st
     updateSize();
 }
 
+bool UI_Switch::getValue()
+{
+    return isOn;
+}
+
+void UI_Switch::setValue( bool v )
+{
+    isOn = v;
+}
+
 void UI_Switch::updateSize()
 {
     glRect.resize ( controlPos.right - controlPos.left, controlPos.bottom - controlPos.top );
 }
-
-
 
 bool UI_Switch::processPointer ( int action, int pid, float x, float y )
 {
@@ -31,7 +40,7 @@ bool UI_Switch::processPointer ( int action, int pid, float x, float y )
         {
             // Toggle switch
             isOn = !isOn;
-
+            signal.emit( uid, isOn );
             return true;
         }
     }
