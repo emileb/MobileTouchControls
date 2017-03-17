@@ -21,7 +21,7 @@
 extern "C"
 {
 
-void EXPORT_ME Java_com_beloko_AssetFileAccess_setAssetManager(JNIEnv *env, jobject obj,
+void EXPORT_ME Java_com_opentouchgaming_androidcore_AssetFileAccess_setAssetManager(JNIEnv *env, jobject obj,
         jobject assetManager)
 {
     AAssetManager *mgr = (AAssetManager *)AAssetManager_fromJava(env, assetManager);
