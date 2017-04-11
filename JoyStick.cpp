@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #endif
 
+#include "math.h"
 
 #define DOUBLE_TAP_SPEED 200
 

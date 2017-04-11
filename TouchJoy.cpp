@@ -1,6 +1,7 @@
 #include "TouchJoy.h"
 #include "TouchControlsConfig.h"
 #include <sys/time.h>
+#include "math.h"
 
 #define DOUBLE_TAP_SPEED 200
 

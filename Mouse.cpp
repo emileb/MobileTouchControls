@@ -1,6 +1,7 @@
 #include "Mouse.h"
 #include "TouchControlsConfig.h"
 #include <sys/time.h>
+#include "math.h"
 
 #define TAP_SPEED 10
 using namespace touchcontrols;

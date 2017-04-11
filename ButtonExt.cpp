@@ -5,6 +5,8 @@
 #include <sys/time.h>
 #endif
 
+#include "math.h"
+
 #define REPEAT_START_TIME 500
 #define REPEAT_INTERVAL   150
 

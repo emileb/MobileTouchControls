@@ -37,6 +37,19 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
 
 void setFixAspect( bool v );
+
+
+#ifdef USE_GLES2
+extern "C"
+{
+    void glColor4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a );
+    void glLoadIdentity();
+    void glScalef( GLfloat x, GLfloat y, GLfloat z );
+    void glTranslatef( GLfloat x, GLfloat y, GLfloat z );
+}
+#endif
+
+
 }
 
 

@@ -55,11 +55,11 @@ LOCAL_MODULE := touchcontrols_gles2
 
 LOCAL_CFLAGS := -Werror -DANDROID_NDK -DUSE_GLES2
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH) $(IDTECH_DIR)  $(IDTECH_DIR)/libpng $(IDTECH_DIR)/TinyXML
+LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
 LOCAL_SRC_FILES:= $(TC_LOCAL_SRC_FILES)
 
-LOCAL_LDLIBS := -lGLESv2 -ldl -llog -lOpenSLES
+LOCAL_LDLIBS := -lGLESv2 -ldl -llog -landroid
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
 
 include $(BUILD_SHARED_LIBRARY)
