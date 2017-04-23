@@ -28,9 +28,6 @@
 namespace touchcontrols
 {
 
-typedef enum {
-    FADE_IN,FADE_OUT
-} fadedir_t;
 
 //const int ScaleX = 26;
 //const int ScaleY = 16;

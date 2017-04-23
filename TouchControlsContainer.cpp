@@ -48,7 +48,7 @@ void TouchControlsContainer::finishEditing()
 {
 	if (editingControls)
 	{
-	    if( uiControls != NULL && uiControls->enabled )
+	    if( uiControls != NULL && uiControls->getEnabled() )
         {
             uiControls->setEnabled( false );
         }
@@ -67,7 +67,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
     // Check if the UI is active
     if( uiControls != NULL )
 	{
-        if( uiControls->enabled )
+        if( uiControls->getEnabled() )
         {
             uiControls->processPointer(action,pid, x, y);
             return false;
@@ -204,7 +204,7 @@ int TouchControlsContainer::draw ()
 
     if( uiControls != NULL )
 	{
-        if( uiControls->enabled )
+        if( uiControls->getEnabled() )
         {
             //Grey out background
             GLRect rect;

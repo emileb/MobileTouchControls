@@ -7,6 +7,7 @@
 #include "TouchControlsInterface.h"
 #include "TouchControlsConfig.h"
 #include "TouchControls.h"
+#include "UI_Controls.h"
 
 #ifdef USE_LIBROCKET
 #include "TouchGui.h"
@@ -40,7 +41,7 @@ public:
 	float editButtonAlpha;
 
    // Set to UI control group
-	TouchControls * uiControls = NULL;
+	UI_Controls * uiControls = NULL;
 
 	sigc::signal<void,int> signal_settings;
 

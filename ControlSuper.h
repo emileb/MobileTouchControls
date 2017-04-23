@@ -24,6 +24,11 @@
 
 namespace touchcontrols
 {
+
+typedef enum {
+    FADE_IN,FADE_OUT
+} fadedir_t;
+
 class ControlSuper
 {
 protected:

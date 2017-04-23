@@ -501,9 +501,6 @@ int TouchControls::draw ()
 		}
 	}
 
-    // This is here is disable scissor test if UI_Window enabled it..will this be OK??
-    glDisable( GL_SCISSOR_TEST );
-
 	if (editorButton)
 	{
 		glLoadIdentity();

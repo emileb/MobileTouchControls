@@ -17,7 +17,7 @@ namespace touchcontrols
 #define SWITCH_JOYSTICKS    22
 
 static TouchControlsContainer *container = NULL;
-static TouchControls *controls = NULL;
+static UI_Controls *controls = NULL;
 static std::string settingsFilename;
 static tTouchSettings settings;
 
@@ -72,11 +72,12 @@ static void resetDefaults()
 
 static void buttonPress ( int state, int code )
 {
-    if ( state == 0 && code == BUTTON_CLOSE )
+    if ( state == 0 && code == UI_WINDOW_BUTTON_BACK )
     {
         saveSettings( settingsFilename);
         signal_settingChange.emit( settings );
         controls->setEnabled ( false );
+        LOGTOUCH("Window close");
     }
 
     if ( code == BUTTON_RESET )
@@ -127,7 +128,7 @@ sigc::signal<void, tTouchSettings> *getSettingsSignal()
     return &signal_settingChange;
 }
 
-TouchControls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string settingsFile )
+UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string settingsFile )
 {
     settingsFilename = settingsFile;
     container = con;
@@ -142,14 +143,14 @@ TouchControls *createDefaultSettingsUI ( TouchControlsContainer *con, std::strin
 
         signal_settingChange.emit( settings );
 
-        controls = new TouchControls ( "ui_settings", false, false );
+        controls = new UI_Controls( "ui_settings" );
 
         float textSize = 0.07f;
         uint32_t windownLeft = 3;
         uint32_t windowRight = 24;
 
-        controls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
-        controls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
+        //controls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
+       // controls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
 
         controls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 4, 12, 6 ), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize ) );
         UI_Slider *slider =   new UI_Slider ( "slider_alpha",  touchcontrols::RectF ( 13, 4, windowRight - 1, 6 ), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle" );
@@ -192,14 +193,10 @@ TouchControls *createDefaultSettingsUI ( TouchControlsContainer *con, std::strin
         controls->addControl ( button );
 
 
-
-
         // Draws backwards so need background last
-        controls->addControl ( new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, 2, windowRight, 14.2 ), "ui_background" ) );
-
-        controls->setPassThroughTouch ( false );
-
-        controls->signal_button.connect ( sigc::ptr_fun ( &buttonPress ) );
+        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, 2, windowRight, 14.2 ), "ui_background" );
+        controls->addControl( window );
+        window->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
     }
 
     return controls;

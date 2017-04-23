@@ -1,5 +1,5 @@
 
-#include "TouchControls.h"
+#include "UI_Controls.h"
 #include "TouchControlsContainer.h"
 
 #ifndef _UI_TouchDefaultSettings_H_
@@ -22,7 +22,7 @@ namespace touchcontrols
     } tTouchSettings;
 
 
-    TouchControls *createDefaultSettingsUI( TouchControlsContainer *con, std::string settingsFile );
+    UI_Controls *createDefaultSettingsUI( TouchControlsContainer *con, std::string settingsFile );
     sigc::signal<void, tTouchSettings> *getSettingsSignal();
 
 }

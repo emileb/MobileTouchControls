@@ -25,6 +25,7 @@ namespace touchcontrols
 const int ScaleX = 26;
 const int ScaleY = 16;
 
+
 }
 
 
