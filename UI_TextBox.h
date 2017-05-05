@@ -44,8 +44,6 @@ public:
 
  	void resetOutput();
 
-    void setScissor( void );
-
 	bool drawGL(bool forEditor = false);
 
 	bool initGL();

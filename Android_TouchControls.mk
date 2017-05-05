@@ -29,12 +29,14 @@ LOCAL_SRC_FILES:= \
  	AssetFileAccess.cpp \
  	AssetFileCache.cpp \
  	android_fopen.cpp \
+ 	TextDraw.cpp \
  	UI_Controls.cpp \
  	UI_Window.cpp \
  	UI_Slider.cpp \
  	UI_TextBox.cpp \
  	UI_Button.cpp \
  	UI_Switch.cpp \
+ 	UI_Keyboard.cpp \
     UI_TouchDefaultSettings.cpp
 
 

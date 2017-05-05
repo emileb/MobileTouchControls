@@ -19,6 +19,7 @@
 #include "UI_TextBox.h"
 #include "UI_Button.h"
 #include "UI_Switch.h"
+#include "UI_Keyboard.h"
 
 
 #ifndef _TouchControls_H_

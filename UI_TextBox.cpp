@@ -4,7 +4,8 @@
 
 using namespace touchcontrols;
 
-UI_TextBox::UI_TextBox( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize ): ControlSuper( TC_TYPE_UI_TEXTBOX, tag, pos )
+UI_TextBox::UI_TextBox( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize ):
+ControlSuper( TC_TYPE_UI_TEXTBOX, tag, pos )
 {
     image = font_filename;
     this->textSize = textSize;
@@ -127,7 +128,6 @@ bool UI_TextBox::drawGL( bool forEditor )
         glRectTemp.texture[5] = fy - 0.0625f;
         glRectTemp.texture[6] = fx + 0.0625f - (rightPad / 16.f);
         glRectTemp.texture[7] = fy;
-
 
         glRectTemp.resize( getCharWidth ( c ), glRect.height);
 

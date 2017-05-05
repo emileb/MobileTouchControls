@@ -37,7 +37,7 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
     bool eventUsed = false;
     for (int n=0;n<size;n++)
     {
-        ControlSuper *cs = controls.at(n);
+        ControlSuper *cs = controls.at(size - 1 - n); // Start from top of stack
         if (cs->isEnabled())
         {
             float ys;
@@ -89,7 +89,7 @@ int UI_Controls::draw ()
     int size = controls.size();
     for (int n=0;n<size;n++) //draw
     {
-        ControlSuper *c = controls.at(size-1-n);
+        ControlSuper *c = controls.at(n);
         if (c->isEnabled())
         {
             glLoadIdentity();

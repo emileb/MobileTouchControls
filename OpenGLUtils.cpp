@@ -254,12 +254,12 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
 #else
 void drawRect( GLuint texture, float x, float y, GLRect &rect )
 {
-    glPushMatrix();
-
     if( texture == -1 )
     {
         return;
     }
+
+    glPushMatrix();
 
     //LOGTOUCH("drawRect %d",texture);
     glBindTexture( GL_TEXTURE_2D, texture );
@@ -323,6 +323,8 @@ void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLR
 #else
 void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
 {
+    glPushMatrix();
+
     glDisable( GL_TEXTURE_2D );
     glColor4f( r, g, b, a );
 
@@ -332,6 +334,8 @@ void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLR
 
     glColor4f( 1, 1, 1, 1 );
     glEnable( GL_TEXTURE_2D );
+
+     glPopMatrix();
 }
 #endif
 
