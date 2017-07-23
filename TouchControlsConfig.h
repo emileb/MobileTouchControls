@@ -2,7 +2,7 @@
 #ifndef _TouchControlsConfig_H_
 #define _TouchControlsConfig_H_
 //#include <string>
-
+#include <sys/time.h>
 
 #ifdef __ANDROID__
 #include <android/log.h>
@@ -25,7 +25,12 @@ namespace touchcontrols
 const int ScaleX = 26;
 const int ScaleY = 16;
 
-
+    inline double getMS()
+    {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+    }
 }
 
 

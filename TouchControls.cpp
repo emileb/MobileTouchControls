@@ -1,4 +1,4 @@
-#include "GLheader.h"
+ #include "GLheader.h"
 
 #include "TouchControls.h"
 #include <math.h>
@@ -19,7 +19,6 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	r = g = b = 1.0f;
 	editGroup = edit_group;
 	passThroughTouch = true;
-
 
 	int lines = ScaleX+1 + ScaleY+1;
 
@@ -74,7 +73,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 		}
 		if (showExtraSettings)
 		{
-			settingsButton = new touchcontrols::Button("settings_control",touchcontrols::RectF(0,0,2,2),"settings_bars",0);
+			settingsButton = new touchcontrols::Button("settings_control",touchcontrols::RectF(12,2,14,4),"settings_bars",0);
 			settingsButton->signal_button.connect(  sigc::mem_fun(this,&TouchControls::settingsButtonPress) );
 		}
 

@@ -12,7 +12,7 @@ using namespace touchcontrols;
 TouchControlsContainer::TouchControlsContainer()
 {
 	//Just for if we have an edit group
-	editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(11,0,13,2),"settings",0);
+	editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(12,0,14,2),"settings",0);
 	editorButton->signal_button.connect(  sigc::mem_fun(this,&TouchControlsContainer::editorButtonPress) );
 	editButtonAlpha = 0;
 }

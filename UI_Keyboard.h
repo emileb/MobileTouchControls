@@ -18,8 +18,13 @@ namespace touchcontrols
 #define NBR_ROWS 4
 struct KeyboardKey
 {
-    char keyPrim;
-    char keyAlt;
+    unsigned char keyPrim;
+    uint32_t keyPrimScanCode;
+    unsigned char keyAlt;
+    const char *primImg;
+    const char *altImg;
+    GLuint glPrim;
+    GLuint glAlt;
     float width;
 };
 
@@ -42,10 +47,17 @@ class UI_Keyboard : public ControlSuper
     KeyboardLayout layout;
     GLuint glKeyBg;
 
-    void setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width );
+    void setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width, const char* primImg = NULL, const char * altImg = NULL );
+
+    int touchId;
+    KeyboardKey *pressedKey;
+    double timeDown;
+    bool useAltKey;
 public:
 
 	UI_Keyboard( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize );
+
+    sigc::signal< void, uint32_t > signal;
 
 	bool processPointer(int action, int pid, float x, float y);
 
