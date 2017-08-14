@@ -13,6 +13,9 @@
 #define DOUBLE_TAP_SPEED 200
 #define DOUBLE_TAP_DRIFT 0.05
 
+
+#define TAP_SPEED 400
+
 using namespace touchcontrols;
 
 ButtonExt::ButtonExt(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_):
@@ -29,7 +32,6 @@ ButtonExt::ButtonExt(std::string tag,RectF pos,std::string image_filename,int va
 	flash = false;
 	flashDir = false;
 	flashCount = 0;
-
 }
 
 double ButtonExt::getMS()
@@ -76,8 +78,9 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 			signal_button.emit(BUTTONEXT_DOWN,value);
 			repeatTime = getMS() +  REPEAT_START_TIME;//Wait before repeating
 
+            tapTimer = getMS();
 
-             if(doubleTapState == 2) //Second down of double tap
+            if(doubleTapState == 2) //Second down of double tap
             {
                 if (((current_timestamp() - doubleTapCounter) < DOUBLE_TAP_SPEED)&&
                     (((abs(doubleTapPos.x - x) + abs(doubleTapPos.y - y))) < DOUBLE_TAP_DRIFT))
@@ -90,10 +93,10 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 
             if (doubleTapState == 0) //First tap of double tap
             {
-                            doubleTapState = 1;
-                            doubleTapCounter = current_timestamp();
-                            doubleTapPos.x = x;
-                            doubleTapPos.y = y;
+                doubleTapState = 1;
+                doubleTapCounter = current_timestamp();
+                doubleTapPos.x = x;
+                doubleTapPos.y = y;
              }
 
 			return true;
@@ -109,6 +112,12 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 
 			if (controlPos.contains(x,y))
             {
+                // Use the doubleTapCounter for taps also
+                if ((getMS() - tapTimer) < TAP_SPEED)
+                {
+                    signal_button.emit(BUTTONEXT_TAP,value);
+                }
+
                 if (doubleTapState == 1) //First up of double tap
                 {
                     //Simple check to see if finger moved very much

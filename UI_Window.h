@@ -29,7 +29,7 @@ class UI_Window : public ControlSuper
 public:
 	std::string image;
 
-	UI_Window(std::string tag,RectF pos,std::string image_filename);
+	UI_Window(std::string tag,RectF pos,std::string title, std::string image_filename);
 
      sigc::signal<void, uint32_t, uint32_t> signal;
 

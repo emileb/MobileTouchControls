@@ -26,6 +26,8 @@ public:
 	int draw ();
 
     void addControl( ControlSuper *cntrl );
+    void deleteControls();
+
     void setEnabled(bool v);
     bool getEnabled();
 
@@ -38,6 +40,11 @@ private:
     std::string tag;
     std::vector<ControlSuper *> controls;
 	bool enabled;
+
+    float fadePos; //current fade
+	fadedir_t fadeDir;
+	float fadeStep;
+	bool fading;
 
 	float yOffset; // Used to scroll up/down
     PointF finger1;

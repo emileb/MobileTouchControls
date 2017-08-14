@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := touchcontrols
 
-LOCAL_CFLAGS := -Werror -DANDROID_NDK -O0 
+LOCAL_CFLAGS := -Werror -DANDROID_NDK
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)
 
@@ -37,7 +37,8 @@ LOCAL_SRC_FILES:= \
  	UI_Button.cpp \
  	UI_Switch.cpp \
  	UI_Keyboard.cpp \
-    UI_TouchDefaultSettings.cpp
+    UI_TouchDefaultSettings.cpp \
+    UI_ButtonListWindow.cpp
 
 
  	

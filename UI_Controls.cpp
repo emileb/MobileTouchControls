@@ -30,6 +30,17 @@ void UI_Controls::addControl(ControlSuper *cntrl)
 	controls.push_back((cntrl));
 }
 
+void UI_Controls::deleteControls()
+{
+    int size = controls.size();
+    for (int n=0;n<size;n++)
+    {
+        delete( controls.at(n) );
+    }
+    controls.clear();
+    yOffset = 0;
+}
+
 bool UI_Controls::processPointer(int action, int pid, float x, float y)
 {
     int size = controls.size();
@@ -84,7 +95,31 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
 
 int UI_Controls::draw ()
 {
-    glColor4f(1, 1, 1, 1);
+	if (fading)
+	{
+		if (fadeDir == FADE_IN) //Fading in
+		{
+			fadePos += fadeStep;
+			if (fadePos >= 1)
+				fading = false;
+
+		}
+		else //Fading out
+		{
+			fadePos -= fadeStep;
+			if (fadePos <= 0)
+			{
+				fading = false;
+				setEnabled(false); //now also disable the control
+			}
+		}
+		//LOGTOUCH("fadePos = %f",fadePos);
+
+		glColor4f(1, 1, 1, fadePos);
+
+	}
+	else
+		glColor4f(1, 1, 1,1 );
 
     int size = controls.size();
     for (int n=0;n<size;n++) //draw
@@ -127,5 +162,15 @@ void UI_Controls::setAlpha(float a)
 
 void UI_Controls::fade(fadedir_t dir,int steps)
 {
-
+    if (dir == FADE_IN) //Fade in
+	{
+		fadePos = 0;
+	}
+	else //Fade out
+	{
+		fadePos = 1;
+	}
+	fadeDir = dir;
+	fadeStep = (float)1/(float)steps;
+	fading = true;
 }

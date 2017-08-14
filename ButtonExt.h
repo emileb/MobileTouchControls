@@ -43,6 +43,8 @@ class ButtonExt : public ControlSuper
 	int long long doubleTapCounter;
 	PointF doubleTapPos;
 
+    double tapTimer;
+
 public:
 	std::string image;
 	sigc::signal<void, int, int> signal_button;

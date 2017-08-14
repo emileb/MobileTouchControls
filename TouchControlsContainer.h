@@ -33,15 +33,17 @@ class TouchControlsContainer: public TouchControlsInterface
 	Button *editorButton;
 	void editorButtonPress(int state,int code);
 	int drawEditButton;
-    
 
+    // Set to UI control group
+    UI_Controls * uiControls = NULL;
+ 	UI_Controls * uiControlsTemp = NULL; // To try and avoid threading issues this is set then copied to uiControls
+    uint32_t      uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
 
 public:
 
 	float editButtonAlpha;
 
-   // Set to UI control group
-	UI_Controls * uiControls = NULL;
+
 
 	sigc::signal<void,int> signal_settings;
 
@@ -66,7 +68,10 @@ public:
 	void resetDefaults();
 
 	TouchControls* getEditingControls();
-    
+
+    void showUIWindow( UI_Controls * uiControls );
+    void hideUIWindow( bool andDelete = false );
+
     //Needs to be here for IOS, breaks otherwise. Memory or compiler bug
 #ifdef USE_LIBROCKET
     TouchGui *touchGui;

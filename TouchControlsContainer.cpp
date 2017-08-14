@@ -61,6 +61,19 @@ void TouchControlsContainer::finishEditing()
 	}
 }
 
+void TouchControlsContainer::showUIWindow( UI_Controls * ui )
+{
+    this->uiControlsTemp = ui;
+}
+
+void TouchControlsContainer::hideUIWindow( bool andDelete )
+{
+    if( andDelete )
+        uiHide = 2;
+    else
+        uiHide = 1;
+}
+
 bool TouchControlsContainer::processPointer(int action, int pid, float x, float y)
 {
 
@@ -202,9 +215,30 @@ int TouchControlsContainer::draw ()
 #endif
 	}
 
+    if( uiControlsTemp != NULL )
+    {
+        uiControls = uiControlsTemp;
+        uiControlsTemp = NULL;
+        uiControls->initGL();
+        uiControls->setEnabled( true );
+        uiControls->fade( touchcontrols::FADE_IN, 10 );
+    }
+
+
     if( uiControls != NULL )
 	{
-        if( uiControls->getEnabled() )
+	    if( uiHide == 1) // We want to hide the active UI element
+	    {
+	       uiControls->setEnabled( false );
+	       uiHide = 0;
+	    }
+	    else if( uiHide == 2 ) // We want to hide and delete the element
+        {
+            delete( uiControls );
+            uiControls = NULL;
+            uiHide = 0;
+        }
+        else if( uiControls->getEnabled() )
         {
             //Grey out background
             GLRect rect;

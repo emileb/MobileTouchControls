@@ -27,7 +27,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	float GLES2scaleY(float Y);
 #endif
 
-	editorButton = 0;
+
 	settingsButton  = 0;
 
 	if (editable)
@@ -66,19 +66,13 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 #endif
 			l +=6;
 		}
-		if (editGroup == -1)
-		{
-			editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(11,0,13,2),"settings",0);
-			editorButton->signal_button.connect(  sigc::mem_fun(this,&TouchControls::editorButtonPress) );
-		}
+
 		if (showExtraSettings)
 		{
-			settingsButton = new touchcontrols::Button("settings_control",touchcontrols::RectF(12,2,14,4),"settings_bars",0);
+			settingsButton = new touchcontrols::ButtonExt("settings_control",touchcontrols::RectF(12,2,14,4),"settings_bars",0);
 			settingsButton->signal_button.connect(  sigc::mem_fun(this,&TouchControls::settingsButtonPress) );
 		}
-
 	}
-
 }
 
 void TouchControls::setColor(float r_,float g_, float b_)
@@ -244,8 +238,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 	if (android_app_is_shutting_down)
 		return 0;
 #endif
-	if (editorButton)
-		editorButton->processPointer(action,pid, x, y);
 
 	if (!editing)
 	{
@@ -408,21 +400,14 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
     return false;
 }
 
-void TouchControls::editorButtonPress(int state,int code)
-{
-
-	if (state == 1)
-	{
-		if (!editing)
-			edit();
-		else
-			stopEdit();
-	}
-}
 
 void TouchControls::settingsButtonPress(int state,int code)
 {
-	signal_settingsButton.emit(state);
+    LOGTOUCH("settingsButtonPress %d %d", state, code );
+    if( state == BUTTONEXT_TAP ) //Only want to activate this if we do a real tap
+    {
+	    signal_settingsButton.emit(1);
+	}
 }
 
 void TouchControls::windowControl(ControlSuper *ctrl)
@@ -498,13 +483,6 @@ int TouchControls::draw ()
             
 			c->drawGL();
 		}
-	}
-
-	if (editorButton)
-	{
-		glLoadIdentity();
-		glScalef(GLScaleWidth, GLScaleHeight, 1);
-		editorButton->drawGL();
 	}
 
 	if (animating)
@@ -585,13 +563,7 @@ int  TouchControls::drawEditor ()
 	}
 
 
-	if (editorButton)
-	{
-		glLoadIdentity();
-		glScalef(GLScaleWidth, GLScaleHeight, 1);
-	//	glColor4f(1.0, 0.7, 0.7, 1 );
-		editorButton->drawGL();
-	}
+
 
 	if (editing)
 	{
@@ -641,8 +613,6 @@ void  TouchControls::initGL ()
 		c->initGL();
 	}
 
-	if (editorButton)
-		editorButton->initGL();
 
 	if (settingsButton)
 		settingsButton->initGL();

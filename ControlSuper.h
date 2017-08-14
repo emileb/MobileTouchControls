@@ -53,6 +53,7 @@ public:
 	int type;
 
 	ControlSuper(int type,std::string t,RectF pos);
+    virtual ~ControlSuper();
 
 	virtual void resetOutput() = 0; //This outputs a reset
 

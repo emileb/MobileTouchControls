@@ -11,11 +11,12 @@
 
 using namespace touchcontrols;
 
-Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_):
+Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_,std::string description_):
 																						ControlSuper(TC_TYPE_BUTTON,tag,pos)
 {
 	value = value_;
 	image = image_filename;
+	description = description_;
 	glTex = 0;
 	id = -1;
 	repeat = repeat_;

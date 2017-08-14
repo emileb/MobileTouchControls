@@ -4,13 +4,13 @@
 
 using namespace touchcontrols;
 
-UI_Window::UI_Window ( std::string tag, RectF pos, std::string image_filename ) : ControlSuper ( TC_TYPE_UI_WINDOW, tag, pos )
+UI_Window::UI_Window ( std::string tag, RectF pos,std::string title, std::string image_filename ) : ControlSuper ( TC_TYPE_UI_WINDOW, tag, pos )
 {
     image = image_filename;
     glTex = 0;
 
     backButton =  new Button ( "close", touchcontrols::RectF ( pos.left, pos.top, pos.left + 2,  pos.top + 2), "ui_back_arrow", UI_WINDOW_BUTTON_BACK );
-    titleText = new UI_TextBox ( "text",touchcontrols::RectF ( pos.left, pos.top, pos.right,     pos.top + 2 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 );
+    titleText = new UI_TextBox ( "text",touchcontrols::RectF ( pos.left, pos.top, pos.right,     pos.top + 2 ), "font_dual", 1, UI_TEXT_CENTRE, title, 0.09 );
 
     backButton->signal_button.connect( signal );
 
@@ -52,9 +52,22 @@ bool UI_Window::initGL()
 void UI_Window::setScissor ( void )
 {
     // Scissor window, leaving
-    glScissor ( controlPos.left * GLScaleWidth, (controlPos.top) * -GLScaleHeight,
-                controlPos.width() * GLScaleWidth, ( controlPos.height() - (2.f/ScaleY)) *  -GLScaleHeight );
-    glEnable ( GL_SCISSOR_TEST );
+    /*
+    glScissor ( controlPos.left * GLScaleWidth,
+                (controlPos.top) * -GLScaleHeight,
+                controlPos.width() * GLScaleWidth,
+                ( controlPos.height() - (2.f/ScaleY)) *  -GLScaleHeight );
+      */
+     int x,y,w,h;
+     x = controlPos.left * GLScaleWidth;
+     y = (1 - controlPos.bottom) * -GLScaleHeight;
+     w =  controlPos.width() * GLScaleWidth;
+     h = ( controlPos.height() - (2.f/ScaleY)) *  -GLScaleHeight ;
+     LOGTOUCH("%d   %d   %d   %d",x,y,w,h);
+
+     glScissor ( x, y , w, h );
+
+     glEnable ( GL_SCISSOR_TEST );
 }
 
 bool UI_Window::drawGL ( bool forEditor )

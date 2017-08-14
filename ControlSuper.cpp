@@ -16,6 +16,12 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 	enabled = true;
 	hidden = false;
 }
+
+ControlSuper::~ControlSuper()
+{
+
+}
+
 void ControlSuper::setEnabled(bool v)
 {
 	enabled = v;

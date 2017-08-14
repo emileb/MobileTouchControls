@@ -82,10 +82,8 @@ class TouchControls
 	void windowControl(ControlSuper *ctrl);
 	void snapControl(ControlSuper *ctrl);
 
-	Button *editorButton;
-	Button *settingsButton;
+	ButtonExt *settingsButton;
 
-	void editorButtonPress(int state,int code);
 	void settingsButtonPress(int state,int code);
 
 	//ANIMATIONS STUFF
@@ -167,7 +165,6 @@ public:
 
     //Enable or disable all BUTTONS in control group
     void setAllButtonsEnable(bool value);
-
 
     std::vector<ControlSuper *> * getControls();
 

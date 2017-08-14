@@ -1,11 +1,12 @@
 #include "UI_TouchDefaultSettings.h"
+#include "UI_ButtonListWindow.h"
 
 namespace touchcontrols
 {
 
 #define BUTTON_CLOSE 1
 #define BUTTON_RESET 2
-#define BUTTON_2 3
+#define BUTTON_EDIT_BUTTONS 3
 
 #define SLIDER_ALPHA 10
 #define SLIDER_LOOK  11
@@ -13,7 +14,6 @@ namespace touchcontrols
 
 
 #define SWITCH_INVERT_LOOK 20
-#define SWITCH_SHOWSAVE     21
 #define SWITCH_JOYSTICKS    22
 
 static TouchControlsContainer *container = NULL;
@@ -66,7 +66,6 @@ static void resetDefaults()
     settings.invertLook = false;
     settings.lookSensitivity = 1;
     settings.moveSensitivity = 1;
-    settings.showLoadSave = false;
     settings.showJoysticks = true;
 }
 
@@ -84,6 +83,10 @@ static void buttonPress ( int state, int code )
     {
         container->resetDefaults();
         resetDefaults();
+    }
+    else if (code == BUTTON_EDIT_BUTTONS )
+    {
+        showButtonListWindow( container );
     }
 }
 
@@ -108,11 +111,6 @@ static void switchChange ( uint32_t uid, bool value )
     if( uid == SWITCH_INVERT_LOOK )
     {
         settings.invertLook = value;
-    }
-    else if( uid == SWITCH_SHOWSAVE )
-    {
-        settings.showLoadSave = value;
-        signal_settingChange.emit( settings );
     }
     else if( uid == SWITCH_JOYSTICKS )
     {
@@ -153,7 +151,7 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
        // rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
 
         // Draws backwards so need background last
-        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, 2, windowRight, 14.2 ), "ui_background" );
+        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, 2, windowRight, 14.2 ),"Touch settings", "ui_background" );
         rootControls->addControl( window );
         window->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
 
@@ -176,19 +174,17 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         rootControls->addControl ( slider );
 
         rootControls->addControl ( new UI_TextBox ( "text",          touchcontrols::RectF ( windownLeft, 10, 9.5, 12 ), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize ) );
-        UI_Switch *swtch =      new UI_Switch ( "invert_switch", touchcontrols::RectF ( 10, 10.3, 13, 11.7 ), SWITCH_INVERT_LOOK, "ui_switch_on", "ui_switch_off" );
+        UI_Switch *swtch =      new UI_Switch ( "invert_switch", touchcontrols::RectF ( 10, 10.2, 13, 11.8 ), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.invertLook );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( 13, 10, windowRight - 3.5, 12 ), "font_dual", 0, UI_TEXT_RIGHT, "Save/Load btns:", textSize ) );
-        swtch = new UI_Switch ( "showsave_switch",              touchcontrols::RectF ( windowRight - 3, 10.3, windowRight, 11.7 ),SWITCH_SHOWSAVE, "ui_switch_on", "ui_switch_off" ) ;
-        swtch->setValue( settings.showLoadSave );
-        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
-        rootControls->addControl ( swtch);
+        UI_Button *buttonEdit =   new UI_Button ( "edit_buttons",  touchcontrols::RectF ( 13, 10, windowRight, 12 ), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg" );
+        buttonEdit->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
+        rootControls->addControl ( buttonEdit );
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 12, 9.5, 14 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
-        swtch =      new UI_Switch ( "show_joy_switch",         touchcontrols::RectF ( 10, 12.3, 13, 13.7 ), SWITCH_JOYSTICKS, "ui_switch_on", "ui_switch_off" );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, 12, 9.5, 14 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
+        swtch =      new UI_Switch ( "show_joy_switch",       touchcontrols::RectF ( 10, 12.2, 13, 13.8 ), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.showJoysticks );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );

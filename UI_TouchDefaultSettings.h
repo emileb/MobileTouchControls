@@ -1,9 +1,10 @@
 
-#include "UI_Controls.h"
-#include "TouchControlsContainer.h"
 
 #ifndef _UI_TouchDefaultSettings_H_
 #define _UI_TouchDefaultSettings_H_
+
+#include "UI_Controls.h"
+#include "TouchControlsContainer.h"
 
 namespace touchcontrols
 {
@@ -15,8 +16,6 @@ namespace touchcontrols
         float moveSensitivity;
 
         bool  invertLook;
-
-        bool showLoadSave;
         bool showJoysticks;
 
     } tTouchSettings;
