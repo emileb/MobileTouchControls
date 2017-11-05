@@ -66,6 +66,9 @@ bool Button::processPointer(int action, int pid, float x, float y)
 	if (hidden) //Hidden controls do not respond to inputs
 		return false;
 
+    if( value == -1 )
+        return false;
+
 	if (action == P_DOWN)
 	{
 		if (controlPos.contains(x,y))

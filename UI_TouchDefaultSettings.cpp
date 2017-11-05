@@ -73,9 +73,7 @@ static void buttonPress ( int state, int code )
 {
     if ( state == 0 && code == UI_WINDOW_BUTTON_BACK )
     {
-        saveSettings( settingsFilename);
-        signal_settingChange.emit( settings );
-        rootControls->setEnabled ( false );
+        rootControls->setEnabled ( false ); // controlsEnabled will get called automatically
         LOGTOUCH("Window close");
     }
 
@@ -119,6 +117,15 @@ static void switchChange ( uint32_t uid, bool value )
     }
 }
 
+// Gets called by a signal when the controls are enabled or disabled
+static void controlsEnabled( bool enabled )
+{
+    if( !enabled )
+    {
+        saveSettings( settingsFilename);
+        signal_settingChange.emit( settings );
+    }
+}
 
 
 sigc::signal<void, tTouchSettings> *getSettingsSignal()
@@ -136,7 +143,7 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         //Defaults
         resetDefaults();
 
-        // Then try and laod file
+        // Then try and load file
         loadSettings( settingsFilename);
 
         signal_settingChange.emit( settings );
@@ -192,6 +199,8 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         UI_Button *button =   new UI_Button ( "reset_button",  touchcontrols::RectF ( 13, 12, windowRight, 14 ), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset", textSize, "ui_button_bg" );
         button->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
         rootControls->addControl ( button );
+
+        rootControls->signalEnable.connect( sigc::ptr_fun(&controlsEnabled) );
     }
 
     return rootControls;

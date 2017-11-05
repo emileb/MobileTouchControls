@@ -4,6 +4,8 @@
 
 using namespace touchcontrols;
 
+#define PADDING 0.02
+
 UI_Window::UI_Window ( std::string tag, RectF pos,std::string title, std::string image_filename ) : ControlSuper ( TC_TYPE_UI_WINDOW, tag, pos )
 {
     image = image_filename;
@@ -19,7 +21,7 @@ UI_Window::UI_Window ( std::string tag, RectF pos,std::string title, std::string
 
 void UI_Window::updateSize()
 {
-    glRect.resize ( controlPos.right - controlPos.left, controlPos.bottom - controlPos.top );
+    glRect.resize ( controlPos.right - controlPos.left + PADDING, controlPos.bottom - controlPos.top + PADDING);
 }
 
 
@@ -63,7 +65,7 @@ void UI_Window::setScissor ( void )
      y = (1 - controlPos.bottom) * -GLScaleHeight;
      w =  controlPos.width() * GLScaleWidth;
      h = ( controlPos.height() - (2.f/ScaleY)) *  -GLScaleHeight ;
-     LOGTOUCH("%d   %d   %d   %d",x,y,w,h);
+     //LOGTOUCH("%d   %d   %d   %d",x,y,w,h);
 
      glScissor ( x, y , w, h );
 
@@ -72,7 +74,7 @@ void UI_Window::setScissor ( void )
 
 bool UI_Window::drawGL ( bool forEditor )
 {
-    drawRect ( glTex, controlPos.left, controlPos.top, glRect );
+    drawRect ( glTex, controlPos.left - (PADDING/2), controlPos.top, glRect );
 
     backButton->drawGL( forEditor );
     titleText->drawGL( forEditor );

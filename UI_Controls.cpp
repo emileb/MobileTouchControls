@@ -17,6 +17,7 @@ tag(t)
 void UI_Controls::setEnabled(bool v)
 {
     enabled = v;
+    signalEnable( enabled );
 }
 
 bool UI_Controls::getEnabled()
@@ -45,6 +46,9 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
 {
     int size = controls.size();
 
+    float totalHeight = 0; //Find to limit scroll
+    float windowHeight = 0;
+
     bool eventUsed = false;
     for (int n=0;n<size;n++)
     {
@@ -58,6 +62,16 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
             {
                 eventUsed = true;
             }
+        }
+
+        if( cs->type == TC_TYPE_UI_WINDOW )
+        {
+            windowHeight = cs->controlPos.bottom - cs->controlPos.top;
+        }
+
+        if( cs->controlPos.bottom > totalHeight )
+        {
+            totalHeight = cs->controlPos.bottom;
         }
     }
 
@@ -79,6 +93,11 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
             if( scrolling )
             {
                 yOffset += finger1.y - y;
+
+                if( yOffset > ( totalHeight - windowHeight ) )
+                {
+                    yOffset = ( totalHeight - windowHeight );
+                }
 
                 if( yOffset < 0 )
                     yOffset = 0;

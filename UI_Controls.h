@@ -9,6 +9,7 @@
 #include <string>
 #include <stdbool.h>
 #include <vector>
+#include "sigc++/sigc++.h"
 
 #include "ControlSuper.h"
 #include "PointF.h"
@@ -21,6 +22,9 @@ class UI_Controls
 {
 public:
     UI_Controls( std::string t );
+
+    sigc::signal< void, bool > signalEnable; // This signal gets called when the control is enabled or disabled
+
 
     bool processPointer(int action, int pid, float x, float y);
 	int draw ();

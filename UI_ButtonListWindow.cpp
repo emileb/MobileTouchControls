@@ -76,7 +76,8 @@ void showButtonListWindow(  TouchControlsContainer *con )
                 if( button->description != "" )
                 {
                     //This is a button for the UI controls, just used for the image
-                    Button *image = new Button ( "", touchcontrols::RectF (windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), button->image.c_str(), 0 );
+                    Button *image = new Button ( "", touchcontrols::RectF (windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), button->image.c_str(), -1 );
+
                     rootControls->addControl ( image );
 
                     // Add the text desciption
