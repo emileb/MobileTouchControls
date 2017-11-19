@@ -392,7 +392,6 @@ void calcFontSpacing( const unsigned char *imageData, int width, int height, std
 
     for( int c = 0; c < 256; c++ )
     {
-
         int cx = c % 16;
         int cy = ( c >> 4 );
 
@@ -647,9 +646,9 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
     png_read_image( png_ptr, row_pointers );
 
     //Now generate the OpenGL texture object
-    GLuint texture = texNumber++;
-    //GLuint texture;
-    //glGenTextures(1,&texture);
+    //GLuint texture = texNumber++;
+    GLuint texture;
+    glGenTextures(1,&texture);
 
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,

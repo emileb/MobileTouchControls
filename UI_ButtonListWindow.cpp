@@ -58,7 +58,7 @@ void showButtonListWindow(  TouchControlsContainer *con )
 
     touchcontrols::TouchControls *editing = container->getEditingControls();
 
-    if (editing != NULL) //This should not every be NULL
+    if (editing != NULL) //This should not ever be NULL
     {
         // Get all the controls there are, but we only want the buttons
         uint32_t numberControls = editing->getControls()->size();
