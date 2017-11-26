@@ -32,8 +32,12 @@ static void saveSettings ( std::string filename )
     TiXmlElement * root = new TiXmlElement ( "settings" );
     doc.LinkEndChild ( root );
 
-    root->SetAttribute ( "inverLook", settings.invertLook );
+    root->SetAttribute( "invert_look", settings.invertLook );
+    root->SetAttribute( "show_sticks", settings.showJoysticks );
     root->SetDoubleAttribute ( "alpha", settings.alpha );
+    root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
+    root->SetDoubleAttribute ( "move_sens", settings.moveSensitivity );
+
 
     LOGTOUCH("Saving settings to %s\n", filename.c_str() );
     doc.SaveFile ( filename );
@@ -54,8 +58,11 @@ static void loadSettings ( std::string filename )
     TiXmlHandle hDoc ( doc );
     TiXmlElement* root = hDoc.FirstChild ( "settings" ).Element();
 
-    root->QueryBoolAttribute ( "inverLook", &settings.invertLook );
+    root->QueryBoolAttribute ( "invert_look", &settings.invertLook );
+    root->QueryBoolAttribute ( "show_sticks", &settings.showJoysticks );
     root->QueryFloatAttribute ( "alpha",  &settings.alpha );
+    root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
+    root->QueryFloatAttribute ( "move_sens",  &settings.moveSensitivity );
 
     delete doc;
 }
