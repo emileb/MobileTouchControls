@@ -168,7 +168,6 @@ int TouchControlsContainer::draw ()
 				if (c->editGroup != -1)
 					drawEditButton_ = 1;
 			}
-
 		}
 
 		if (drawEditButton_ != drawEditButton)

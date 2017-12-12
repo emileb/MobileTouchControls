@@ -18,7 +18,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	alpha = 0.5;
 	r = g = b = 1.0f;
 	editGroup = edit_group;
-	passThroughTouch = true;
+	passThroughTouch = ALWAYS;
 
 	int lines = ScaleX+1 + ScaleY+1;
 
@@ -82,7 +82,7 @@ void TouchControls::setColor(float r_,float g_, float b_)
 	b = b_;
 }
 
-void TouchControls::setPassThroughTouch(bool v)
+void TouchControls::setPassThroughTouch(PassThrough v)
 {
 	passThroughTouch = v;
 }
@@ -242,6 +242,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 	if (!editing)
 	{
 		int size = controls.size();
+        bool controlUsed = false;
 
 		for (int n=0;n<size;n++)
 		{
@@ -249,14 +250,17 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 			if (cs->isEnabled())
 				if (cs->processPointer(action,pid, x, y))
 				{
+				    controlUsed = true;
 					//If it is a touch pad or mouse, break out so nothing under it gets data
 					if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
 						break;
 				}
 		}
 
-		if ( !passThroughTouch ) // If not passing through return true
-			return true;
+        if( passThroughTouch == ALWAYS )
+            return true;
+		else if ( passThroughTouch  == NO_CONTROL )
+			return controlUsed;
 	    else
 		    return false;
 	}

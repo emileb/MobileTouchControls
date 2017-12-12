@@ -45,6 +45,14 @@ public:
 
 class TouchControls
 {
+public:
+    enum PassThrough
+      {
+          ALWAYS,
+          NO_CONTROL,
+          NEVER
+      };
+private:
 
 	std::vector<ControlSuper *> controls;
 
@@ -65,7 +73,8 @@ class TouchControls
 		signal_button.emit(state, code);
 	}
 
-	bool passThroughTouch; // set to true (default) to pass touches to controls underneath
+	PassThrough passThroughTouch;
+
 	//EDITOR
 	std::string xmlFilename;
 
@@ -121,7 +130,7 @@ public:
 
 	void setColor(float r,float g, float b);
 
-	void setPassThroughTouch(bool v);
+	void setPassThroughTouch(PassThrough v);
 
 	void animateIn(int steps);
 	void animateOut(int steps);
