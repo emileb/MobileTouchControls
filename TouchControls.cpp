@@ -258,11 +258,11 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		}
 
         if( passThroughTouch == ALWAYS )
-            return true;
+            return false;
 		else if ( passThroughTouch  == NO_CONTROL )
 			return controlUsed;
 	    else
-		    return false;
+		    return true;
 	}
 	else
 	{
