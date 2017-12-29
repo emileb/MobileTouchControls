@@ -169,7 +169,7 @@ void UI_Controls::initGL ()
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
 	{
-		ControlSuper *c = controls.at(size-1-n);
+		ControlSuper *c = controls.at(n);
 		c->initGL();
 	}
 }

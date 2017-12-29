@@ -51,7 +51,7 @@ bool UI_TextBox::initGL()
 }
 
 
-#define CHAR_TO_GLYPH( C, F ) ((C - 32) + 128 * F)
+#define CHAR_TO_GLYPH( C, F ) (((unsigned char)C - 32) + 128 * F)
 float UI_TextBox::getCharWidth( unsigned char c )
 {
     if( c == ' ' )
@@ -67,7 +67,6 @@ float UI_TextBox::getCharWidth( unsigned char c )
     }
 }
 
-#define CHAR_TO_GLYPH( C, F ) ((C - 32) + 128 * F)
 float UI_TextBox::getTotalWidth()
 {
     float ret = 0;
@@ -105,8 +104,8 @@ bool UI_TextBox::drawGL( bool forEditor )
 
     while( textC[pos] )
     {
-        char c = textC[pos];
-        char g = CHAR_TO_GLYPH( c, fontSet );
+        unsigned char c = textC[pos];
+        unsigned char g = CHAR_TO_GLYPH( c, fontSet );
 
         int32_t tx = g % 16;
         int32_t ty = ( g >> 4 );
