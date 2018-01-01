@@ -41,6 +41,8 @@ struct KeyboardLayout
 
 class UI_Keyboard : public ControlSuper
 {
+
+
     std::string font_filename;
     TextDraw textDrawer;
     int fontSet;
@@ -49,17 +51,33 @@ class UI_Keyboard : public ControlSuper
 
     void setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width, const char* primImg = NULL, const char * altImg = NULL );
 
+    float findXCenter( uint32_t row, uint32_t key );
+
+    void keyDown( KeyboardKey *key );
+    void keyUp();
+
     int touchId;
     KeyboardKey *pressedKey;
     double timeDown;
     bool useAltKey;
+
+    //Gamepad
+    int32_t selectedX;
+    int32_t selectedRow;
+
 public:
+    enum GamePadKey
+    {
+        LEFT,RIGHT,UP,DOWN,SELECT
+    };
 
 	UI_Keyboard( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize );
 
     sigc::signal< void, uint32_t > signal;
 
 	bool processPointer(int action, int pid, float x, float y);
+
+    void gamepadInput(bool down, GamePadKey key);
 
  	void resetOutput();
 

@@ -4,6 +4,7 @@
 
 #include "UI_Keyboard.h"
 #include "TouchControlsConfig.h"
+#include <math.h>
 
 using namespace touchcontrols;
 
@@ -62,6 +63,10 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
 
     pressedKey = NULL;
     touchId = -1;
+
+    // -1 is not yet used
+    selectedX = -1;
+    selectedRow = -1;
 }
 
 void UI_Keyboard::setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width, const char* primImg, const char * altImg )
@@ -73,6 +78,28 @@ void UI_Keyboard::setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt,
     layout.rows[row].keys[key].altImg  = altImg;
     layout.rows[row].keys[key].glPrim  = 0;
     layout.rows[row].keys[key].glAlt   = 0;
+}
+
+void UI_Keyboard::keyDown( KeyboardKey *key )
+{
+    LOGTOUCH("keyDown: %c",key->keyPrim);
+    pressedKey = key;
+    timeDown = getMS();
+    useAltKey = false;
+}
+
+void UI_Keyboard::keyUp()
+{
+    LOGTOUCH("keyUp");
+    if( pressedKey != NULL )
+    {
+        if( useAltKey )
+            signal.emit( pressedKey->keyAlt );
+        else
+            signal.emit( pressedKey->keyPrim );
+
+        pressedKey = NULL;
+    }
 }
 
 bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
@@ -92,13 +119,10 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 
                     for(int n = 0; n < MAX_ROW_KEYS; n++ )
                     {
-                        KeyboardKey *key = NULL;
-                        key = &(layout.rows[row].keys[n]);
+                        KeyboardKey *key = &(layout.rows[row].keys[n]);
                         if( x < xPos + key->width)
                         {
-                            pressedKey = key;
-                            timeDown = getMS();
-                            useAltKey = false;
+                            keyDown( key );
                             break;
                         }
 
@@ -115,15 +139,7 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 	{
 		if ( pid == touchId )
 		{
-		    if( pressedKey != NULL )
-		    {
-		        if( useAltKey )
-		            signal.emit( pressedKey->keyAlt );
-		        else
-		            signal.emit( pressedKey->keyPrim );
-
-                pressedKey = NULL;
-		    }
+		    keyUp();
 
 		    touchId = -1;
 			return true;
@@ -136,6 +152,126 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 	}
 
     return false;
+}
+
+// Scan keys to find the X centre of the key
+float UI_Keyboard::findXCenter( uint32_t row, uint32_t key )
+{
+    float centre = 0;
+    uint32_t n = 0;
+    while(n != key)
+    {
+        centre += layout.rows[row].keys[n].width;
+        n++;
+    }
+
+    centre += layout.rows[row].keys[key].width / 2;
+
+    return centre;
+}
+
+
+void UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
+{
+    // Check gamepad has been used yet
+    if( selectedX == -1 )
+    {
+        // Select G as default
+        selectedX = 6;
+        selectedRow = 1;
+    }
+    else
+    {
+        if( down )
+        {
+            switch( gamepadKey )
+            {
+                case LEFT:
+                {
+                    while (true)
+                    {
+                        selectedX--;
+                        if(selectedX < 0)
+                            selectedX = MAX_ROW_KEYS-1;
+
+                        // Check key is valid
+                        if( layout.rows[selectedRow].keys[selectedX].keyPrim != 0 )
+                            break;
+                    }
+                }
+                break;
+
+                case RIGHT:
+                {
+                    while (true)
+                    {
+                        selectedX++;
+                        if(selectedX == MAX_ROW_KEYS)
+                            selectedX = 0;
+
+                        // Check key is valid
+                        if( layout.rows[selectedRow].keys[selectedX].keyPrim != 0 )
+                            break;
+                    }
+                }
+                break;
+
+                case DOWN:
+                case UP:
+                {
+                    // Find the closest key to the key on the current row
+                    float currentXCentre = findXCenter(selectedRow,selectedX);
+
+                    if( gamepadKey == UP )
+                    {
+                        selectedRow--;
+                        if(selectedRow < 0)
+                            selectedRow = NBR_ROWS - 1;
+                    }
+                    else // DOWN
+                    {
+                        selectedRow++;
+                        if(selectedRow == NBR_ROWS)
+                            selectedRow = 0;
+                    }
+
+                    uint32_t closestKey = 0;
+                    float closestDistance = 0xFFFFFFF;
+                    for( int n = 0; n < MAX_ROW_KEYS; n++ )
+                    {
+                        // Only valid keys
+                        if( layout.rows[selectedRow].keys[n].keyPrim != 0 )
+                        {
+                            float dist = fabs(currentXCentre - findXCenter(selectedRow,n));
+                            if( dist < closestDistance)
+                            {
+                                closestDistance = dist;
+                                closestKey = n;
+                            }
+                        }
+                    }
+
+                    selectedX = closestKey;
+                }
+                break;
+
+                case SELECT:
+                {
+
+                }
+                break;
+
+            }
+        }
+
+        if( gamepadKey == SELECT )
+        {
+            if( down )
+                keyDown( &layout.rows[selectedRow].keys[selectedX] );
+            else
+                keyUp();
+        }
+    }
 }
 
 void UI_Keyboard::resetOutput()
@@ -180,6 +316,11 @@ bool UI_Keyboard::drawGL(bool forEditor)
                         useAltKey = true;
                     }
                 }
+                else if( (row == selectedRow) && (n == selectedX) ) // Show selected gamepad key
+                {
+                     glColor4f( 0, 0, 1, 1 ); // Make very blue
+                }
+
                 glRect.resize( key->width, rowHeight );
                 drawRect( glKeyBg, rowXPos, rowYPos, glRect );
 
