@@ -137,7 +137,7 @@ int TouchControlsContainer::draw ()
 			break;
 		}
 	}
-
+/*
 #ifndef USE_GLES2
 	glDisable(GL_ALPHA_TEST);
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -150,7 +150,7 @@ int TouchControlsContainer::draw ()
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_CULL_FACE);
 #endif
-
+*/
 	openGL_start.emit();
 
 	if (editingControls == 0)
