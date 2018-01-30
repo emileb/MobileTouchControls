@@ -53,7 +53,7 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
     for (int n=0;n<size;n++)
     {
         ControlSuper *cs = controls.at(size - 1 - n); // Start from top of stack
-        if (cs->isEnabled())
+        if (cs->isEnabled() && !eventUsed) // Now !eventUsed, only one control should use the event, to fix DropDown control
         {
             float ys;
             ys = (cs->type == TC_TYPE_UI_WINDOW) ? y : y + yOffset; //Dont apply scroll offset to window

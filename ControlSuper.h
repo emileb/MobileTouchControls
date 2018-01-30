@@ -21,6 +21,7 @@
 #define TC_TYPE_UI_BUTTON       23
 #define TC_TYPE_UI_SWITCH       24
 #define TC_TYPE_UI_KEYBOARD     25
+#define TC_TYPE_UI_DROPDOWN     26
 
 
 namespace touchcontrols

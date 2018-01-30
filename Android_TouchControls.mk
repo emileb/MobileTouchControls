@@ -38,7 +38,8 @@ LOCAL_SRC_FILES:= \
  	UI_Switch.cpp \
  	UI_Keyboard.cpp \
     UI_TouchDefaultSettings.cpp \
-    UI_ButtonListWindow.cpp
+    UI_ButtonListWindow.cpp \
+    UI_DropDown.cpp
 
 
  	

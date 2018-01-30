@@ -12,9 +12,12 @@ namespace touchcontrols
 #define SLIDER_LOOK  11
 #define SLIDER_MOVE  12
 
+#define SWITCH_INVERT_LOOK   20
+#define SWITCH_JOYSTICKS     22
+#define SWITCH_JOYSTICK_MODE 23
 
-#define SWITCH_INVERT_LOOK 20
-#define SWITCH_JOYSTICKS    22
+#define DROPDOWN_DBL_TAP_LEFT 30
+#define DROPDOWN_DBL_TAP_RIGHT 31
 
 static TouchControlsContainer *container = NULL;
 static UI_Controls *rootControls = NULL;
@@ -34,10 +37,14 @@ static void saveSettings ( std::string filename )
 
     root->SetAttribute( "invert_look", settings.invertLook );
     root->SetAttribute( "show_sticks", settings.showJoysticks );
+    root->SetAttribute( "joystick_mode", settings.joystickLookMode );
+
     root->SetDoubleAttribute ( "alpha", settings.alpha );
     root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
     root->SetDoubleAttribute ( "move_sens", settings.moveSensitivity );
 
+    root->SetAttribute( "dbl_tap_left", settings.dblTapLeft );
+    root->SetAttribute( "dbl_tap_right", settings.dblTapRight );
 
     LOGTOUCH("Saving settings to %s\n", filename.c_str() );
     doc.SaveFile ( filename );
@@ -60,9 +67,14 @@ static void loadSettings ( std::string filename )
 
     root->QueryBoolAttribute ( "invert_look", &settings.invertLook );
     root->QueryBoolAttribute ( "show_sticks", &settings.showJoysticks );
+    root->QueryBoolAttribute ( "joystick_mode", &settings.joystickLookMode );
+
     root->QueryFloatAttribute ( "alpha",  &settings.alpha );
     root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
     root->QueryFloatAttribute ( "move_sens",  &settings.moveSensitivity );
+
+    root->QueryUnsignedAttribute( "dbl_tap_left",  &settings.dblTapLeft );
+    root->QueryUnsignedAttribute( "dbl_tap_right",  &settings.dblTapRight );
 
     delete doc;
 }
@@ -74,6 +86,9 @@ static void resetDefaults()
     settings.lookSensitivity = 1;
     settings.moveSensitivity = 1;
     settings.showJoysticks = true;
+    settings.joystickLookMode = false;
+    settings.dblTapLeft = 0;
+    settings.dblTapRight = 0;
 }
 
 static void buttonPress ( int state, int code )
@@ -122,6 +137,22 @@ static void switchChange ( uint32_t uid, bool value )
         settings.showJoysticks = value;
         signal_settingChange.emit( settings );
     }
+    else if( uid == SWITCH_JOYSTICK_MODE )
+    {
+        settings.joystickLookMode = value;
+    }
+}
+
+static void dropDownChange ( uint32_t uid, uint32_t value )
+{
+    if( uid == DROPDOWN_DBL_TAP_LEFT )
+    {
+        settings.dblTapLeft = value;
+    }
+    else if( uid == DROPDOWN_DBL_TAP_RIGHT )
+    {
+        settings.dblTapRight = value;
+    }
 }
 
 // Gets called by a signal when the controls are enabled or disabled
@@ -163,49 +194,80 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         //rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
        // rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
+        float y = 2;;
 
         // Draws backwards so need background last
-        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, 2, windowRight, 14.2 ),"Touch settings", "ui_background" );
+        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, y, windowRight, 14.5 ),"Touch settings", "ui_background" );
         rootControls->addControl( window );
         window->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 4, 12, 6 ), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize ) );
-        UI_Slider *slider =   new UI_Slider ( "slider_alpha",  touchcontrols::RectF ( 13, 4, windowRight - 1, 6 ), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle" );
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize ) );
+        UI_Slider *slider =   new UI_Slider ( "slider_alpha",  touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle" );
         slider->setValue(  settings.alpha );
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 6, 12, 8 ), "font_dual", 0, UI_TEXT_RIGHT, "Look sensitivity:", textSize ) );
-        slider =              new UI_Slider ( "slider_look",  touchcontrols::RectF ( 13, 6, windowRight - 1, 8 ), SLIDER_LOOK , "ui_slider_bg1", "ui_slider_handle");
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Look sensitivity:", textSize ) );
+        slider =              new UI_Slider ( "slider_look",  touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_LOOK , "ui_slider_bg1", "ui_slider_handle");
         slider->setValue(  settings.lookSensitivity / 2 );
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 8, 12, 10 ), "font_dual", 0, UI_TEXT_RIGHT, "Move sensitivity:", textSize ) );
-        slider =              new UI_Slider ( "slider_move",    touchcontrols::RectF ( 13, 8, windowRight - 1, 10 ), SLIDER_MOVE, "ui_slider_bg1", "ui_slider_handle" );
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Move sensitivity:", textSize ) );
+        slider =              new UI_Slider ( "slider_move",    touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_MOVE, "ui_slider_bg1", "ui_slider_handle" );
         slider->setValue(  settings.moveSensitivity / 2 );
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
 
-        rootControls->addControl ( new UI_TextBox ( "text",          touchcontrols::RectF ( windownLeft, 10, 9.5, 12 ), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize ) );
-        UI_Switch *swtch =      new UI_Switch ( "invert_switch", touchcontrols::RectF ( 10, 10.2, 13, 11.8 ), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off" );
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",          touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize ) );
+        UI_Switch *swtch =      new UI_Switch ( "invert_switch", touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.invertLook );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
-        UI_Button *buttonEdit =   new UI_Button ( "edit_buttons",  touchcontrols::RectF ( 13, 10, windowRight, 12 ), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg" );
+        UI_Button *buttonEdit =   new UI_Button ( "edit_buttons",  touchcontrols::RectF ( 13, y, windowRight, y+2 ), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg" );
         buttonEdit->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
         rootControls->addControl ( buttonEdit );
 
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, 12, 9.5, 14 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
-        swtch =      new UI_Switch ( "show_joy_switch",       touchcontrols::RectF ( 10, 12.2, 13, 13.8 ), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off" );
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
+        swtch =      new UI_Switch ( "show_joy_switch",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.showJoysticks );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
-        UI_Button *button =   new UI_Button ( "reset_button",  touchcontrols::RectF ( 13, 12, windowRight, 14 ), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset", textSize, "ui_button_bg" );
-        button->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
-        rootControls->addControl ( button );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Joystick look mode:", textSize ) );
+        swtch =      new UI_Switch ( "joystick_look_switch",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.joystickLookMode );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+        y += 2;
+
+        UI_DropDown *dblTapLeft = new UI_DropDown( "dbl_tap_left",  touchcontrols::RectF ( windownLeft, y, 13 , y+2 ), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Double tap left  :  ", "None:Use:Jump:Fire", textSize, "ui_dropdown_bg" );
+        dblTapLeft->setSelected(settings.dblTapLeft);
+        rootControls->addControl ( dblTapLeft );
+        dblTapLeft->signal.connect(sigc::ptr_fun ( &dropDownChange) );
+
+        UI_DropDown *dblTapRight = new UI_DropDown( "dbl_tap_right",  touchcontrols::RectF ( 13, y, windowRight , y+2 ), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Double tap right  :  ", "None:Use:Jump:Fire", textSize, "ui_dropdown_bg" );
+        dblTapRight->setSelected(settings.dblTapRight);
+        rootControls->addControl ( dblTapRight );
+        dblTapRight->signal.connect(sigc::ptr_fun ( &dropDownChange) );
+
+        y += 2;
+
+        UI_Button *buttonReset =   new UI_Button ( "reset_button",  touchcontrols::RectF ( 13, y, windowRight, y+2 ), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset", textSize, "ui_button_bg" );
+        buttonReset->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
+        rootControls->addControl ( buttonReset );
 
         rootControls->signalEnable.connect( sigc::ptr_fun(&controlsEnabled) );
     }

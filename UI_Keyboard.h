@@ -65,6 +65,7 @@ class UI_Keyboard : public ControlSuper
     int32_t selectedX;
     int32_t selectedRow;
 
+    float fadePos;
 public:
     enum GamePadKey
     {

@@ -17,6 +17,10 @@ namespace touchcontrols
 
         bool  invertLook;
         bool showJoysticks;
+        bool joystickLookMode;
+
+        uint32_t dblTapLeft;
+        uint32_t dblTapRight;
 
     } tTouchSettings;
 

@@ -24,6 +24,8 @@ public:
     void initGL( std::string font_filename );
 
     float drawChar( char c, int fontSet, float x, float y, float height, uint32_t params = 0 );
+
+    float drawText( const char *text, int fontSet, float x, float y, float height, uint32_t params = 0 );
 };
 
 }

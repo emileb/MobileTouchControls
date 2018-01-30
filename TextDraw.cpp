@@ -75,3 +75,16 @@ float TextDraw::drawChar( char c, int fontSet, float x, float y, float height, u
 
     return charWidth;
 }
+
+float TextDraw::drawText( const char *text, int fontSet, float x, float y, float height, uint32_t params )
+{
+    uint32_t pos = 0;
+
+    while( text[pos] )
+    {
+        x += drawChar( text[pos], fontSet, x, y, height, params );
+        pos++;
+    }
+
+    return 0;
+}
