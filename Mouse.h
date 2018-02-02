@@ -45,11 +45,11 @@ class Mouse : public ControlSuper
 	//Double tap stuff
 	int tapState; //0 = waiting for first press, 1 = waiting for first lift,
 	int tapCounter;
+
+	void emit( int, float, float, float, float );
+
 public:
 	sigc::signal<void,int, float,float,float,float> signal_action;
-
-	sigc::signal<void, int> signal_double_tap;
-
 
 	Mouse(std::string tag,RectF pos,std::string image_filename);
 

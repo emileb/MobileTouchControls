@@ -38,6 +38,7 @@ void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
 
 void setFixAspect( bool v );
 
+bool getFixAspect();
 
 #ifdef USE_GLES2
 extern "C"

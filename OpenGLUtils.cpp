@@ -13,6 +13,10 @@ void setFixAspect( bool v )
     fixAspect = v;
 }
 
+bool getFixAspect()
+{
+    return fixAspect;
+}
 
 #ifdef USE_GLES2
 extern "C"
