@@ -18,9 +18,9 @@ namespace touchcontrols
 #define NBR_ROWS 4
 struct KeyboardKey
 {
-    unsigned char keyPrim;
+    uint32_t keyPrim;
     uint32_t keyPrimScanCode;
-    unsigned char keyAlt;
+    uint32_t keyAlt;
     const char *primImg;
     const char *altImg;
     GLuint glPrim;
@@ -49,7 +49,7 @@ class UI_Keyboard : public ControlSuper
     KeyboardLayout layout;
     GLuint glKeyBg;
 
-    void setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width, const char* primImg = NULL, const char * altImg = NULL );
+    void setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, const char* primImg = NULL, const char * altImg = NULL );
 
     float findXCenter( uint32_t row, uint32_t key );
 

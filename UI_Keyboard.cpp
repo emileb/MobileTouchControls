@@ -6,6 +6,8 @@
 #include "TouchControlsConfig.h"
 #include <math.h>
 
+#include "SDL_keycode.h"
+
 using namespace touchcontrols;
 
 #define Y_START_POS  0.55
@@ -28,7 +30,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 0, 8, 'O', '9', 0.1f );
     setKey( 0, 9, 'P', '0', 0.1f );
 
-    setKey( 1, 0, 0, 0,     0.05f ); //Blank
+    setKey( 1, 0, 8, 0,     0.07f,"key_backspace" );  //Backspace
     setKey( 1, 1, 'A', '@', 0.1f );
     setKey( 1, 2, 'S', '#', 0.1f );
     setKey( 1, 3, 'D', '&', 0.1f );
@@ -39,7 +41,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 1, 8, 'K', '(', 0.1f );
     setKey( 1, 9, 'L', ')', 0.1f );
 
-    setKey( 2, 0, 0, 0,     0.15f ); //Blank
+    setKey( 2, 0,  13, 0,   0.15f,"enter_key" );  //Enter
     setKey( 2, 1, 'Z', '_', 0.1f );
     setKey( 2, 2, 'X', '$', 0.1f );
     setKey( 2, 3, 'C', '"', 0.1f );
@@ -47,16 +49,16 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 2, 5, 'B', ':', 0.1f );
     setKey( 2, 6, 'N', ';', 0.1f );
     setKey( 2, 7, 'M', '/', 0.1f );
-    setKey( 2, 8, 8, 0, 0.15f, "key_backspace" ); //Backspace
+    setKey( 2, 8, SDLK_UP, 0, 0.07f, "key_arrow_up" );
     setKey( 2, 9, 0, 0, 0.1f );
 
     setKey( 3, 0, 1, 0, 0.10f, "hide_key" ); //Hide keyboard
     setKey( 3, 1, '.', 0, 0.1f );
     setKey( 3, 2, ',', 0, 0.1f );
-    setKey( 3, 3, ' ', 0, 0.5f );
-    setKey( 3, 4, 13, 0, 0.2f, "enter_key" ); //Enter
-    setKey( 3, 5, 0, 0, 0.1f );
-    setKey( 3, 6, 0, 0, 0.1f );
+    setKey( 3, 3, ' ', 0, 0.48f );
+    setKey( 3, 4, SDLK_LEFT, 0, 0.07f, "key_arrow_left" );
+    setKey( 3, 5, SDLK_DOWN, 0, 0.07f, "key_arrow_down"  );
+    setKey( 3, 6, SDLK_RIGHT, 0, 0.07f, "key_arrow_right" );
     setKey( 3, 7, 0, 0, 0.1f );
     setKey( 3, 8, 0, 0, 0.1f );
     setKey( 3, 9, 0, 0, 0.1f );
@@ -69,7 +71,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     selectedRow = -1;
 }
 
-void UI_Keyboard::setKey( uint32_t row, uint32_t key, char keyPrim, char keyAlt, float width, const char* primImg, const char * altImg )
+void UI_Keyboard::setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, const char* primImg, const char * altImg )
 {
     layout.rows[row].keys[key].keyPrim = keyPrim;
     layout.rows[row].keys[key].keyAlt  = keyAlt;
