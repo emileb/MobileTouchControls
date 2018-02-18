@@ -16,7 +16,9 @@ class TouchJoy : public ControlSuper
 	bool pressed;
 	bool hideGraphics;
 
-	int id;
+public: // SWAPFIX. Make this avaible to the other TouchJoy
+	int pid;
+private:
 
 	std::string image;
 
@@ -32,6 +34,8 @@ class TouchJoy : public ControlSuper
 	PointF anchor;
 	int glitchFix;
 
+    // POINTER SWAP FIX
+     TouchJoy * otherTouchJoySWAPFIX;
 
 	//Double tap stuff
 	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
@@ -55,6 +59,8 @@ public:
 	bool initGL();
 
 	void updateSize();
+
+    void registerTouchJoySWAPFIX( TouchJoy * other );
 
 	void saveXML(TiXmlDocument &doc);
 

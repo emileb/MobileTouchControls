@@ -252,8 +252,9 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 				{
 				    controlUsed = true;
 					//If it is a touch pad or mouse, break out so nothing under it gets data
-					if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
-						break;
+					// REMOVED so SWAPFIX works
+					//if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
+					//	break;
 				}
 		}
 

@@ -11,12 +11,18 @@ TouchJoy::TouchJoy(std::string tag,RectF pos,std::string image_filename):
 		ControlSuper(TC_TYPE_TOUCHJOY,tag,pos)
 {
 	image = image_filename;
-	id = -1;
+	pid = -1;
 	doubleTapState = 0;
 	hideGraphics = false;
 	updateSize();
 	glitchFix = 0;
+	otherTouchJoySWAPFIX = NULL;
 };
+
+void TouchJoy::registerTouchJoySWAPFIX( TouchJoy * other )
+{
+    this->otherTouchJoySWAPFIX = other;
+}
 
 
 void TouchJoy::setHideGraphics(bool v)
@@ -42,7 +48,7 @@ double TouchJoy::getMS()
     return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
 }
 
-bool TouchJoy::processPointer(int action, int pid, float x, float y)
+bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 {
 	if (action == P_DOWN)
 	{
@@ -51,7 +57,7 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 		{
 			if (controlPos.contains(x, y))
 			{
-				id = pid;
+				pid = tpid;
 
 				glitchFix = 1; //Fix jumpy initial move
 
@@ -84,7 +90,7 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 	}
 	else if (action == P_UP)
 	{
-		if (id == pid)
+		if (pid == tpid)
 		{
 			if (doubleTapState == 1) //First up of double tap
 			{
@@ -105,7 +111,6 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 				doubleTapCounter = 0;
 			}
 
-
 			reset();
 			return true;
 		}
@@ -113,9 +118,8 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 	}
 	else if(action == P_MOVE)
 	{
-		if (pid == id) //Finger already down
+		if (pid == tpid) //Finger already down
 		{
-
 			if (glitchFix) //Need to wait untill the values have changed at least once, otherwise inital jump
 			{
 				if ((last.x != x) || (last.y != y))
@@ -130,7 +134,6 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 				}
 			}
 
-
 			if (!glitchFix)
 			{
 				fingerPos.x = x;
@@ -138,6 +141,22 @@ bool TouchJoy::processPointer(int action, int pid, float x, float y)
 				calcNewValue();
 			}
 			return true;
+		}
+		else
+		{
+            if( otherTouchJoySWAPFIX != NULL ) //SWAPFIX
+            {
+                if (otherTouchJoySWAPFIX->pid == tpid ) // Other one has finger down, this is it
+                {
+                    if (controlPos.contains(x, y)) // UH OH! This probably means touch has swapped fingers
+                    {
+                        LOGTOUCH("SWAPFIX");
+                        otherTouchJoySWAPFIX->processPointer( P_UP, tpid, x, y ); // Force finger up on the other one
+                        //processPointer( P_DOWN, tpid, x, y ); // ALSO give the pointer to this one. Acctually don't do this, confusing movment otherwise
+                        return true;
+                    }
+                }
+            }
 		}
 		return false;
 	}
@@ -163,7 +182,7 @@ bool TouchJoy::drawGL(bool forEditor)
 	//drawRect(glTex,controlPos.left,controlPos.top,glRect);
     if (!hideGraphics)
 	{
-		if (id != -1)
+		if (pid != -1)
 			drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
 		else
 			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
@@ -177,24 +196,33 @@ bool TouchJoy::drawGL(bool forEditor)
 
 void TouchJoy::reset()
 {
-	id = -1;
+	pid = -1;
 	valueTouch.x = 0;
 	valueTouch.y = 0;
 	valueJoy.x = 0;
 	valueJoy.y = 0;
 
 	doUpdate();
-
 }
 
 void TouchJoy::calcNewValue()
 {
 	float dx = last.x - fingerPos.x;
 	float dy = last.y - fingerPos.y;
+
+    // SWAPFIX. Filter out very fast movments when a swap occurs
+    if(( abs(dx) > 0.1 ) || ( abs(dy) > 0.1 ))
+    {
+        dx = 0;
+        dy = 0;
+    }
+
+
 	valueTouch.x = dx;
 	valueTouch.y = dy;
 	last.x =  fingerPos.x;
 	last.y = fingerPos.y;
+
 
 
 	dx = anchor.x - fingerPos.x;
