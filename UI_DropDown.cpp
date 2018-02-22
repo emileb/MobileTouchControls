@@ -25,6 +25,7 @@ UI_DropDown::UI_DropDown ( std::string tag, RectF pos, uint32_t uid, std::string
     this->font_filename = font_filename;
     glTex = 0;
     isOpen = false;
+    fadePos = 0;
     selectedItem = 0;
     // Split the options into the vector
     split(optionList, ':', std::back_inserter(listItems));
@@ -114,10 +115,7 @@ bool UI_DropDown::initGL()
 {
     int x, y;
     glTex = loadTextureFromPNG ( bg_image, x, y );
-
-
     textDraw.initGL( font_filename );
-
     return false;
 }
 
@@ -134,7 +132,6 @@ bool UI_DropDown::drawGL ( bool forEditor )
                                              textHeight );
     if( isOpen || fadePos > 0)
     {
-
         // Draw background
         GLRect glRect;
         glRect.resize( controlPos.width(), listBottom - listTop );
