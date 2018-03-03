@@ -115,14 +115,13 @@ bool Button::drawGL(bool forEditor)
 	{
         if (!hidden)
         {
-		drawRect(glTex,controlPos.left,controlPos.top,glRect);
+		    drawRect(glTex,controlPos.left,controlPos.top,glRect);
 		}
 	}
 	else //Draw normal in game
 	{
 		if (!hidden)
 		{
-
 			if (flash)
 			{
 				//LOGTOUCH("fc = %lld",flashCount);

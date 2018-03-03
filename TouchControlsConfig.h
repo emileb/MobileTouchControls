@@ -1,7 +1,7 @@
 
 #ifndef _TouchControlsConfig_H_
 #define _TouchControlsConfig_H_
-//#include <string>
+#include <string>
 #include <sys/time.h>
 
 #ifdef __ANDROID__
@@ -24,6 +24,8 @@ namespace touchcontrols
 {
 const int ScaleX = 26;
 const int ScaleY = 16;
+
+
 
     inline double getMS()
     {

@@ -8,6 +8,15 @@ extern int android_app_is_shutting_down;
 using namespace touchcontrols;
 
 
+static std::string xlmAppend = "";
+namespace touchcontrols
+{
+    void setGlobalXmlAppend( const char * append )
+    {
+        xlmAppend = append;
+    }
+}
+
 TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group,bool showExtraSettings)
 {
 	tag = t;
@@ -625,7 +634,7 @@ void  TouchControls::initGL ()
 
 void TouchControls::setXMLFile(std::string file)
 {
-	xmlFilename = file;
+	xmlFilename = file + xlmAppend;
 	saveXML(xmlFilename + ".default"); //Save incase we want to reset positions
 	loadXML(xmlFilename);
 }
