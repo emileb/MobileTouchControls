@@ -15,6 +15,7 @@ LOCAL_SRC_FILES:= \
  	RectF.cpp \
  	Button.cpp \
  	ButtonExt.cpp \
+    ButtonGrid.cpp \
  	OpenGLUtils.cpp \
  	GLRect.cpp \
  	TouchJoy.cpp \

@@ -13,6 +13,7 @@
 #include "MultitouchMouse.h"
 #include "PolarSelect.h"
 #include "JoyStick.h"
+#include "ButtonGrid.h"
 
 #include "UI_Window.h"
 #include "UI_Slider.h"
@@ -40,8 +41,12 @@ public:
 	float alpha;
 	std::string tag;
 	bool enabled;
+
 };
 
+
+
+void setGlobalXmlAppend( const char * append );
 
 class TouchControls
 {
@@ -151,6 +156,8 @@ public:
 	void addControl(Button *cntrl);
 
     void addControl(ButtonExt *cntrl);
+
+    void addControl(ButtonGrid *cntrl);
 
 	void addControl(ControlSuper *cntrl);
 

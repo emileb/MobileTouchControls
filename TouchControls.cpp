@@ -235,6 +235,11 @@ void TouchControls::addControl(ButtonExt *cntrl)
 	controls.push_back((cntrl));
 }
 
+void TouchControls::addControl(ButtonGrid *cntrl)
+{
+	cntrl->signal_button.connect(  sigc::mem_fun(this,&TouchControls::button) );
+	controls.push_back((cntrl));
+}
 
 void TouchControls::addControl(ControlSuper *cntrl)
 {

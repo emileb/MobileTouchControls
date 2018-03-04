@@ -258,11 +258,10 @@ void UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
                 break;
 
                 case SELECT:
+                case BACK:
                 {
-
                 }
                 break;
-
             }
         }
 
