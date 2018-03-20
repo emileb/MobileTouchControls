@@ -17,6 +17,12 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 	hidden = false;
 }
 
+bool ControlSuper::gamepadInput(bool down, GamePadKey key)
+{
+    // By default controls do no handle a gamepad
+    return false;
+}
+
 ControlSuper::~ControlSuper()
 {
 
@@ -36,6 +42,7 @@ bool ControlSuper::isEnabled()
 {
 	return enabled;
 }
+
 bool ControlSuper::isHidden()
 {
 	return hidden;

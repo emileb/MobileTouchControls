@@ -482,8 +482,12 @@ void setGraphicsBasePath( std::string path )
 static std::map <std::string, GLuint> glTextureCache;
 static std::map <std::string, std::vector< FontInfo > > fontInfoCache;
 
+void clearGlTexCache()
+{
+    glTextureCache.clear();
+    fontInfoCache.clear();
+}
 
-static int texNumber = 20000;
 GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec )
 {
 

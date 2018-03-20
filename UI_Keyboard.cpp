@@ -52,7 +52,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 2, 8, SDLK_UP, 0, 0.07f, "key_arrow_up" );
     setKey( 2, 9, 0, 0, 0.1f );
 
-    setKey( 3, 0, 1, 0, 0.10f, "hide_key" ); //Hide keyboard
+    setKey( 3, 0, UI_KEYBOARD_HIDE, 0, 0.10f, "hide_key" ); //Hide keyboard
     setKey( 3, 1, '.', 0, 0.1f );
     setKey( 3, 2, ',', 0, 0.1f );
     setKey( 3, 3, ' ', 0, 0.48f );
@@ -173,7 +173,7 @@ float UI_Keyboard::findXCenter( uint32_t row, uint32_t key )
 }
 
 
-void UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
+bool UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
 {
     // Check gamepad has been used yet
     if( selectedX == -1 )
@@ -272,7 +272,13 @@ void UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
             else
                 keyUp();
         }
+        else if( gamepadKey == BACK )
+        {
+            signal.emit( UI_KEYBOARD_HIDE );
+        }
     }
+
+    return true;
 }
 
 void UI_Keyboard::resetOutput()

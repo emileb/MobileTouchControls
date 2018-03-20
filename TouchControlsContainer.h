@@ -62,6 +62,8 @@ public:
 
 	bool processPointer(int action, int pid, float x, float y);
 
+    bool gamepadInput(bool down, GamePadKey key);
+
 	bool isEditing();
 	void finishEditing();
 

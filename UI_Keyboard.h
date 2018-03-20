@@ -11,6 +11,8 @@
 #include "OpenGLUtils.h"
 #include "TextDraw.h"
 
+#define UI_KEYBOARD_HIDE 1
+
 namespace touchcontrols
 {
 
@@ -71,7 +73,7 @@ public:
 
 	bool processPointer(int action, int pid, float x, float y);
 
-    void gamepadInput(bool down, GamePadKey key);
+    bool gamepadInput(bool down, GamePadKey key);
 
  	void resetOutput();
 

@@ -97,7 +97,7 @@ bool ButtonGrid::processPointer(int action, int pid, float x, float y)
     return false;
 }
 
-void  ButtonGrid::gamepadInput(bool down, GamePadKey key)
+bool ButtonGrid::gamepadInput(bool down, GamePadKey key)
 {
     if( gamepadXSel == -1 ) // Gamepad not used yet
     {
@@ -146,7 +146,14 @@ void  ButtonGrid::gamepadInput(bool down, GamePadKey key)
             else
                 cellUp();
         }
+        else if (key == BACK )
+        {
+            // This hides it
+            signal_outside.emit();
+        }
     }
+
+    return true;
 }
 
 bool ButtonGrid::initGL()

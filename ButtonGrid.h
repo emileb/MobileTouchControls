@@ -54,7 +54,7 @@ public:
 
 	bool processPointer(int action, int pid, float x, float y);
 
-    void gamepadInput(bool down, GamePadKey key);
+    bool gamepadInput(bool down, GamePadKey key);
 
 	bool drawGL(bool forEditor = false);
 

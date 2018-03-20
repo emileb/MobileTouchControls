@@ -74,6 +74,25 @@ void TouchControlsContainer::hideUIWindow( bool andDelete )
         uiHide = 1;
 }
 
+bool TouchControlsContainer::gamepadInput(bool down, GamePadKey key)
+{
+	int size = controls.size();
+
+    for (int n=0;n<size;n++)
+    {
+        TouchControls *cs = controls.at(n);
+        if (cs->isEnabled())
+        {
+            if ( cs->gamepadInput(down, key) == true )
+            {
+               return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 bool TouchControlsContainer::processPointer(int action, int pid, float x, float y)
 {
 

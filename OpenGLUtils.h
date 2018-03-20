@@ -40,6 +40,8 @@ void setFixAspect( bool v );
 
 bool getFixAspect();
 
+void clearGlTexCache();
+
 #ifdef USE_GLES2
 extern "C"
 {

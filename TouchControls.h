@@ -169,6 +169,8 @@ public:
 
 	bool processPointer(int action, int pid, float x, float y);
 
+    bool gamepadInput(bool down, GamePadKey key);
+
 	void saveXML(std::string filename);
 
 	void loadXML(std::string filename);

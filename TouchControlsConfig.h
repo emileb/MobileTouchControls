@@ -25,11 +25,6 @@ namespace touchcontrols
     const int ScaleX = 26;
     const int ScaleY = 16;
 
-    enum GamePadKey
-    {
-        LEFT,RIGHT,UP,DOWN,SELECT,BACK
-    };
-
     inline double getMS()
     {
         struct timeval tv;

@@ -246,6 +246,27 @@ void TouchControls::addControl(ControlSuper *cntrl)
 	controls.push_back((cntrl));
 }
 
+bool TouchControls::gamepadInput(bool down, GamePadKey key)
+{
+    bool controlUsed = false;
+
+    int size = controls.size();
+    for (int n=0;n<size;n++)
+    {
+        ControlSuper *cs = controls.at(n);
+        if (cs->isEnabled())
+            if (cs->gamepadInput(down, key))
+            {
+                // Gamepad actions only ever go to one control
+                controlUsed = true;
+                break;
+            }
+    }
+
+    return controlUsed;
+}
+
+
 bool TouchControls::processPointer(int action, int pid, float x, float y)
 {
 #ifdef __ANDROID__

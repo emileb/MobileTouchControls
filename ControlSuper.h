@@ -32,6 +32,11 @@ typedef enum {
     FADE_IN,FADE_OUT
 } fadedir_t;
 
+enum GamePadKey
+{
+    LEFT,RIGHT,UP,DOWN,SELECT,BACK
+};
+
 class ControlSuper
 {
 protected:
@@ -60,6 +65,8 @@ public:
 	virtual void resetOutput() = 0; //This outputs a reset
 
 	virtual bool processPointer(int action, int pid, float x, float y) = 0;
+
+    virtual bool gamepadInput(bool down, GamePadKey key);
 
 	virtual bool drawGL(bool forEditor = false) = 0;
 
