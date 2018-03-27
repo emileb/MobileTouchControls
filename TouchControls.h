@@ -14,6 +14,7 @@
 #include "PolarSelect.h"
 #include "JoyStick.h"
 #include "ButtonGrid.h"
+#include "QuadSlide.h"
 
 #include "UI_Window.h"
 #include "UI_Slider.h"

@@ -28,7 +28,6 @@ public:
 
     sigc::signal<void, uint32_t, uint32_t> signal;
 
-
 	UI_Button( std::string tag, RectF pos, uint32_t uid, std::string font_filename, int fontSet,
 	            uint32_t params, std::string text, float textSize, std::string bg_image );
 

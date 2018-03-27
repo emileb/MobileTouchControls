@@ -18,6 +18,10 @@ public:
 	GLRect();
 
 	void resize(float width, float height);
+
+	void mirror( bool v, bool h );
+
+	void rotate90( bool ccw );
 };
 
 }

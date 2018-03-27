@@ -290,6 +290,8 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					// REMOVED so SWAPFIX works
 					//if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
 					//	break;
+					if( cs->type == TC_TYPE_QUADSLIDE ) // Quad slide we should never pass data through
+					    return true;
 				}
 		}
 

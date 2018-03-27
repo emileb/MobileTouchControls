@@ -16,7 +16,6 @@ class Button : public ControlSuper
 
 	int id;
 
-
 	GLuint glTex;
 	GLuint glTexHidden;
 
@@ -40,8 +39,6 @@ public:
 	sigc::signal<void, int> signal_buttonDown;
 	sigc::signal<void, int> signal_buttonUp;
 	sigc::signal<void, int, int> signal_button;
-
-    std::string description;
 
 	Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat=false,bool hidden=false,std::string description = "");
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);

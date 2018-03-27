@@ -42,3 +42,60 @@ void GLRect::resize(float w, float h) {
 	vertices[9] = width;
 #endif
 };
+
+#define SWAP(A,B) t = texture[A]; texture[A] = texture[B]; texture[B] = t;
+void GLRect::mirror( bool v, bool h )
+{
+    if( v )
+    {
+        GLfloat t;
+        SWAP(0,2)
+        SWAP(1,3)
+
+        SWAP(4,6)
+        SWAP(5,7)
+    }
+    if( h )
+    {
+
+    }
+}
+
+
+void GLRect::rotate90( bool ccw )
+{
+    if( !ccw ) // clockwise
+    {
+        GLfloat t1,t2;
+        t1 = texture[0];
+        t2 = texture[1];
+        texture[0] = texture[4];
+        texture[1] = texture[5];
+
+        texture[4] = texture[6];
+        texture[5] = texture[7];
+
+        texture[6] = texture[2];
+        texture[7] = texture[3];
+
+        texture[2] = t1;
+        texture[3] = t2;
+    }
+    else // counter clockwise
+    {
+        GLfloat t1,t2;
+        t1 = texture[0];
+        t2 = texture[1];
+        texture[0] = texture[2];
+        texture[1] = texture[3];
+
+        texture[2] = texture[6];
+        texture[3] = texture[7];
+
+        texture[6] = texture[4];
+        texture[7] = texture[5];
+
+        texture[4] = t1;
+        texture[5] = t2;
+    }
+}

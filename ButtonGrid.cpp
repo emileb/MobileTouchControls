@@ -5,11 +5,9 @@ using namespace touchcontrols;
 
 ButtonGrid::ButtonGrid(std::string tag,RectF pos,std::string cellBgImage, uint32_t xNbr, uint32_t yNbr,bool hidden,std::string description):
     ControlSuper(TC_TYPE_BUTTONGRID,tag,pos),
-    description(description),
     xNbr(xNbr),
     yNbr(yNbr),
-    cellBgImage(cellBgImage),
-    hidden(hidden)
+    cellBgImage(cellBgImage)
 {
 	glCellBgTex = 0;
 	pid = -1;
@@ -20,7 +18,8 @@ ButtonGrid::ButtonGrid(std::string tag,RectF pos,std::string cellBgImage, uint32
     memset(cellValues,0, sizeof(cellValues));
     memset(cellGlTex,0, sizeof(cellGlTex));
 
-	hidden = hidden;
+	this->hidden = hidden;
+	this->description = description;
 	updateSize();
 }
 

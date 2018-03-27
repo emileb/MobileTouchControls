@@ -15,6 +15,7 @@
 #define TC_TYPE_JOYSTICK        6
 #define TC_TYPE_BUTTONEXT       7
 #define TC_TYPE_BUTTONGRID      8
+#define TC_TYPE_QUADSLIDE       9
 
 #define TC_TYPE_UI_WINDOW       20
 #define TC_TYPE_UI_SLIDER       21

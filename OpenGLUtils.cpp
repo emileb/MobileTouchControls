@@ -284,7 +284,6 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
 
         glScalef( 1, yScale, 1 );
         glTranslatef( 0, -( 1 - yScale ) * rect.height / 2, 0 );
-
     }
 
 

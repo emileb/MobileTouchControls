@@ -25,7 +25,6 @@ class ButtonGrid : public ControlSuper
     int32_t valuePressed;
 
     std::string cellBgImage;
-    bool hidden;
 
     uint32_t xNbr;
     uint32_t yNbr;
@@ -43,8 +42,6 @@ public:
 	sigc::signal<void, int32_t, int32_t> signal_button;
 
 	sigc::signal<void> signal_outside; // Signaled when press down OUTSIDE of control (used to hide it)
-
-    std::string description;
 
 	ButtonGrid(std::string tag,RectF pos,std::string cellBgImage, uint32_t xNbr, uint32_t yNbr, bool hidden=false,std::string description = "");
 

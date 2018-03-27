@@ -67,30 +67,37 @@ void showButtonListWindow(  TouchControlsContainer *con )
 
         for( int n = 0; n < numberControls; n++ )
         {
-            if( editing->getControls()->at(n)->type == TC_TYPE_BUTTON )
+            if(( editing->getControls()->at(n)->type == TC_TYPE_BUTTON ) ||
+               ( editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE ))
             {
                 // This is the button in the touch controls
-                Button *button = (Button*)(editing->getControls()->at(n));
+                ControlSuper *control = (editing->getControls()->at(n));
 
                 // We can only edit buttons which have been given a description
-                if( button->description != "" )
+                if( control->description != "" )
                 {
+                    const char * imagePng;
+                    if( editing->getControls()->at(n)->type == TC_TYPE_BUTTON )
+                        imagePng = ((Button*)control)->image.c_str();
+                    if( editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE )
+                        imagePng = ((QuadSlide*)control)->bgImage.c_str();
+
                     //This is a button for the UI controls, just used for the image
-                    Button *image = new Button ( "", touchcontrols::RectF (windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), button->image.c_str(), -1 );
+                    Button *image = new Button ( "", touchcontrols::RectF (windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT),imagePng, -1 );
 
                     rootControls->addControl ( image );
 
                     // Add the text desciption
                     rootControls->addControl ( new UI_TextBox ( "text",  touchcontrols::RectF ( windownLeft + ROW_HEIGHT, yPos, windowRight - 4, yPos + ROW_HEIGHT ),
-                                               "font_dual", 0, UI_TEXT_CENTRE, button->description, 0.08 ) );
+                                               "font_dual", 0, UI_TEXT_CENTRE, control->description, 0.08 ) );
 
                     // Add the switch
                     UI_Switch *swtch = new UI_Switch ( "switch", touchcontrols::RectF ( windowRight - 4, yPos, windowRight, yPos + ROW_HEIGHT ), editableButtons.size(), "ui_switch2_on", "ui_switch2_off" );
-                    swtch->setValue( !button->isHidden() );
+                    swtch->setValue( !control->isHidden() );
                     swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
                     rootControls->addControl( swtch );
 
-                    editableButtons.push_back( button );
+                    editableButtons.push_back( control );
 
                     yPos += 2;
                 }
