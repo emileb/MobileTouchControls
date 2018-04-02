@@ -55,13 +55,6 @@ void JoyStick::updateSize()
 	//glRect.resize(0.1, 0.16);
 }
 
-double JoyStick::getMS()
-{
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-}
-
 bool JoyStick::processPointer(int action, int pid, float x, float y)
 {
 	if (action == P_DOWN)

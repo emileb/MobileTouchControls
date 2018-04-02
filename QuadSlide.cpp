@@ -32,6 +32,8 @@ QuadSlide::QuadSlide(std::string tag,RectF pos,std::string bgImage,std::string a
     this->valueRight = valueRight;
 
 	updateSize();
+
+	resetOutput();
 }
 
 
@@ -223,9 +225,10 @@ bool QuadSlide::drawGL(bool forEditor)
 
         #define SLIDE_TIME_MS 300
 
-        double timeNow = getMS();
+        uint64_t timeNow = getMS();
         uint64_t diff = timeNow - arrowSlideTime;
         arrowSlidePos = (float)(diff % SLIDE_TIME_MS) / (float)SLIDE_TIME_MS;
+        LOGTOUCH("time now = %lld slid pos = %f",timeNow,arrowSlidePos);
     }
 
 

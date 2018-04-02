@@ -41,12 +41,6 @@ void TouchJoy::updateSize()
 	glRect.resize(1 * 0.1, 1.6 * 0.1);
 }
 
-double TouchJoy::getMS()
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-}
 
 bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 {

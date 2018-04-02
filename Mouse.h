@@ -73,7 +73,6 @@ private:
 	void reset();
 	void calcNewValue();
 	void doUpdate();
-	double getMS();
 };
 
 }

@@ -26,22 +26,6 @@ Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,b
 	flash = false;
 	flashDir = false;
 	flashCount = 0;
-
-}
-
-double Button::getMS()
-{
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-}
-
-int long long Button::current_timestamp() {
-    struct timeval te;
-    gettimeofday(&te, NULL); // get current time
-    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // caculate milliseconds
-    // printf("milliseconds: %lld\n", milliseconds);
-    return milliseconds;
 }
 
 void Button::updateSize()
@@ -127,9 +111,9 @@ bool Button::drawGL(bool forEditor)
 				//LOGTOUCH("fc = %lld",flashCount);
 				//LOGTOUCH("flashDir = %d",flashDir);
 
-				if (current_timestamp() > flashCount)
+				if (getMS() > flashCount)
 				{
-					flashCount = current_timestamp() + 300;
+					flashCount = getMS() + 300;
 					flashDir = !flashDir;
 				}
 

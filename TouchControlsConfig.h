@@ -3,6 +3,9 @@
 #define _TouchControlsConfig_H_
 #include <string>
 #include <sys/time.h>
+#include <time.h>
+#include <inttypes.h>
+#include <math.h>
 
 #ifdef __ANDROID__
 #include <android/log.h>
@@ -25,11 +28,21 @@ namespace touchcontrols
     const int ScaleX = 26;
     const int ScaleY = 16;
 
-    inline double getMS()
+    inline uint64_t getMS()
     {
-        struct timeval tv;
-        gettimeofday(&tv, NULL);
-        return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+        uint64_t            ms; // Milliseconds
+        time_t          s;  // Seconds
+        struct timespec spec;
+
+        clock_gettime(CLOCK_REALTIME, &spec);
+
+        s  = spec.tv_sec;
+        ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
+        if (ms > 999) {
+            s++;
+            ms = 0;
+        }
+        return (s * 1000ull) + ms;
     }
 }
 

@@ -32,13 +32,6 @@ void Mouse::updateSize()
 	glRect.resize(controlPos.width(), controlPos.height());
 }
 
-double Mouse::getMS()
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-}
-
 void Mouse::emit( int action, float x, float y, float dx, float dy)
 {
     x = x - controlPos.left;

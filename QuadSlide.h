@@ -26,7 +26,7 @@ class QuadSlide : public ControlSuper
     std::string arrowImage;
 
     float arrowSlidePos;
-    double arrowSlideTime;
+    uint64_t arrowSlideTime;
 
     uint32_t showDemoArrowsTime;
 

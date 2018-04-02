@@ -15,6 +15,7 @@ namespace touchcontrols
 #define SWITCH_INVERT_LOOK   20
 #define SWITCH_JOYSTICKS     22
 #define SWITCH_JOYSTICK_MODE 23
+#define SWITCH_HIDE_INV      24
 
 #define DROPDOWN_DBL_TAP_LEFT 30
 #define DROPDOWN_DBL_TAP_RIGHT 31
@@ -38,6 +39,7 @@ static void saveSettings ( std::string filename )
     root->SetAttribute( "invert_look", settings.invertLook );
     root->SetAttribute( "show_sticks", settings.showJoysticks );
     root->SetAttribute( "joystick_mode", settings.joystickLookMode );
+    root->SetAttribute( "auto_hide_inventory", settings.autoHideInventory );
 
     root->SetDoubleAttribute ( "alpha", settings.alpha );
     root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
@@ -68,6 +70,7 @@ static void loadSettings ( std::string filename )
     root->QueryBoolAttribute ( "invert_look", &settings.invertLook );
     root->QueryBoolAttribute ( "show_sticks", &settings.showJoysticks );
     root->QueryBoolAttribute ( "joystick_mode", &settings.joystickLookMode );
+    root->QueryBoolAttribute ( "auto_hide_inventory", &settings.autoHideInventory );
 
     root->QueryFloatAttribute ( "alpha",  &settings.alpha );
     root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
@@ -87,6 +90,7 @@ static void resetDefaults()
     settings.moveSensitivity = 1;
     settings.showJoysticks = true;
     settings.joystickLookMode = false;
+    settings.autoHideInventory = true;
     settings.dblTapLeft = 0;
     settings.dblTapRight = 0;
 }
@@ -141,6 +145,10 @@ static void switchChange ( uint32_t uid, bool value )
     {
         settings.joystickLookMode = value;
     }
+    else if( uid == SWITCH_HIDE_INV )
+    {
+        settings.autoHideInventory = value;
+    }
 }
 
 static void dropDownChange ( uint32_t uid, uint32_t value )
@@ -160,7 +168,7 @@ static void controlsEnabled( bool enabled )
 {
     if( !enabled )
     {
-        saveSettings( settingsFilename);
+        saveSettings( settingsFilename );
         signal_settingChange.emit( settings );
     }
 }
@@ -194,10 +202,10 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         //rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
        // rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
-        float y = 2;;
+        float y = 1;;
 
         // Draws backwards so need background last
-        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, y, windowRight, 14.5 ),"Touch settings", "ui_background" );
+        UI_Window *window =  new UI_Window ( "bg_window", touchcontrols::RectF ( windownLeft, y, windowRight, 14 ),"Touch settings", "ui_background" );
         rootControls->addControl( window );
         window->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
 
@@ -253,6 +261,14 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         y += 2;
 
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto hide inven:", textSize ) );
+        swtch =      new UI_Switch ( "auto_hide_inventory",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_HIDE_INV, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.autoHideInventory );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+        y += 2;
+
         UI_DropDown *dblTapLeft = new UI_DropDown( "dbl_tap_left",  touchcontrols::RectF ( windownLeft, y, 13 , y+2 ), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Double tap left  :  ", "None:Use:Jump:Fire", textSize, "ui_dropdown_bg" );
         dblTapLeft->setSelected(settings.dblTapLeft);
         rootControls->addControl ( dblTapLeft );
@@ -265,7 +281,7 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         y += 2;
 
-        UI_Button *buttonReset =   new UI_Button ( "reset_button",  touchcontrols::RectF ( 13, y, windowRight, y+2 ), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset", textSize, "ui_button_bg" );
+        UI_Button *buttonReset =   new UI_Button ( "reset_button",  touchcontrols::RectF ( 13 - 5, y, windowRight - 5, y+2 ), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset", textSize, "ui_button_bg" );
         buttonReset->signal.connect ( sigc::ptr_fun ( &buttonPress ) );
         rootControls->addControl ( buttonReset );
 

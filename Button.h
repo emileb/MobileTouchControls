@@ -30,10 +30,6 @@ class Button : public ControlSuper
 	bool flashDir;
 	int long long  flashCount;
 
-	double getMS();
-
-	int long long current_timestamp();
-
 public:
 	std::string image;
 	sigc::signal<void, int> signal_buttonDown;

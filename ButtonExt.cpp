@@ -34,13 +34,6 @@ ButtonExt::ButtonExt(std::string tag,RectF pos,std::string image_filename,int va
 	flashCount = 0;
 }
 
-double ButtonExt::getMS()
-{
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return  (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-}
-
 int long long ButtonExt::current_timestamp() {
     struct timeval te;
     gettimeofday(&te, NULL); // get current time
