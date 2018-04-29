@@ -109,6 +109,65 @@ void showKeyboard(int val)
 
 }
 
+static bool consoleBoxCanceled;
+
+void openConsoleBox( const char * title )
+{
+	JNIEnv *env = getEnv();
+	jstring title_j;
+
+   	title_j = env->NewStringUTF( title );
+
+	consoleBoxCanceled = false;
+
+	jclass myClass =  env->FindClass("org/libsdl/app/NativeConsoleBox");
+	jmethodID myMethod = env->GetStaticMethodID(myClass,  "openConsoleBox", "(Ljava/lang/String;)V");
+	env->CallStaticVoidMethod(myClass, myMethod, title_j);
+
+	env->DeleteLocalRef(title_j);
+	env->DeleteLocalRef(myClass);
+	//env->DeleteLocalRef(myMethod);
+}
+
+void addTextConsoleBox( const char * text )
+{
+	if( ! text )
+		return;
+
+	JNIEnv *env = getEnv();
+	jstring text_j;
+
+   	text_j = env->NewStringUTF( text );
+
+	jclass myClass =  env->FindClass("org/libsdl/app/NativeConsoleBox");
+	jmethodID myMethod = env->GetStaticMethodID(myClass,  "addTextConsoleBox", "(Ljava/lang/String;)V");
+	env->CallStaticVoidMethod(myClass, myMethod, text_j);
+
+	env->DeleteLocalRef(text_j);
+	env->DeleteLocalRef(myClass);
+	//env->DeleteLocalRef(myMethod);
+}
+
+
+void closeConsoleBox()
+{
+	JNIEnv *env = getEnv();
+
+	jclass myClass =  env->FindClass("org/libsdl/app/NativeConsoleBox");
+	jmethodID myMethod = env->GetStaticMethodID(myClass,  "closeConsoleBox", "()V");
+	env->CallStaticVoidMethod(myClass, myMethod );
+}
+
+void JNICALL Java_org_libsdl_app_NativeConsoleBox_cancel( JNIEnv* env, jclass cls )
+{
+ 	consoleBoxCanceled = true;
+}
+
+bool getConsoleBoxCanceled()
+{
+	return consoleBoxCanceled;
+}
+
 //This is to try and stop the occasional crash on shutdown
 int android_app_is_shutting_down = 0;
 void appShutdown()

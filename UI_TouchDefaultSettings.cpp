@@ -16,6 +16,7 @@ namespace touchcontrols
 #define SWITCH_JOYSTICKS     22
 #define SWITCH_JOYSTICK_MODE 23
 #define SWITCH_HIDE_INV      24
+#define SWITCH_HIDE_NBRS     25
 
 #define DROPDOWN_DBL_TAP_LEFT 30
 #define DROPDOWN_DBL_TAP_RIGHT 31
@@ -40,6 +41,7 @@ static void saveSettings ( std::string filename )
     root->SetAttribute( "show_sticks", settings.showJoysticks );
     root->SetAttribute( "joystick_mode", settings.joystickLookMode );
     root->SetAttribute( "auto_hide_inventory", settings.autoHideInventory );
+   	root->SetAttribute( "auto_hide_numbers", settings.autoHideNumbers );
 
     root->SetDoubleAttribute ( "alpha", settings.alpha );
     root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
@@ -71,6 +73,7 @@ static void loadSettings ( std::string filename )
     root->QueryBoolAttribute ( "show_sticks", &settings.showJoysticks );
     root->QueryBoolAttribute ( "joystick_mode", &settings.joystickLookMode );
     root->QueryBoolAttribute ( "auto_hide_inventory", &settings.autoHideInventory );
+  	root->QueryBoolAttribute ( "auto_hide_numbers", &settings.autoHideNumbers );
 
     root->QueryFloatAttribute ( "alpha",  &settings.alpha );
     root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
@@ -91,6 +94,7 @@ static void resetDefaults()
     settings.showJoysticks = true;
     settings.joystickLookMode = false;
     settings.autoHideInventory = true;
+    settings.autoHideNumbers = true;
     settings.dblTapLeft = 0;
     settings.dblTapRight = 0;
 }
@@ -149,6 +153,10 @@ static void switchChange ( uint32_t uid, bool value )
     {
         settings.autoHideInventory = value;
     }
+	else if( uid == SWITCH_HIDE_NBRS )
+	{
+		settings.autoHideNumbers = value;
+	}
 }
 
 static void dropDownChange ( uint32_t uid, uint32_t value )
@@ -264,6 +272,12 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto hide inven:", textSize ) );
         swtch =      new UI_Switch ( "auto_hide_inventory",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_HIDE_INV, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.autoHideInventory );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+     	rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto hide numbers", textSize ) );
+        swtch =      new UI_Switch ( "auto_hide_number",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_HIDE_NBRS, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.autoHideNumbers );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 

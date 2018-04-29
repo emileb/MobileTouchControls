@@ -19,6 +19,7 @@ namespace touchcontrols
         bool showJoysticks;
         bool joystickLookMode;
         bool autoHideInventory;
+  		bool autoHideNumbers;
 
         uint32_t dblTapLeft;
         uint32_t dblTapRight;

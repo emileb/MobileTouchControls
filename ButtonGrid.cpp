@@ -74,7 +74,7 @@ bool ButtonGrid::processPointer(int action, int pid, float x, float y)
 		}
 		else
 		{
-		    signal_outside.emit();
+		    signal_outside.emit( false );
 		}
 		return false;
 	}
@@ -148,7 +148,7 @@ bool ButtonGrid::gamepadInput(bool down, GamePadKey key)
         else if (key == BACK )
         {
             // This hides it
-            signal_outside.emit();
+            signal_outside.emit( true );
         }
     }
 

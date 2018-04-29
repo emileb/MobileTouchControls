@@ -158,18 +158,28 @@ void TouchControls::animateOut(int steps)
 
 void TouchControls::fade(fadedir_t dir,int steps)
 {
-	//LOGTOUCH("fade %d  %d",in,steps);
-	if (dir == FADE_IN) //Fade in
+	if( steps )
 	{
-		fadePos = 0;
+		//LOGTOUCH("fade %d  %d",in,steps);
+		if (dir == FADE_IN) //Fade in
+		{
+			fadePos = 0;
+		}
+		else //Fade out
+		{
+			fadePos = 1;
+		}
+		fadeDir = dir;
+		fadeStep = (float)1/(float)steps;
+		fading = true;
 	}
-	else //Fade out
+	else // No fading, jsut do it
 	{
-		fadePos = 1;
+		if (dir == FADE_OUT )
+	 	{
+	 		setEnabled(false);
+	 	}
 	}
-	fadeDir = dir;
-	fadeStep = (float)1/(float)steps;
-	fading = true;
 }
 
 

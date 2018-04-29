@@ -21,6 +21,11 @@ void showEditButtons();
 void toggleKeyboard();
 void showKeyboard(int val);
 
+void openConsoleBox( const char * title );
+void addTextConsoleBox( const char * text );
+void closeConsoleBox();
+bool getConsoleBoxCanceled();
+
 void ChangeDroidMusic(int action,int param1,int param2);
 
 #ifdef __cplusplus
