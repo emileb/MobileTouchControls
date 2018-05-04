@@ -20,6 +20,7 @@ namespace touchcontrols
         bool joystickLookMode;
         bool autoHideInventory;
   		bool autoHideNumbers;
+		bool weaponWheelEnabled;
 
         uint32_t dblTapLeft;
         uint32_t dblTapRight;
