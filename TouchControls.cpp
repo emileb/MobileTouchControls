@@ -399,14 +399,14 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 				if (selectedCtrl != 0)
 				{
 					float newDistX = fabs(finger1.x - finger2.x);
-					if (fabs(newDistX - oldDist.x)>((float)1/(float)ScaleX))
+					if (fabs(newDistX - oldDist.x)>((float)1/(float)ScaleX/2))
 					{
 						selectedCtrl->controlPos.right += (newDistX - oldDist.x);
 						oldDist.x = newDistX;
 
-						if (selectedCtrl->controlPos.width()<(1/(float)ScaleX))
+						if (selectedCtrl->controlPos.width()<(1/(float)ScaleX/2))
 						{
-							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + (1/(float)ScaleX);
+							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + (1/(float)ScaleX/2);
 						}
 						else if  (selectedCtrl->controlPos.width()>0.5)
 						{
@@ -415,14 +415,14 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					}
 
 					float newDistY = fabs(finger1.y - finger2.y);
-					if (fabs(newDistY - oldDist.y)>((float)1/(float)ScaleY))
+					if (fabs(newDistY - oldDist.y)>((float)1/(float)ScaleY/2))
 					{
 						selectedCtrl->controlPos.bottom += (newDistY - oldDist.y);
 						oldDist.y = newDistY;
 
-						if (selectedCtrl->controlPos.height()<(1/(float)ScaleY))
+						if (selectedCtrl->controlPos.height()<(1/(float)ScaleY/2))
 						{
-							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + (1/(float)ScaleY);
+							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + (1/(float)ScaleY/2);
 						}
 						else if  (selectedCtrl->controlPos.width()>0.5)
 						{
@@ -481,14 +481,16 @@ void TouchControls::windowControl(ControlSuper *ctrl)
 
 void  TouchControls::snapControl(ControlSuper *ctrl)
 {
-	int t = floor((ctrl->controlPos.left * (float)ScaleX) + 0.5);
-	ctrl->controlPos.left = (float)t/(float)ScaleX;
-	t = floor((ctrl->controlPos.right * (float)ScaleX) + 0.5);
-	ctrl->controlPos.right = (float)t/(float)ScaleX;
-	t = floor((ctrl->controlPos.top * (float)ScaleY) + 0.5);
-	ctrl->controlPos.top = (float)t/(float)ScaleY;
-	t = floor((ctrl->controlPos.bottom * (float)ScaleY) + 0.5);
-	ctrl->controlPos.bottom = (float)t/(float)ScaleY;
+    uint32_t snapX = ScaleX * 2;
+    uint32_t snapY = ScaleY * 2;
+	int t = floor((ctrl->controlPos.left * (float)snapX) + 0.5);
+	ctrl->controlPos.left = (float)t/(float)snapX;
+	t = floor((ctrl->controlPos.right * (float)snapX) + 0.5);
+	ctrl->controlPos.right = (float)t/(float)snapX;
+	t = floor((ctrl->controlPos.top * (float)snapY) + 0.5);
+	ctrl->controlPos.top = (float)t/(float)snapY;
+	t = floor((ctrl->controlPos.bottom * (float)snapY) + 0.5);
+	ctrl->controlPos.bottom = (float)t/(float)snapY;
 	ctrl->updateSize();
 }
 
