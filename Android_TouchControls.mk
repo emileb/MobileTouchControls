@@ -17,6 +17,7 @@ LOCAL_SRC_FILES:= \
  	ButtonExt.cpp \
     ButtonGrid.cpp \
     QuadSlide.cpp \
+    DPadSelect.cpp \
  	OpenGLUtils.cpp \
  	GLRect.cpp \
  	TouchJoy.cpp \
