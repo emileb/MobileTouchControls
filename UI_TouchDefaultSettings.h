@@ -13,6 +13,7 @@ namespace touchcontrols
     {
         float alpha;
         float lookSensitivity;
+        float turnSensitivity;
         float moveSensitivity;
 
         bool  invertLook;
@@ -21,6 +22,7 @@ namespace touchcontrols
         bool autoHideInventory;
   		bool autoHideNumbers;
 		bool weaponWheelEnabled;
+        bool fixedMoveStick;
 
         uint32_t dblTapLeft;
         uint32_t dblTapRight;

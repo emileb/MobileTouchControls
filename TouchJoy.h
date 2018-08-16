@@ -34,8 +34,11 @@ private:
 	PointF anchor;
 	int glitchFix;
 
+    // Anchor point is centre of control, not where first tapped
+    bool centerAnchor;
+
     // POINTER SWAP FIX
-     TouchJoy * otherTouchJoySWAPFIX;
+    TouchJoy * otherTouchJoySWAPFIX;
 
 	//Double tap stuff
 	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
@@ -47,6 +50,8 @@ public:
 
 
 	TouchJoy(std::string tag,RectF pos,std::string image_filename);
+
+    void setCenterAnchor(bool v);
 
 	void setHideGraphics(bool v);
 

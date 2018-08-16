@@ -14,6 +14,7 @@ TouchJoy::TouchJoy(std::string tag,RectF pos,std::string image_filename):
 	pid = -1;
 	doubleTapState = 0;
 	hideGraphics = false;
+	centerAnchor = false;
 	updateSize();
 	glitchFix = 0;
 	otherTouchJoySWAPFIX = NULL;
@@ -29,6 +30,11 @@ void TouchJoy::setHideGraphics(bool v)
 {
 	hideGraphics = v;
 	//LOGTOUCH("setHideGraphics enabled = %d",enabled);
+}
+
+void TouchJoy::setCenterAnchor(bool v)
+{
+    centerAnchor = v;
 }
 
 void TouchJoy::resetOutput(){
@@ -57,8 +63,18 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 
 				last.x = x;
 				last.y = y;
-				anchor.x = x;
-				anchor.y = y;
+				if( centerAnchor )
+				{
+				     anchor.x = controlPos.left + (controlPos.width() / 2);
+				     anchor.y = controlPos.top + (controlPos.height() / 2);
+				     glitchFix = 0; // Dont do this
+				}
+				else
+				{
+				    anchor.x = x;
+				    anchor.y = y;
+				}
+
 				fingerPos.x = x;
 				fingerPos.y = y;
 
@@ -77,6 +93,9 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 					else
 						doubleTapState = 0;
 				}
+
+				calcNewValue();
+
 				return true;
 			}
 		}
@@ -114,7 +133,7 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 	{
 		if (pid == tpid) //Finger already down
 		{
-			if (glitchFix) //Need to wait untill the values have changed at least once, otherwise inital jump
+			if (glitchFix) //Need to wait until the values have changed at least once, otherwise inital jump
 			{
 				if ((last.x != x) || (last.y != y))
 				{
@@ -180,7 +199,6 @@ bool TouchJoy::drawGL(bool forEditor)
 			drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
 		else
 			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
-
 	}
 
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
@@ -234,7 +252,6 @@ void TouchJoy::calcNewValue()
 		valueJoy.y = -1;
 
 	doUpdate();
-
 }
 
 void TouchJoy::doUpdate()

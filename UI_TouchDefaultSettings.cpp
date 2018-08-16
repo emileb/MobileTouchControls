@@ -11,6 +11,7 @@ namespace touchcontrols
 #define SLIDER_ALPHA 10
 #define SLIDER_LOOK  11
 #define SLIDER_MOVE  12
+#define SLIDER_TURN  13
 
 #define SWITCH_INVERT_LOOK   20
 #define SWITCH_JOYSTICKS     22
@@ -18,6 +19,7 @@ namespace touchcontrols
 #define SWITCH_HIDE_INV      24
 #define SWITCH_HIDE_NBRS     25
 #define SWITCH_WEAP_WHEEL    26
+#define SWITCH_FIXED_MOVE    27
 
 #define DROPDOWN_DBL_TAP_LEFT 30
 #define DROPDOWN_DBL_TAP_RIGHT 31
@@ -44,9 +46,11 @@ static void saveSettings ( std::string filename )
     root->SetAttribute( "auto_hide_inventory", settings.autoHideInventory );
    	root->SetAttribute( "auto_hide_numbers", settings.autoHideNumbers );
     root->SetAttribute( "weapon_wheel_enabled", settings.weaponWheelEnabled );
+    root->SetAttribute( "fixed_move_stick", settings.fixedMoveStick );
 
     root->SetDoubleAttribute ( "alpha", settings.alpha );
     root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
+    root->SetDoubleAttribute ( "turn_sens", settings.turnSensitivity );
     root->SetDoubleAttribute ( "move_sens", settings.moveSensitivity );
 
     root->SetAttribute( "dbl_tap_left", settings.dblTapLeft );
@@ -77,9 +81,11 @@ static void loadSettings ( std::string filename )
     root->QueryBoolAttribute ( "auto_hide_inventory", &settings.autoHideInventory );
   	root->QueryBoolAttribute ( "auto_hide_numbers", &settings.autoHideNumbers );
   	root->QueryBoolAttribute ( "weapon_wheel_enabled", &settings.weaponWheelEnabled );
+	root->QueryBoolAttribute ( "fixed_move_stick", &settings.fixedMoveStick );
 
     root->QueryFloatAttribute ( "alpha",  &settings.alpha );
     root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
+    root->QueryFloatAttribute ( "turn_sens",  &settings.turnSensitivity );
     root->QueryFloatAttribute ( "move_sens",  &settings.moveSensitivity );
 
     root->QueryUnsignedAttribute( "dbl_tap_left",  &settings.dblTapLeft );
@@ -93,12 +99,15 @@ static void resetDefaults()
     settings.alpha = 0.5;
     settings.invertLook = false;
     settings.lookSensitivity = 1;
+    settings.turnSensitivity = 1;
     settings.moveSensitivity = 1;
     settings.showJoysticks = true;
     settings.joystickLookMode = false;
     settings.autoHideInventory = true;
     settings.autoHideNumbers = true;
     settings.weaponWheelEnabled = true;
+    settings.fixedMoveStick = false;
+
     settings.dblTapLeft = 0;
     settings.dblTapRight = 0;
 }
@@ -131,6 +140,10 @@ static void sliderChange ( uint32_t uid, float value )
     else if( uid == SLIDER_LOOK )
     {
         settings.lookSensitivity = value * 2;
+    }
+    else if( uid == SLIDER_TURN )
+    {
+        settings.turnSensitivity = value * 2;
     }
     else if( uid == SLIDER_MOVE )
     {
@@ -165,7 +178,10 @@ static void switchChange ( uint32_t uid, bool value )
 	{
 		settings.weaponWheelEnabled = value;
 	}
-
+	else if( uid == SWITCH_FIXED_MOVE )
+	{
+		settings.fixedMoveStick = value;
+	}
 }
 
 static void dropDownChange ( uint32_t uid, uint32_t value )
@@ -236,9 +252,17 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         y += 2;
 
-        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Look sensitivity:", textSize ) );
+        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Up/Down sensitivity:", textSize ) );
         slider =              new UI_Slider ( "slider_look",  touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_LOOK , "ui_slider_bg1", "ui_slider_handle");
         slider->setValue(  settings.lookSensitivity / 2 );
+        slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
+        rootControls->addControl ( slider );
+
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, y, 12, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Turn sensitivity:", textSize ) );
+        slider =              new UI_Slider ( "slider_turn",  touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_TURN , "ui_slider_bg1", "ui_slider_handle");
+        slider->setValue(  settings.turnSensitivity / 2 );
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
 
@@ -249,6 +273,7 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         slider->setValue(  settings.moveSensitivity / 2 );
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
+
 
         y += 2;
 
@@ -264,37 +289,15 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         y += 2;
 
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
-        swtch =      new UI_Switch ( "show_joy_switch",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off" );
-        swtch->setValue( settings.showJoysticks );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Fixed Move:", textSize ) );
+        swtch =      new UI_Switch ( "fixed_move_stick",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_FIXED_MOVE, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.fixedMoveStick );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Joystick look mode:", textSize ) );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look mode:", textSize ) );
         swtch =      new UI_Switch ( "joystick_look_switch",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off" );
         swtch->setValue( settings.joystickLookMode );
-        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
-        rootControls->addControl ( swtch );
-
-        y += 2;
-
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto hide inven:", textSize ) );
-        swtch =      new UI_Switch ( "auto_hide_inventory",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_HIDE_INV, "ui_switch2_on", "ui_switch2_off" );
-        swtch->setValue( settings.autoHideInventory );
-        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
-        rootControls->addControl ( swtch );
-
-     	rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto hide numbers", textSize ) );
-        swtch =      new UI_Switch ( "auto_hide_number",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_HIDE_NBRS, "ui_switch2_on", "ui_switch2_off" );
-        swtch->setValue( settings.autoHideNumbers );
-        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
-        rootControls->addControl ( swtch );
-
-        y += 2;
-
-   		rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Weapon wheel:", textSize ) );
-        swtch =      new UI_Switch ( "weapon_wheel_enabled",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_WEAP_WHEEL, "ui_switch2_on", "ui_switch2_off" );
-        swtch->setValue( settings.weaponWheelEnabled );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
@@ -309,6 +312,35 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         dblTapRight->setSelected(settings.dblTapRight);
         rootControls->addControl ( dblTapRight );
         dblTapRight->signal.connect(sigc::ptr_fun ( &dropDownChange) );
+
+
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide inven:", textSize ) );
+        swtch =      new UI_Switch ( "auto_hide_inventory",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_HIDE_INV, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.autoHideInventory );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+     	rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide numbers", textSize ) );
+        swtch =      new UI_Switch ( "auto_hide_number",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_HIDE_NBRS, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.autoHideNumbers );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+        y += 2;
+
+   		rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Weapon wheel:", textSize ) );
+        swtch =      new UI_Switch ( "weapon_wheel_enabled",       touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_WEAP_WHEEL, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.weaponWheelEnabled );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
+
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize ) );
+        swtch =      new UI_Switch ( "show_joy_switch",       touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off" );
+        swtch->setValue( settings.showJoysticks );
+        swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
+        rootControls->addControl ( swtch );
 
         y += 2;
 
