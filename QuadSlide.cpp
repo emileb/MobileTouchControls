@@ -228,7 +228,7 @@ bool QuadSlide::drawGL(bool forEditor)
         uint64_t timeNow = getMS();
         uint64_t diff = timeNow - arrowSlideTime;
         arrowSlidePos = (float)(diff % SLIDE_TIME_MS) / (float)SLIDE_TIME_MS;
-        LOGTOUCH("time now = %lld slid pos = %f",timeNow,arrowSlidePos);
+        LOGTOUCH("time now = %" PRId64 " slid pos = %f",timeNow,arrowSlidePos);
     }
 
 

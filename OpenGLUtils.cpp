@@ -292,7 +292,6 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
     glPopMatrix();
     //Move back to original pos in case other rects to draw
     //glTranslatef(-x, y*(1.2), 0);
-
 }
 #endif
 
