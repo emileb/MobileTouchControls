@@ -62,8 +62,10 @@ bool UI_DropDown::processPointer ( int action, int pid, float x, float y )
                 if ( controlPos.contains ( x, y ) )
                 {
                     touchId = pid;
-                    isOpen = true;
+                    //isOpen = true;
                     fadePos = 0;
+                    tapDetect.reset();
+                    tapDetect.processPointer( action, pid, x, y );
                     return true;
                 }
             }
@@ -90,9 +92,18 @@ bool UI_DropDown::processPointer ( int action, int pid, float x, float y )
     }
     else if ( action == P_UP )
     {
+        tapDetect.processPointer( action, pid, x, y );
+
         if ( pid == touchId )
         {
-            signal.emit(1 , uid );
+            if( !isOpen )
+            {
+                if( tapDetect.didTap() )
+                {
+                   isOpen = true;
+                }
+            }
+            //signal.emit(1 , uid );
             touchId = -1;
             return true;
         }
@@ -100,6 +111,8 @@ bool UI_DropDown::processPointer ( int action, int pid, float x, float y )
     }
     else if ( action == P_MOVE )
     {
+        tapDetect.processPointer( action, pid, x, y );
+
         return false;
     }
 

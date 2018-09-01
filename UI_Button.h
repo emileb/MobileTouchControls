@@ -3,6 +3,8 @@
 #include "GLRect.h"
 #include "OpenGLUtils.h"
 #include "UI_TextBox.h"
+#include "TapDetect.h"
+
 
 #ifndef _UI_Button_H_
 #define _UI_Button_H_
@@ -24,6 +26,9 @@ class UI_Button : public UI_TextBox
     std::string bg_image;
 
     uint32_t uid;
+
+	TapDetect tapDetect;
+
 public:
 
     sigc::signal<void, uint32_t, uint32_t> signal;

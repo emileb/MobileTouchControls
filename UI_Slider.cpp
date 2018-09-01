@@ -4,6 +4,8 @@
 
 using namespace touchcontrols;
 
+#define MOVE_LOCK 0.01
+#define TAP_TIME  250
 UI_Slider::UI_Slider( std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture ):ControlSuper( TC_TYPE_UI_SLIDER, tag, pos )
 {
 
@@ -65,8 +67,12 @@ bool UI_Slider::processPointer(int action, int pid, float x, float y)
 		{
 			if (controlPos.contains(x, y))
 			{
+				timeDown = getMS();
 				touchId = pid;
-				updateValue( x );
+				anchor.x = x;
+				anchor.y = y;
+				lockState = 0;
+				//updateValue( x );
 				return true;
 			}
 		}
@@ -76,6 +82,12 @@ bool UI_Slider::processPointer(int action, int pid, float x, float y)
 	{
 		if ( pid == touchId )
 		{
+			uint64_t timeNow = getMS();
+			// If have not scrolled down and did a quick tap, then update
+			if( (lockState != -1) && (timeNow - timeDown) < TAP_TIME )
+			{
+				updateValue( x );
+			}
 		    touchId = -1;
 			return true;
 		}
@@ -85,7 +97,27 @@ bool UI_Slider::processPointer(int action, int pid, float x, float y)
 	{
 		if (pid == touchId) //Finger already down
 		{
-		    updateValue( x );
+			if( lockState == 0 )
+			{
+				float dx = abs( anchor.x - x );
+				float dy = abs( anchor.y - y );
+				if ( (dy > MOVE_LOCK ) || ( dx > MOVE_LOCK ))
+				{
+					if( (dy/1.6) > dx ) // Probably trying to scroll, lock it out
+					{
+						lockState = -1;
+					}
+					else // OK
+					{
+						lockState = 1;
+					}
+				}
+			}
+
+			if( lockState == 1 )
+			{
+		        updateValue( x );
+	        }
 			return true;
 		}
 		return false;

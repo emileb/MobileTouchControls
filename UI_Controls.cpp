@@ -80,7 +80,8 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
          scrolling = false;
     }
 
-    if( !eventUsed ) // Finger not over a usable control
+    //if( !eventUsed ) // Finger not over a usable control
+    // UPDATE, now scroll all the time
     {
         if (action == P_DOWN)
         {

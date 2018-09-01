@@ -179,7 +179,7 @@ void appShutdown()
 void ChangeDroidMusic(int action,int param1,int param2)
 {
 	JNIEnv * env = getEnv();
-
+return;
 	jclass myClass =  env->FindClass("com/beloko/opengames/CDAudioPlayer");
 	jmethodID myMethod = env->GetStaticMethodID(myClass,  "callback", "(III)V");
 	env->CallStaticVoidMethod(myClass, myMethod, action,param1,param2);

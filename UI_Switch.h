@@ -2,6 +2,8 @@
 #include "ControlSuper.h"
 #include "GLRect.h"
 #include "OpenGLUtils.h"
+#include "TapDetect.h"
+
 
 #ifndef _UI_Switch_H_
 #define _UI_Switch_H_
@@ -27,6 +29,8 @@ class UI_Switch : public ControlSuper
     std::string on_image;
 
     bool isOn;
+
+	TapDetect tapDetect;
 
 public:
 

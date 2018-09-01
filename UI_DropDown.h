@@ -4,6 +4,7 @@
 #include "GLRect.h"
 #include "OpenGLUtils.h"
 #include "TextDraw.h"
+#include "TapDetect.h"
 
 #ifndef _UI_DropDown_H_
 #define _UI_DropDown_H_
@@ -37,6 +38,9 @@ class UI_DropDown : public ControlSuper
     float fadePos;
 
     float listTop, listBottom, listItemHeight;
+
+    TapDetect tapDetect;
+
 public:
 
     sigc::signal<void, uint32_t, uint32_t> signal;

@@ -31,7 +31,8 @@ bool UI_Button::processPointer ( int action, int pid, float x, float y )
             if ( controlPos.contains ( x, y ) )
             {
                 touchId = pid;
-
+                tapDetect.reset();
+                tapDetect.processPointer( action, pid, x, y );
                 return true;
             }
         }
@@ -39,9 +40,14 @@ bool UI_Button::processPointer ( int action, int pid, float x, float y )
     }
     else if ( action == P_UP )
     {
+        tapDetect.processPointer( action, pid, x, y );
+
         if ( pid == touchId )
         {
-            signal.emit(1 , uid );
+            if( tapDetect.didTap() )
+            {
+                signal.emit(1 , uid );
+            }
             touchId = -1;
             return true;
         }
@@ -49,6 +55,7 @@ bool UI_Button::processPointer ( int action, int pid, float x, float y )
     }
     else if ( action == P_MOVE )
     {
+        tapDetect.processPointer( action, pid, x, y );
         //If the finger moves out of the button cancel
         if ( !controlPos.contains ( x, y ) )
         {

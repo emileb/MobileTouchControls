@@ -32,6 +32,7 @@ LOCAL_SRC_FILES:= \
  	AssetFileCache.cpp \
  	android_fopen.cpp \
  	TextDraw.cpp \
+ 	TapDetect.cpp \
  	UI_Controls.cpp \
  	UI_Window.cpp \
  	UI_Slider.cpp \

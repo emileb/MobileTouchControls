@@ -1,7 +1,9 @@
 #include "sigc++/sigc++.h"
 #include "ControlSuper.h"
 #include "GLRect.h"
+#include "PointF.h"
 #include "OpenGLUtils.h"
+#include "TapDetect.h"
 
 #ifndef _UI_Slider_H_
 #define _UI_Slider_H_
@@ -27,6 +29,10 @@ class UI_Slider : public ControlSuper
 
     float value;
     uint32_t uid;
+
+	uint64_t timeDown;
+	PointF   anchor;
+	int32_t  lockState; // 0 = start, -1 = bad, 1 = good
 
     void updateValue( float x );
 public:

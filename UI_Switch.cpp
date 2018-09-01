@@ -2,6 +2,8 @@
 #include "TouchControlsConfig.h"
 
 
+#define TAP_TIME  250
+
 using namespace touchcontrols;
 
 UI_Switch::UI_Switch ( std::string tag, RectF pos, uint32_t uid, std::string on_image, std::string off_image ) : ControlSuper ( TC_TYPE_UI_SWITCH, tag, pos )
@@ -38,19 +40,30 @@ bool UI_Switch::processPointer ( int action, int pid, float x, float y )
     {
         if ( controlPos.contains ( x, y ) )
         {
-            // Toggle switch
-            isOn = !isOn;
-            signal.emit( uid, isOn );
+            touchId = pid;
+            tapDetect.reset();
+            tapDetect.processPointer( action, pid, x, y );
             return true;
         }
     }
     else if ( action == P_UP )
     {
+        tapDetect.processPointer( action, pid, x, y );
 
+        if( touchId == pid)
+        {
+			if( tapDetect.didTap() )
+			{
+			    // Toggle switch
+		        isOn = !isOn;
+	            signal.emit( uid, isOn );
+			}
+			touchId = -1;
+		}
     }
     else if ( action == P_MOVE )
     {
-
+        tapDetect.processPointer( action, pid, x, y );
     }
 
     return false;
@@ -66,8 +79,6 @@ bool UI_Switch::initGL()
     int x, y;
     glTexOn = loadTextureFromPNG ( on_image, x, y );
     glTexOff = loadTextureFromPNG ( off_image, x, y );
-
-
     return false;
 }
 
