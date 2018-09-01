@@ -12,12 +12,14 @@
 #include "TextDraw.h"
 
 #define UI_KEYBOARD_HIDE 1
+#define UI_KEYBOARD_SHIFT 2
 
 namespace touchcontrols
 {
 
-#define MAX_ROW_KEYS 10
+#define MAX_ROW_KEYS 11
 #define NBR_ROWS 4
+
 struct KeyboardKey
 {
     uint32_t keyPrim;
@@ -56,6 +58,8 @@ class UI_Keyboard : public ControlSuper
     void keyDown( KeyboardKey *key );
     void keyUp();
 
+	uint32_t shiftKey( uint32_t key );
+
     int touchId;
     KeyboardKey *pressedKey;
     double timeDown;
@@ -66,6 +70,9 @@ class UI_Keyboard : public ControlSuper
     int32_t selectedRow;
 
     float fadePos;
+
+    bool shiftActive;
+
 public:
 	UI_Keyboard( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize );
 

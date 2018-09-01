@@ -40,6 +40,7 @@ public:
 	void setAlpha(float a);
     void fade(fadedir_t dir,int steps);
 
+   void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
 private:
     std::string tag;
     std::vector<ControlSuper *> controls;

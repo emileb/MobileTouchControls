@@ -328,7 +328,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					for (int n=0;n<controls.size();n++)
 					{
 						ControlSuper *cs = controls.at(n);
-						if (cs->isEnabled() && !cs->isHidden() &&  (cs->type != TC_TYPE_MOUSE))
+						if (cs->isEnabled() && !cs->isHidden() )//&&  (cs->type != TC_TYPE_MOUSE))
 							if (cs->controlPos.contains(x, y))
 							{
 								selectedCtrl = cs;
@@ -579,7 +579,7 @@ int  TouchControls::drawEditor ()
 	for (int n=0;n<size;n++) //draw
 	{
 		ControlSuper *c = controls.at(size-1-n);
-		if (c->isEnabled() &&  (c->type != TC_TYPE_MOUSE))
+		if (c->isEnabled() )//&&  (c->type != TC_TYPE_MOUSE))
 		{
 
 			GLRect rect;

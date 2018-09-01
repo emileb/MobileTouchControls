@@ -194,3 +194,15 @@ void UI_Controls::fade(fadedir_t dir,int steps)
 	fadeStep = (float)1/(float)steps;
 	fading = true;
 }
+
+void *UI_Controls::getControl(std::string name)
+{
+	for (int n=0;n< controls.size();n++) //draw
+	{
+		ControlSuper *c = controls.at(n);
+		if (c->tag == name)
+			return c;
+	}
+
+	return NULL;
+}

@@ -14,61 +14,81 @@ using namespace touchcontrols;
 #define ROW_HEIGHT   0.1
 #define ROW_GAP      0.01
 
+#define EVEN_SPACE ( 1.f / MAX_ROW_KEYS )
+
 UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize ):
     ControlSuper( TC_TYPE_UI_KEYBOARD, tag, pos ),
     font_filename(font_filename),
     fontSet(fontSet)
 {
-    setKey( 0, 0, 'Q', '1', 0.1f );
-    setKey( 0, 1, 'W', '2', 0.1f );
-    setKey( 0, 2, 'E', '3', 0.1f );
-    setKey( 0, 3, 'R', '4', 0.1f );
-    setKey( 0, 4, 'T', '5', 0.1f );
-    setKey( 0, 5, 'Y', '6', 0.1f );
-    setKey( 0, 6, 'U', '7', 0.1f );
-    setKey( 0, 7, 'I', '8', 0.1f );
-    setKey( 0, 8, 'O', '9', 0.1f );
-    setKey( 0, 9, 'P', '0', 0.1f );
+    setKey( 0, 0, 'Q', '1', EVEN_SPACE );
+    setKey( 0, 1, 'W', '2', EVEN_SPACE );
+    setKey( 0, 2, 'E', '3', EVEN_SPACE );
+    setKey( 0, 3, 'R', '4', EVEN_SPACE );
+    setKey( 0, 4, 'T', '5', EVEN_SPACE );
+    setKey( 0, 5, 'Y', '6', EVEN_SPACE );
+    setKey( 0, 6, 'U', '7', EVEN_SPACE );
+    setKey( 0, 7, 'I', '8', EVEN_SPACE );
+    setKey( 0, 8, 'O', '9', EVEN_SPACE );
+    setKey( 0, 9, 'P', '0', EVEN_SPACE );
+    setKey( 0, 9, 'P', '0', EVEN_SPACE );
+    setKey( 0, 10, 8,    0, EVEN_SPACE, "key_backspace" );  //Backspace
 
-    setKey( 1, 0, 8, 0,     0.07f,"key_backspace" );  //Backspace
-    setKey( 1, 1, 'A', '@', 0.1f );
-    setKey( 1, 2, 'S', '#', 0.1f );
-    setKey( 1, 3, 'D', '&', 0.1f );
-    setKey( 1, 4, 'F', '*', 0.1f );
-    setKey( 1, 5, 'G', '-', 0.1f );
-    setKey( 1, 6, 'H', '+', 0.1f );
-    setKey( 1, 7, 'J', '=', 0.1f );
-    setKey( 1, 8, 'K', '(', 0.1f );
-    setKey( 1, 9, 'L', ')', 0.1f );
+    setKey( 1, 0, '\t', 0,     0.065f,"key_tab" );  //blank
+    setKey( 1, 1, 'A', '@', EVEN_SPACE );
+    setKey( 1, 2, 'S', '#', EVEN_SPACE );
+    setKey( 1, 3, 'D', '&', EVEN_SPACE );
+    setKey( 1, 4, 'F', '*', EVEN_SPACE );
+    setKey( 1, 5, 'G', '-', EVEN_SPACE );
+    setKey( 1, 6, 'H', '+', EVEN_SPACE );
+    setKey( 1, 7, 'J', '=', EVEN_SPACE );
+    setKey( 1, 8, 'K', '(', EVEN_SPACE );
+    setKey( 1, 9, 'L', ')', EVEN_SPACE );
+    setKey( 1, 10, 13,   0,   0.12f,"enter_key" );  //Enter
 
-    setKey( 2, 0,  13, 0,   0.15f,"enter_key" );  //Enter
-    setKey( 2, 1, 'Z', '_', 0.1f );
-    setKey( 2, 2, 'X', '$', 0.1f );
-    setKey( 2, 3, 'C', '"', 0.1f );
-    setKey( 2, 4, 'V', '\'', 0.1f );
-    setKey( 2, 5, 'B', ':', 0.1f );
-    setKey( 2, 6, 'N', ';', 0.1f );
-    setKey( 2, 7, 'M', '/', 0.1f );
-    setKey( 2, 8, SDLK_UP, 0, 0.07f, "key_arrow_up" );
-    setKey( 2, 9, 0, 0, 0.1f );
+    setKey( 2, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, "key_shift" );  //Shift key
+    setKey( 2, 1, 'Z', '_', EVEN_SPACE );
+    setKey( 2, 2, 'X', '$', EVEN_SPACE );
+    setKey( 2, 3, 'C', '"', EVEN_SPACE );
+    setKey( 2, 4, 'V', '\'', EVEN_SPACE );
+    setKey( 2, 5, 'B', ':', EVEN_SPACE );
+    setKey( 2, 6, 'N', ';', EVEN_SPACE );
+    setKey( 2, 7, 'M', '/', EVEN_SPACE );
+    setKey( 2, 8, '_',  0, EVEN_SPACE );
+    setKey( 2, 9, 0, 0, 0.032f );
+    setKey( 2, 10, SDLK_UP, 0, 0.07f, "key_arrow_up" );
 
     setKey( 3, 0, UI_KEYBOARD_HIDE, 0, 0.10f, "hide_key" ); //Hide keyboard
-    setKey( 3, 1, '.', 0, 0.1f );
-    setKey( 3, 2, ',', 0, 0.1f );
-    setKey( 3, 3, ' ', 0, 0.48f );
+    setKey( 3, 1, ',', 0, 0.1f );
+    setKey( 3, 2, ' ', 0, 0.48f );
+    setKey( 3, 3, '.', 0, 0.1f );
     setKey( 3, 4, SDLK_LEFT, 0, 0.07f, "key_arrow_left" );
     setKey( 3, 5, SDLK_DOWN, 0, 0.07f, "key_arrow_down"  );
     setKey( 3, 6, SDLK_RIGHT, 0, 0.07f, "key_arrow_right" );
     setKey( 3, 7, 0, 0, 0.1f );
     setKey( 3, 8, 0, 0, 0.1f );
     setKey( 3, 9, 0, 0, 0.1f );
+    setKey( 3, 10, 0, 0, 0.1f );
 
     pressedKey = NULL;
     touchId = -1;
+	shiftActive = false;
 
     // -1 is not yet used
     selectedX = -1;
     selectedRow = -1;
+}
+
+uint32_t UI_Keyboard::shiftKey( uint32_t key )
+{
+	if( shiftActive && key >= 'A' &&  key <= 'Z' )
+	{
+		return key + 32;
+	}
+	else
+	{
+		return key;
+	}
 }
 
 void UI_Keyboard::setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, const char* primImg, const char * altImg )
@@ -95,11 +115,17 @@ void UI_Keyboard::keyUp()
     LOGTOUCH("keyUp");
     if( pressedKey != NULL )
     {
-        if( useAltKey )
-            signal.emit( pressedKey->keyAlt );
+		if( pressedKey->keyPrim == UI_KEYBOARD_SHIFT )
+        {
+			shiftActive = !shiftActive;
+        }
         else
-            signal.emit( pressedKey->keyPrim );
-
+        {
+	        if( useAltKey )
+	            signal.emit( pressedKey->keyAlt );
+	        else
+	            signal.emit( shiftKey(pressedKey->keyPrim) );
+		}
         pressedKey = NULL;
     }
 }
@@ -340,7 +366,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 }
                 else
                 {
-                    textDrawer.drawChar( key->keyPrim, fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
+                    textDrawer.drawChar( shiftKey(key->keyPrim), fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
                 }
 
                 if( key->keyAlt )
