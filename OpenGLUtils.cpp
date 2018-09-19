@@ -108,7 +108,6 @@ int loadShader( int shaderType, const char * source )
         glShaderSource( shader, 1, &source, NULL );
         glCompileShader( shader );
 
-
         GLint  length;
 
         glGetShaderiv( shader , GL_INFO_LOG_LENGTH , &length );
@@ -234,10 +233,20 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
                            false,
                            3 * 4, rect.vertices );
 
+	// I messed up the corrdinates for GLES so not the game as GLES2
+	GLfloat texVert[] =
+	{
+	    rect.texture[2],rect.texture[3], // TexCoord 0
+	    rect.texture[0],rect.texture[1], // TexCoord 1
+	    rect.texture[4],rect.texture[5], // TexCoord 2
+	    rect.texture[6],rect.texture[7] // TexCoord 3
+	};
+
     glVertexAttribPointer( mTexCoordLoc, 2, GL_FLOAT,
                            false,
                            2 * 4,
-                           mTexVertices );
+                           //mTexVertices );
+                           texVert);
 
     glEnableVertexAttribArray( mPositionLoc );
     glEnableVertexAttribArray( mTexCoordLoc );
