@@ -34,7 +34,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 0, 9, 'P', '0', EVEN_SPACE );
     setKey( 0, 10, 8,    0, EVEN_SPACE, "key_backspace" );  //Backspace
 
-    setKey( 1, 0, '\t', 0,     0.065f,"key_tab" );  //blank
+    setKey( 1, 0, '\t', 0,     0.05f,"key_tab" );  //blank
     setKey( 1, 1, 'A', '@', EVEN_SPACE );
     setKey( 1, 2, 'S', '#', EVEN_SPACE );
     setKey( 1, 3, 'D', '&', EVEN_SPACE );
@@ -44,7 +44,7 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 1, 7, 'J', '=', EVEN_SPACE );
     setKey( 1, 8, 'K', '(', EVEN_SPACE );
     setKey( 1, 9, 'L', ')', EVEN_SPACE );
-    setKey( 1, 10, 13,   0,   0.12f,"enter_key" );  //Enter
+    setKey( 1, 10, 13,   0,   0.145f,"enter_key" );  //Enter
 
     setKey( 2, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, "key_shift" );  //Shift key
     setKey( 2, 1, 'Z', '_', EVEN_SPACE );

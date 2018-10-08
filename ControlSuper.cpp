@@ -15,6 +15,7 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 	tag = t;
 	enabled = true;
 	hidden = false;
+	editable = true;
 }
 
 bool ControlSuper::gamepadInput(bool down, GamePadKey key)
@@ -46,6 +47,17 @@ bool ControlSuper::isEnabled()
 bool ControlSuper::isHidden()
 {
 	return hidden;
+}
+
+void ControlSuper::setEditable(bool v)
+{
+    editable = v;
+}
+
+
+bool ControlSuper::isEditable()
+{
+    return editable;
 }
 
 void ControlSuper::saveXML(TiXmlElement &root)

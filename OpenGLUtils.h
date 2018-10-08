@@ -42,6 +42,8 @@ bool getFixAspect();
 
 void clearGlTexCache();
 
+void setTextureNumberStart( int start );
+
 #ifdef USE_GLES2
 extern "C"
 {

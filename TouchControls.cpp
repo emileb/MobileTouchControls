@@ -328,7 +328,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					for (int n=0;n<controls.size();n++)
 					{
 						ControlSuper *cs = controls.at(n);
-						if (cs->isEnabled() && !cs->isHidden() )//&&  (cs->type != TC_TYPE_MOUSE))
+						if (cs->isEnabled() && !cs->isHidden() && cs->isEditable())//&&  (cs->type != TC_TYPE_MOUSE))
 							if (cs->controlPos.contains(x, y))
 							{
 								selectedCtrl = cs;

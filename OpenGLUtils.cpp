@@ -200,7 +200,6 @@ static int gles2InitDone = 0;
 
 void initGLES2()
 {
-
     // Load the shaders and get a linked program object
     mProgramObject = createProgram( vShaderStr, fShaderStr );
     mProgramObjectColor = createProgram( vShaderStr, fShaderColorStr );
@@ -495,6 +494,13 @@ void clearGlTexCache()
     fontInfoCache.clear();
 }
 
+static int glTexNumber = 0;
+
+void setTextureNumberStart( int start )
+{
+	glTexNumber = start;
+}
+
 GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec )
 {
 
@@ -663,7 +669,16 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
     //Now generate the OpenGL texture object
     //GLuint texture = texNumber++;
     GLuint texture;
-    glGenTextures(1,&texture);
+
+    if( glTexNumber )
+    {
+        texture = glTexNumber;
+        glTexNumber++;
+    }
+    else
+        glGenTextures(1,&texture);
+
+    LOGTOUCH( "Texture ID: %d\n", texture );
 
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
