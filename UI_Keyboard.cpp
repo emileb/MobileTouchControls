@@ -319,7 +319,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
     float rowHeight = 0.1;
     float rowGap = 0.01;
 
-    setFixAspect( false );
+    gl_setFixAspect( false );
 
     GLRect glRect;
 
@@ -385,7 +385,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
     }
     glColor4f(1,1,1,1);
 
-    setFixAspect( true );
+    gl_setFixAspect( true );
 
     return false;
 }

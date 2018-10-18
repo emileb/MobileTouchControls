@@ -116,6 +116,8 @@ private:
 	bool fading;
 
 	bool tapDeselect; //true if first press down in empty space
+
+    bool fixAspect; // Make circles circle, default on.
 public:
 
 	bool enabled;
@@ -125,7 +127,6 @@ public:
 	int editGroup;
 
 	std::string tag;
-
 
 	sigc::signal<void, int> signal_buttonDown;
 	sigc::signal<void, int> signal_buttonUp;
@@ -152,6 +153,10 @@ public:
 	void setEnabled(bool v);
 
 	bool isEnabled();
+
+    void setFixAspect(bool v);
+
+    bool isFixAspect();
 
 	void setAlpha(float a);
 

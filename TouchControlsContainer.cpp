@@ -265,9 +265,9 @@ int TouchControlsContainer::draw ()
             glScalef(GLScaleWidth, GLScaleHeight, 1);
             drawRect((GLfloat)0, (GLfloat)0, (GLfloat)0, (GLfloat)0.7, 0.f, 0.f, rect );
 
-            setFixAspect ( false );
+            gl_setFixAspect ( false );
             uiControls->draw();
-            setFixAspect ( true );
+            gl_setFixAspect ( true );
         }
 	}
 

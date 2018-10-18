@@ -150,12 +150,12 @@ bool Mouse::initGL()
 bool Mouse::drawGL(bool editor)
 {
 	//drawLines(0,0,*glLines);
-    bool fa = getFixAspect();
-    setFixAspect( false ); // Fill the mouse screen with the graphic
+    bool fa = gl_getFixAspect();
+    gl_setFixAspect( false ); // Fill the mouse screen with the graphic
 
 	drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
-	setFixAspect( fa );
+	gl_setFixAspect( fa );
 	/*
 	if (!hideGraphics)
 	{

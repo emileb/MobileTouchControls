@@ -47,16 +47,21 @@ protected:
 	bool hidden; //Can hide control from view, but still enabled
 
     bool editable; // If can edit position, default true
+
+    bool allowPassThrough; // allow controls under to get pointer data. Default true.
 public:
 	RectF controlPos;
 
 	void setEnabled(bool v);
 	void setHidden(bool v);
     void setEditable(bool v);
+    void setAllowPassThrough(bool v);
 
 	bool isEnabled();
 	bool isHidden();
     bool isEditable();
+
+    bool isAllowPassThrough();
 
 	std::string description;
 

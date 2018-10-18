@@ -36,9 +36,9 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 
 void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
 
-void setFixAspect( bool v );
+void gl_setFixAspect( bool v );
 
-bool getFixAspect();
+bool gl_getFixAspect();
 
 void clearGlTexCache();
 

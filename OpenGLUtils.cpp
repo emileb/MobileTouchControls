@@ -8,12 +8,12 @@ float GLScaleHeight = -300;
 
 static bool fixAspect = true;
 
-void setFixAspect( bool v )
+void gl_setFixAspect( bool v )
 {
     fixAspect = v;
 }
 
-bool getFixAspect()
+bool gl_getFixAspect()
 {
     return fixAspect;
 }

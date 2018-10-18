@@ -174,9 +174,9 @@ bool ButtonGrid::drawGL(bool forEditor)
     float cellHeight = controlPos.height() / yNbr;
     glRect.resize( cellWidth, cellHeight );
 
-    bool aspect = getFixAspect(); // Save old
+    bool aspect = gl_getFixAspect(); // Save old
 
-    setFixAspect( false ); // Turn off aspect fixing for this
+    gl_setFixAspect( false ); // Turn off aspect fixing for this
 
     for( int cy = 0; cy < yNbr; cy++ )
         for( int cx = 0; cx < xNbr; cx ++ )
@@ -197,7 +197,8 @@ bool ButtonGrid::drawGL(bool forEditor)
             }
         }
 
-    setFixAspect( aspect );
+    gl_setFixAspect( aspect );
+
     return false;
 }
 

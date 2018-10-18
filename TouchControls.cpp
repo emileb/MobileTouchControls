@@ -24,6 +24,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	animating = false;
 	fading = false;
 	editing = false;
+	fixAspect = true;
 	alpha = 0.5;
 	r = g = b = 1.0f;
 	editGroup = edit_group;
@@ -208,6 +209,17 @@ void TouchControls::setEnabled(bool v)
 	enabled = v;
 }
 
+void TouchControls::setFixAspect(bool v)
+{
+    fixAspect = v;
+}
+
+
+bool TouchControls::isFixAspect()
+{
+    return fixAspect;
+}
+
 void TouchControls::resetOutput()
 {
 	int size = controls.size();
@@ -293,6 +305,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			ControlSuper *cs = controls.at(n);
 			if (cs->isEnabled())
+			{
 				if (cs->processPointer(action,pid, x, y))
 				{
 				    controlUsed = true;
@@ -302,7 +315,15 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					//	break;
 					if( cs->type == TC_TYPE_QUADSLIDE ) // Quad slide we should never pass data through
 					    return true;
+
 				}
+
+                // Check if point is in control at all
+				if( !cs->isAllowPassThrough()  && cs->controlPos.contains(x,y))
+				{
+				    return true;
+				}
+            }
 		}
 
         if( passThroughTouch == ALWAYS )
@@ -497,6 +518,9 @@ void  TouchControls::snapControl(ControlSuper *ctrl)
 
 int TouchControls::draw ()
 {
+    bool fixAspectOrig = gl_getFixAspect();
+    gl_setFixAspect( fixAspect );
+
 	if (fading)
 	{
 		if (fadeDir == FADE_IN) //Fading in
@@ -558,6 +582,8 @@ int TouchControls::draw ()
 			}
 		}
 	}
+
+    gl_setFixAspect( fixAspectOrig );
 
 	if (editing)
 		return 1;

@@ -16,6 +16,7 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 	enabled = true;
 	hidden = false;
 	editable = true;
+	allowPassThrough = true;
 }
 
 bool ControlSuper::gamepadInput(bool down, GamePadKey key)
@@ -47,6 +48,16 @@ bool ControlSuper::isEnabled()
 bool ControlSuper::isHidden()
 {
 	return hidden;
+}
+
+void ControlSuper::setAllowPassThrough(bool v)
+{
+    allowPassThrough = v;
+}
+
+bool ControlSuper::isAllowPassThrough()
+{
+    return allowPassThrough;
 }
 
 void ControlSuper::setEditable(bool v)
