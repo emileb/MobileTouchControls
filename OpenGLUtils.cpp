@@ -395,7 +395,7 @@ void drawLines( float x, float y, GLLines &lines )
 
 void calcFontSpacing( const unsigned char *imageData, int width, int height, std::vector< FontInfo > *fontInfoVec )
 {
-    LOGTOUCH( "fontSpacing w=%d, h=%d", width, height );
+    //LOGTOUCH( "fontSpacing w=%d, h=%d", width, height );
 
     // We have a 16 x 16 grid of characters
     int charWidth = width / 16;
@@ -510,7 +510,7 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
         return -1;
     }
 
-    LOGTOUCH( "Loading png: %s\n", filename.c_str() );
+    //LOGTOUCH( "Loading png: %s\n", filename.c_str() );
 
 #ifdef USE_GLES2
     if( !gles2InitDone )
@@ -529,7 +529,7 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
             (*fontInfoVec).insert((*fontInfoVec).begin(), fontInfoCache[filename].begin(), fontInfoCache[filename].end());
         }
         //element found;
-        LOGTOUCH( "PNG %s is already loaded\n", filename.c_str() );
+        //LOGTOUCH( "PNG %s is already loaded\n", filename.c_str() );
         return it->second;
     }
 
