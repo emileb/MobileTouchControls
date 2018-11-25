@@ -678,7 +678,7 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
     else
         glGenTextures(1,&texture);
 
-    LOGTOUCH( "Texture ID: %d\n", texture );
+    //LOGTOUCH( "Texture ID: %d\n", texture );
 
     glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
