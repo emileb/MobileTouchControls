@@ -25,12 +25,18 @@ struct FontInfo
 extern float GLScaleWidth ;
 extern float GLScaleHeight ;
 
-void drawRect(GLuint texture, float x, float y, GLRect &rect);
-void drawRect(GLfloat r,GLfloat g,GLfloat b,GLfloat a, float x, float y, GLRect &rect);
+void gl_setGLESVersion( int v );
+int  gl_getGLESVersion();
 
-void drawLines(float x, float y, GLLines &lines);
+void gl_setGraphicsBasePath(std::string path);
 
-void setGraphicsBasePath(std::string path);
+float GLESscaleX(float X);
+float GLESscaleY(float Y);
+
+void gl_drawRect(GLuint texture, float x, float y, GLRect &rect);
+void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
+void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
+
 
 GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* = NULL );
 

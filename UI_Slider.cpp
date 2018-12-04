@@ -142,9 +142,9 @@ bool UI_Slider::initGL()
 
 bool UI_Slider::drawGL(bool forEditor)
 {
-	drawRect( glTex, controlPos.left, controlPos.top, glRect );
+	gl_drawRect( glTex, controlPos.left, controlPos.top, glRect );
 	//Draw in the middle
-	drawRect( glTexHandle, controlPos.left + (controlPos.width() * value) - (glRectHandle.width / 2),
+	gl_drawRect( glTexHandle, controlPos.left + (controlPos.width() * value) - (glRectHandle.width / 2),
 	                       controlPos.top + (controlPos.height() - glRectHandle.height) / 2, glRectHandle );
 
     return false;

@@ -139,14 +139,8 @@ bool PolarSelect::initGL()
 
 bool PolarSelect::drawGL(bool forEditor)
 {
-	//drawLines(0,0,*glLines);
-#ifndef USE_GLES2
-	//glRotatef(50,0,0,1);
-#endif
+	gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
-	drawRect(glTex,controlPos.left,controlPos.top,glRect);
-
-    //LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
     return false;
 }
 

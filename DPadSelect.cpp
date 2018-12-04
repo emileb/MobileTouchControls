@@ -137,7 +137,7 @@ bool DPadSelect::drawGL(bool forEditor)
 
     GLRect glRect;
     glRect.resize( gridWidth, gridHeight );
-    drawRect( glDPad, controlPos.left + gridWidth, controlPos.top + gridHeight, glRect ); // Background
+    gl_drawRect( glDPad, controlPos.left + gridWidth, controlPos.top + gridHeight, glRect ); // Background
 
     for( int n = 0; n < 4; n++ )
     {
@@ -146,19 +146,19 @@ bool DPadSelect::drawGL(bool forEditor)
 
         if( n == DPAD_LEFT )
         {
-            drawRect( cellGlTex[n], controlPos.left, controlPos.top + gridHeight, glRect );
+            gl_drawRect( cellGlTex[n], controlPos.left, controlPos.top + gridHeight, glRect );
         }
         else if( n == DPAD_UP )
         {
-            drawRect( cellGlTex[n], controlPos.left + gridWidth, controlPos.top , glRect );
+            gl_drawRect( cellGlTex[n], controlPos.left + gridWidth, controlPos.top , glRect );
         }
         else if( n == DPAD_RIGHT )
         {
-            drawRect( cellGlTex[n], controlPos.left + gridWidth * 2, controlPos.top + gridHeight , glRect );
+            gl_drawRect( cellGlTex[n], controlPos.left + gridWidth * 2, controlPos.top + gridHeight , glRect );
         }
         else if( n == DPAD_DOWN )
         {
-            drawRect( cellGlTex[n], controlPos.left + gridWidth, controlPos.top  + gridHeight * 2, glRect );
+            gl_drawRect( cellGlTex[n], controlPos.left + gridWidth, controlPos.top  + gridHeight * 2, glRect );
         }
 
         glColor4f( 1, 1, 1, 1 );

@@ -166,7 +166,7 @@ bool QuadSlide::drawGL(bool forEditor)
 	{
         if (!hidden)
         {
-		    drawRect(glBgTex,controlPos.left,controlPos.top,glRect);
+		    gl_drawRect(glBgTex,controlPos.left,controlPos.top,glRect);
 		    drawArrows = STATE_DOWN; // Show arrows when editing
 		}
 	}
@@ -174,7 +174,7 @@ bool QuadSlide::drawGL(bool forEditor)
 	{
 		if (!hidden)
 		{
-            drawRect(glBgTex,controlPos.left,controlPos.top,glRect);
+            gl_drawRect(glBgTex,controlPos.left,controlPos.top,glRect);
 
             if( slideState == STATE_UP )
             {
@@ -204,24 +204,24 @@ bool QuadSlide::drawGL(bool forEditor)
         // Top
         arrowRect.resize(controlPos.width(),controlPos.height()/3);
         if( drawArrows & STATE_DOWN_UP)
-            drawRect(glArrowTex,controlPos.left,controlPos.top - arrowRect.height - arrowOffset,arrowRect);
+            gl_drawRect(glArrowTex,controlPos.left,controlPos.top - arrowRect.height - arrowOffset,arrowRect);
 
         //Bottom
         arrowRect.mirror( true, false );
         if( drawArrows & STATE_DOWN_DOWN)
-            drawRect(glArrowTex,controlPos.left,controlPos.top + controlPos.height() + arrowOffset,arrowRect);
+            gl_drawRect(glArrowTex,controlPos.left,controlPos.top + controlPos.height() + arrowOffset,arrowRect);
 
         // Left
         arrowRect.resize(controlPos.width()/3,controlPos.height());
         arrowRect.rotate90(false);
         if( drawArrows & STATE_DOWN_LEFT)
-            drawRect(glArrowTex,controlPos.left - arrowRect.width - arrowOffset,controlPos.top,arrowRect);
+            gl_drawRect(glArrowTex,controlPos.left - arrowRect.width - arrowOffset,controlPos.top,arrowRect);
 
         // right
         arrowRect.rotate90(false);
         arrowRect.rotate90(false);
         if( drawArrows & STATE_DOWN_RIGHT)
-            drawRect(glArrowTex,controlPos.left + controlPos.width() + arrowOffset,controlPos.top,arrowRect);
+            gl_drawRect(glArrowTex,controlPos.left + controlPos.width() + arrowOffset,controlPos.top,arrowRect);
 
         #define SLIDE_TIME_MS 300
 

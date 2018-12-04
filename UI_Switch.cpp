@@ -87,9 +87,9 @@ bool UI_Switch::drawGL ( bool forEditor )
 {
     //setScissor();
     if( isOn )
-        drawRect ( glTexOn, controlPos.left, controlPos.top, glRect );
+        gl_drawRect ( glTexOn, controlPos.left, controlPos.top, glRect );
     else
-        drawRect ( glTexOff, controlPos.left, controlPos.top, glRect );
+        gl_drawRect ( glTexOff, controlPos.left, controlPos.top, glRect );
 
     return false;
 }

@@ -184,13 +184,11 @@ bool JoyStick::drawGL(bool forEditor)
 
 	if (!enabled)
 		return false;
-	//drawLines(0,0,*glLines);
 
-	//drawRect(glTex,controlPos.left,controlPos.top,glRect);
 	if ((!hideGraphics && centreAnchor))
 	{
 		if (glTexBg)
-			drawRect(glTexBg,controlPos.left,controlPos.top,glRectBg);
+			gl_drawRect(glTexBg,controlPos.left,controlPos.top,glRectBg);
 
 		if (id != -1)
 		{
@@ -211,10 +209,10 @@ bool JoyStick::drawGL(bool forEditor)
 				xyStretch = 0.8f;
 				scale = maxMovement / dist;
 			}
-			drawRect(glTex,controlPos.left - dx*scale * (xyStretch),controlPos.top - dy*scale  * (1.f/xyStretch),glRect);
+			gl_drawRect(glTex,controlPos.left - dx*scale * (xyStretch),controlPos.top - dy*scale  * (1.f/xyStretch),glRect);
 		}
 		else
-			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
 
 	}
 

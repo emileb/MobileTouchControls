@@ -163,7 +163,7 @@ bool ButtonExt::drawGL(bool forEditor)
 	{
         if (!hidden)
         {
-		drawRect(glTex,controlPos.left,controlPos.top,glRect);
+		    gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 		}
 	}
 	else //Draw normal in game
@@ -187,11 +187,11 @@ bool ButtonExt::drawGL(bool forEditor)
 			}
 
 			if (id==-1)
-				drawRect(glTex,controlPos.left,controlPos.top,glRect);
+				gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 			else //Highlight buttons if pressed
 			{
 				//glBlendFunc(GL_CONSTANT_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-				drawRect(glTex,controlPos.left,controlPos.top,glRect);
+				gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 				//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			}
 		}

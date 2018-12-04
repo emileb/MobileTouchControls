@@ -86,13 +86,13 @@ bool UI_Button::initGL()
 
 bool UI_Button::drawGL ( bool forEditor )
 {
-    drawRect ( glTex, controlPos.left, controlPos.top, glRect );
+    gl_drawRect ( glTex, controlPos.left, controlPos.top, glRect );
 
     UI_TextBox::drawGL ( forEditor );
 
     if ( touchId != -1 ) // Finger down, change colour
     {
-        drawRect ( 0.9, 1, 0, 0.2, controlPos.left, controlPos.top, glRect );
+        gl_drawRect ( 0.9, 1, 0, 0.2, controlPos.left, controlPos.top, glRect );
     }
 
     return false;

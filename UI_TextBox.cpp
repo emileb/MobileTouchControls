@@ -130,7 +130,7 @@ bool UI_TextBox::drawGL( bool forEditor )
 
         glRectTemp.resize( getCharWidth ( c ), glRect.height);
 
-        drawRect( glTex, x, y, glRectTemp );
+        gl_drawRect( glTex, x, y, glRectTemp );
 
         x += glRectTemp.width + charSpacing;
 

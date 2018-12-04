@@ -32,11 +32,6 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 
 	int lines = ScaleX+1 + ScaleY+1;
 
-#ifdef USE_GLES2
-	float GLES2scaleX(float X);
-	float GLES2scaleY(float Y);
-#endif
-
 
 	settingsButton  = 0;
 
@@ -47,33 +42,20 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 		int l=0;
 		for (int n=0;n<ScaleX;n++)
 		{
-			grid->vertices[l+0] = (float)n/(float)ScaleX;
-			grid->vertices[l+1] = 0;
-#ifdef USE_GLES2
-			grid->vertices[l+0] = GLES2scaleX((float)n/(float)ScaleX);
-#endif
-			grid->vertices[l+3] = (float)n/(float)ScaleX;
-			grid->vertices[l+4] = -1;
-#ifdef USE_GLES2
-			grid->vertices[l+3] = GLES2scaleX((float)n/(float)ScaleX);
-			grid->vertices[l+4] = -GLES2scaleX(1);
-#endif
+			grid->vertices[l+0] = GLESscaleX((float)n/(float)ScaleX);
+			grid->vertices[l+1] = GLESscaleX(0);
+			grid->vertices[l+3] = GLESscaleX((float)n/(float)ScaleX);
+			grid->vertices[l+4] = GLESscaleX(-1);
+
 			l +=6;
 		}
 		for (int n=1;n<ScaleY+1;n++)
 		{
-			grid->vertices[l+0] = 0;
-			grid->vertices[l+1] = -(float)n/(float)ScaleY;
-#ifdef USE_GLES2
-			grid->vertices[l+1] = -GLES2scaleY((float)n/(float)ScaleY);
-#endif
+			grid->vertices[l+0] = GLESscaleY(0);
+			grid->vertices[l+1] = GLESscaleY((float)-n/(float)ScaleY);
+			grid->vertices[l+3] = GLESscaleY(1);
+			grid->vertices[l+4] = GLESscaleY((float)-n/(float)ScaleY);
 
-			grid->vertices[l+3] = 1;
-			grid->vertices[l+4] = -(float)n/(float)ScaleY;
-#ifdef USE_GLES2
-			grid->vertices[l+3] = GLES2scaleY(1);
-			grid->vertices[l+4] = -GLES2scaleY((float)n/(float)ScaleY);
-#endif
 			l +=6;
 		}
 
@@ -599,7 +581,7 @@ int  TouchControls::drawEditor ()
 
 	glLoadIdentity();
 	glScalef(GLScaleWidth, GLScaleHeight, 1);
-	drawLines(0,0,*grid);
+	gl_drawLines(0,0,*grid);
 
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
@@ -614,7 +596,7 @@ int  TouchControls::drawEditor ()
 			glScalef(GLScaleWidth, GLScaleHeight, 1);
 
 			if (!c->isHidden()) //Not hidden control
-				drawRect((GLfloat)1,(GLfloat)0.5,(GLfloat)0,(GLfloat)0.2,c->controlPos.left,c->controlPos.top,rect);
+				gl_drawRect((GLfloat)1,(GLfloat)0.5,(GLfloat)0,(GLfloat)0.2,c->controlPos.left,c->controlPos.top,rect);
 
 			glLoadIdentity();
 			glScalef(GLScaleWidth, GLScaleHeight, 1);
@@ -626,7 +608,7 @@ int  TouchControls::drawEditor ()
 			glScalef(GLScaleWidth, GLScaleHeight, 1);
 
 			//  if (c->isHidden()) //Hidden controls over color
-			//     drawRect((GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,c->controlPos.left,c->controlPos.top,rect);
+			//     gl_drawRect((GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,c->controlPos.left,c->controlPos.top,rect);
 
 		}
 	}
@@ -639,7 +621,7 @@ int  TouchControls::drawEditor ()
 		rect.resize(sel->controlPos.right - sel->controlPos.left, sel->controlPos.bottom - sel->controlPos.top);
 		glLoadIdentity();
 		glScalef(GLScaleWidth, GLScaleHeight, 1);
-		drawRect((GLfloat)0.5,(GLfloat)0.3,(GLfloat)0.8,(GLfloat)0.5,sel->controlPos.left,sel->controlPos.top,rect);
+		gl_drawRect((GLfloat)0.5,(GLfloat)0.3,(GLfloat)0.8,(GLfloat)0.5,sel->controlPos.left,sel->controlPos.top,rect);
 	}
 
 

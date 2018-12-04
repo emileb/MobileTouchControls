@@ -71,7 +71,7 @@ float TextDraw::drawChar( char c, int fontSet, float x, float y, float height, u
     if( params & TEXT_DRAW_X_CENTER )
         x = x - (charWidth / 2);
 
-    drawRect( glTex, x, y, glRectTemp );
+    gl_drawRect( glTex, x, y, glRectTemp );
 
     return charWidth;
 }

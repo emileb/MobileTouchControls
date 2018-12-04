@@ -190,15 +190,13 @@ bool TouchJoy::drawGL(bool forEditor)
 
 	if (!enabled)
 		return false;
-	//drawLines(0,0,*glLines);
 
-	//drawRect(glTex,controlPos.left,controlPos.top,glRect);
     if (!hideGraphics)
 	{
 		if (pid != -1)
-			drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
+			gl_drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
 		else
-			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
 	}
 
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);

@@ -136,7 +136,7 @@ bool UI_DropDown::initGL()
 
 bool UI_DropDown::drawGL ( bool forEditor )
 {
-    drawRect ( glTex, controlPos.left, controlPos.top, glRect );
+    gl_drawRect ( glTex, controlPos.left, controlPos.top, glRect );
 
     float textHeight = controlPos.height()/2;
 
@@ -148,7 +148,7 @@ bool UI_DropDown::drawGL ( bool forEditor )
         // Draw background
         GLRect glRect;
         glRect.resize( controlPos.width(), listBottom - listTop );
-        drawRect( 0,0,0,fadePos,controlPos.left, listTop, glRect);
+        gl_drawRect( 0,0,0,fadePos,controlPos.left, listTop, glRect);
 
         glColor4f(1, 1, 1, fadePos);
 

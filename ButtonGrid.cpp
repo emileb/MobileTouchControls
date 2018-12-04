@@ -189,11 +189,11 @@ bool ButtonGrid::drawGL(bool forEditor)
                 if( cx == gamepadXSel && cy == gamepadYSel )
                     glDisable (GL_BLEND);
 
-                drawRect( glCellBgTex, x, y, glRect ); // Background
+                gl_drawRect( glCellBgTex, x, y, glRect ); // Background
 
                 glEnable (GL_BLEND); //reset
 
-                drawRect( cellGlTex[cx][cy], x, y, glRect );
+                gl_drawRect( cellGlTex[cx][cy], x, y, glRect );
             }
         }
 

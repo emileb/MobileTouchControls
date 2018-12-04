@@ -162,15 +162,12 @@ bool MultitouchMouse::initGL()
 
 bool MultitouchMouse::drawGL(bool editor)
 {
-	//drawLines(0,0,*glLines);
-
-	//drawRect(glTex,controlPos.left,controlPos.top,glRect);
 	if (!hideGraphics)
 	{
 		if (id != -1)
-			drawRect(glTex,last.x-glRect.width/2,last.y-glRect.height/2,glRect);
+			gl_drawRect(glTex,last.x-glRect.width/2,last.y-glRect.height/2,glRect);
 		else
-			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
 
 	}
 

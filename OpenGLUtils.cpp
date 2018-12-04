@@ -3,10 +3,31 @@
 
 namespace touchcontrols
 {
+
+
+
 float GLScaleWidth = 400;
 float GLScaleHeight = -300;
 
+bool isGLES2 = false;
+
 static bool fixAspect = true;
+
+void gl_setGLESVersion( int v )
+{
+    if( v == 2 )
+        isGLES2 = true;
+    else
+        isGLES2 = false;
+}
+
+int  gl_getGLESVersion()
+{
+    if( isGLES2 )
+        return 2;
+    else
+        return 1;
+}
 
 void gl_setFixAspect( bool v )
 {
@@ -16,6 +37,22 @@ void gl_setFixAspect( bool v )
 bool gl_getFixAspect()
 {
     return fixAspect;
+}
+
+float GLESscaleX( float X )
+{
+    if( isGLES2 )
+        return X * 2;
+    else
+        return X;
+}
+
+float GLESscaleY( float Y )
+{
+    if( isGLES2 )
+        return Y * 2;
+    else
+        return Y;
 }
 
 #ifdef USE_GLES2
@@ -59,14 +96,7 @@ float translateY( float Y )
 {
     return ( -Y * 2 + 1 );
 }
-float GLES2scaleX( float X )
-{
-    return X * 2;
-}
-float GLES2scaleY( float Y )
-{
-    return Y * 2;
-}
+
 const char vShaderStr [] =
     "attribute vec4 a_position;  \
 			attribute vec2 a_texCoord;   \
@@ -223,9 +253,9 @@ void initGLES2()
 
 
 #ifdef USE_GLES2
-void drawRect( GLuint texture, float x, float y, GLRect &rect )
+void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 {
-    //LOGTOUCH("drawRect");
+    //LOGTOUCH("gl_drawRect");
     glUseProgram( mProgramObject );
 
     glVertexAttribPointer( mPositionLoc, 3, GL_FLOAT,
@@ -264,7 +294,7 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
 }
 
 #else
-void drawRect( GLuint texture, float x, float y, GLRect &rect )
+void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 {
     if( texture == -1 )
     {
@@ -273,7 +303,7 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
 
     glPushMatrix();
 
-    //LOGTOUCH("drawRect %d",texture);
+    //LOGTOUCH("gl_drawRect %d",texture);
     glBindTexture( GL_TEXTURE_2D, texture );
     glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
     glTexCoordPointer( 2, GL_FLOAT, 0, rect.texture );
@@ -304,7 +334,7 @@ void drawRect( GLuint texture, float x, float y, GLRect &rect )
 #endif
 
 #ifdef USE_GLES2
-void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
+void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
 {
     glUseProgram( mProgramObjectColor );
 
@@ -331,7 +361,7 @@ void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLR
 }
 
 #else
-void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
+void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
 {
     glPushMatrix();
 
@@ -351,7 +381,7 @@ void drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLR
 
 
 #ifdef USE_GLES2
-void drawLines( float x, float y, GLLines &lines )
+void gl_drawLines( float x, float y, GLLines &lines )
 {
     glUseProgram( mProgramObjectColor );
 
@@ -374,7 +404,7 @@ void drawLines( float x, float y, GLLines &lines )
 }
 
 #else
-void drawLines( float x, float y, GLLines &lines )
+void gl_drawLines( float x, float y, GLLines &lines )
 {
 
     glDisable( GL_TEXTURE_2D );
@@ -478,7 +508,7 @@ void png_read( png_structp png_ptr, png_bytep data, png_size_t length )
 
 //This needs to be set to the location of the PNG files
 std::string graphicsBasePath;
-void setGraphicsBasePath( std::string path )
+void gl_setGraphicsBasePath( std::string path )
 {
     graphicsBasePath = path;
 }

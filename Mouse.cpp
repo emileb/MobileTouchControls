@@ -149,20 +149,19 @@ bool Mouse::initGL()
 
 bool Mouse::drawGL(bool editor)
 {
-	//drawLines(0,0,*glLines);
     bool fa = gl_getFixAspect();
     gl_setFixAspect( false ); // Fill the mouse screen with the graphic
 
-	drawRect(glTex,controlPos.left,controlPos.top,glRect);
+	gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
 	gl_setFixAspect( fa );
 	/*
 	if (!hideGraphics)
 	{
 		if (id != -1)
-			drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
+			gl_drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
 		else
-			drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
 	}
 */
 	tapCounter++;

@@ -74,7 +74,7 @@ void UI_Window::setScissor ( void )
 
 bool UI_Window::drawGL ( bool forEditor )
 {
-    drawRect ( glTex, controlPos.left - (PADDING/2), controlPos.top, glRect );
+    gl_drawRect ( glTex, controlPos.left - (PADDING/2), controlPos.top, glRect );
 
     backButton->drawGL( forEditor );
     titleText->drawGL( forEditor );

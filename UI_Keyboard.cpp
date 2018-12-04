@@ -325,7 +325,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
 
     // Draw background
     glRect.resize( 1, 0.5 );
-    drawRect( 0, 0, 0, 0.8, 0, rowYPos, glRect );
+    gl_drawRect( 0, 0, 0, 0.8, 0, rowYPos, glRect );
 
     glColor4f(1,1,1,0.8);
 
@@ -355,14 +355,14 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 }
 
                 glRect.resize( key->width, rowHeight );
-                drawRect( glKeyBg, rowXPos, rowYPos, glRect );
+                gl_drawRect( glKeyBg, rowXPos, rowYPos, glRect );
 
                 glColor4f(1,1,1,0.8);
 
                 // Check for custom image, otherwise use font
                 if( key->glPrim != 0 )
                 {
-                    drawRect( key->glPrim , rowXPos, rowYPos, glRect );
+                    gl_drawRect( key->glPrim , rowXPos, rowYPos, glRect );
                 }
                 else
                 {

@@ -157,12 +157,8 @@ bool WheelSelect::initGL()
 
 bool WheelSelect::drawGL(bool forEditor)
 {
-	//drawLines(0,0,*glLines);
-#ifndef USE_GLES2
-	//glRotatef(50,0,0,1);
-#endif
 	if ((id != -1) || forEditor)
-		drawRect(glTex,controlPos.left,controlPos.top,glRect);
+		gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
 	if (useFadeSegs)
 	{
@@ -183,7 +179,7 @@ bool WheelSelect::drawGL(bool forEditor)
 				//Now scale as prob not square..
 				o = o * (glRect.width/glRect.height);
 				if (!(enabledSegs & 1<<n))
-					drawRect(glTexFade,centre.x + o - glRectFade.width/2 ,centre.y - a -glRectFade.height/2 ,glRectFade);
+					gl_drawRect(glTexFade,centre.x + o - glRectFade.width/2 ,centre.y - a -glRectFade.height/2 ,glRectFade);
 
 				ang += 360/nbrSegs;
 			}

@@ -1,5 +1,5 @@
 #include "TouchControlsConfig.h"
-
+#include "OpenGLUtils.h"
 #include "GLRect.h"
 
 using namespace touchcontrols;
@@ -26,21 +26,15 @@ GLRect::GLRect()
 void GLRect::resize(float w, float h) {
 	width = w;
 	height = h;
-#ifdef USE_GLES2
-	float GLES2scaleX(float X);
-	float GLES2scaleY(float Y);
 
-	vertices[4] = -GLES2scaleY(height);
-	vertices[6] = GLES2scaleX(width);
-	vertices[7] = -GLES2scaleY(height);
-	vertices[9] = GLES2scaleX(width);
+    if( gl_getGLESVersion() == 2 )
+	    vertices[4] = GLESscaleY(-height);
+    else
+        vertices[1] = GLESscaleY(-height);
 
-#else
-	vertices[1] = -1*height;
-	vertices[6] = width;
-	vertices[7] = -1*height;
-	vertices[9] = width;
-#endif
+	vertices[6] = GLESscaleX(width);
+	vertices[7] = GLESscaleY(-height);
+	vertices[9] = GLESscaleX(width);
 };
 
 #define SWAP(A,B) t = texture[A]; texture[A] = texture[B]; texture[B] = t;
