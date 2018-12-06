@@ -11,9 +11,7 @@ using namespace touchcontrols;
 
 TouchControlsContainer::TouchControlsContainer()
 {
-	//Just for if we have an edit group
-	editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(12,0,14,2),"settings",0);
-	editorButton->signal_button.connect(  sigc::mem_fun(this,&TouchControlsContainer::editorButtonPress) );
+
 	editButtonAlpha = 0;
 }
 
@@ -106,7 +104,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
         }
 	}
 
-	if (drawEditButton)
+	if (drawEditButton && editorButton)
 		editorButton->processPointer(action,pid, x, y);
 
 #ifdef USE_LIBROCKET
@@ -180,7 +178,7 @@ int TouchControlsContainer::draw ()
 		if (drawEditButton_ != drawEditButton)
 			drawEditButton = drawEditButton_;
 
-		if (drawEditButton)
+		if (drawEditButton && editorButton)
 		{
 			if (editButtonAlpha != 0)
 			{
@@ -207,7 +205,7 @@ int TouchControlsContainer::draw ()
 			editingControls = 0;
 		}
 
-		if (drawEditButton)
+		if (drawEditButton && editorButton)
 		{
 			drawEditButton = true;
 
@@ -266,7 +264,13 @@ int TouchControlsContainer::draw ()
 
 void TouchControlsContainer::initGL (const char * root_path)
 {
-    editorButton->updateSize();
+    if(!editorButton)
+    {
+    //Just for if we have an edit group
+    	editorButton = new touchcontrols::Button("edit_control",touchcontrols::RectF(12,0,14,2),"settings",0);
+    	editorButton->signal_button.connect(  sigc::mem_fun(this,&TouchControlsContainer::editorButtonPress) );
+    }
+    //editorButton->updateSize();
 
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
