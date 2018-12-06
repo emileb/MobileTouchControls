@@ -36,18 +36,13 @@ float GLESscaleY(float Y);
 void gl_drawRect(GLuint texture, float x, float y, GLRect &rect);
 void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
 void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
+void gl_setFixAspect( bool v );
+bool gl_getFixAspect();
 
 
 GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* = NULL );
-
 void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
-
-void gl_setFixAspect( bool v );
-
-bool gl_getFixAspect();
-
 void clearGlTexCache();
-
 void setTextureNumberStart( int start );
 
 #ifdef USE_GLES2
