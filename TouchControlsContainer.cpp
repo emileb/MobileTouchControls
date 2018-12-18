@@ -183,11 +183,11 @@ int TouchControlsContainer::draw ()
 			if (editButtonAlpha != 0)
 			{
 				//LOGTOUCH("editButtonAlpha");
-				glColor4f(1, 1, 1,editButtonAlpha);
+				gl_color4f(1, 1, 1,editButtonAlpha);
 			}
 
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 		//	glColor4f(1.0, 0.7, 0.7, 1 );
 			editorButton->drawGL();
 		}
@@ -209,8 +209,8 @@ int TouchControlsContainer::draw ()
 		{
 			drawEditButton = true;
 
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 			editorButton->drawGL();
 
 		}
@@ -247,8 +247,8 @@ int TouchControlsContainer::draw ()
             //Grey out background
             GLRect rect;
             rect.resize(1,1);
-            glLoadIdentity();
-            glScalef(GLScaleWidth, GLScaleHeight, 1);
+            gl_loadIdentity();
+            gl_scalef(GLScaleWidth, GLScaleHeight, 1);
             gl_drawRect((GLfloat)0, (GLfloat)0, (GLfloat)0, (GLfloat)0.7, 0.f, 0.f, rect );
 
             gl_setFixAspect ( false );

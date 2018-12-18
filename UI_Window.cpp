@@ -67,9 +67,9 @@ void UI_Window::setScissor ( void )
      h = ( controlPos.height() - (2.f/ScaleY)) *  -GLScaleHeight ;
      //LOGTOUCH("%d   %d   %d   %d",x,y,w,h);
 
-     glScissor ( x, y , w, h );
+     gl_scissor ( x, y , w, h );
 
-     glEnable ( GL_SCISSOR_TEST );
+     gl_enable ( GL_SCISSOR_TEST );
 }
 
 bool UI_Window::drawGL ( bool forEditor )

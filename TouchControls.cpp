@@ -523,11 +523,11 @@ int TouchControls::draw ()
 		}
 		//LOGTOUCH("fadePos = %f",fadePos);
 
-		glColor4f(r, g, b,alpha * fadePos);
+		gl_color4f(r, g, b,alpha * fadePos);
 
 	}
 	else
-		glColor4f(r, g, b,alpha);
+		gl_color4f(r, g, b,alpha);
 
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
@@ -535,11 +535,11 @@ int TouchControls::draw ()
 		ControlSuper *c = controls.at(size-1-n);
 		if (c->isEnabled())
 		{
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
             
 			if (animating)
-				glTranslatef(0, -slidePos, 0);
+				gl_translatef(0, -slidePos, 0);
             
 			c->drawGL();
 		}
@@ -576,11 +576,11 @@ int TouchControls::draw ()
 int  TouchControls::drawEditor ()
 {
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	gl_clearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//glClear(GL_COLOR_BUFFER_BIT);
 
-	glLoadIdentity();
-	glScalef(GLScaleWidth, GLScaleHeight, 1);
+	gl_loadIdentity();
+	gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 	gl_drawLines(0,0,*grid);
 
 	int size = controls.size();
@@ -592,20 +592,20 @@ int  TouchControls::drawEditor ()
 
 			GLRect rect;
 			rect.resize(c->controlPos.right - c->controlPos.left, c->controlPos.bottom - c->controlPos.top);
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
 			if (!c->isHidden()) //Not hidden control
 				gl_drawRect((GLfloat)1,(GLfloat)0.5,(GLfloat)0,(GLfloat)0.2,c->controlPos.left,c->controlPos.top,rect);
 
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
-			glColor4f(r, g, b, 1 );
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_color4f(r, g, b, 1 );
 
 			c->drawGL(true);
 
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
 			//  if (c->isHidden()) //Hidden controls over color
 			//     gl_drawRect((GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,c->controlPos.left,c->controlPos.top,rect);
@@ -619,8 +619,8 @@ int  TouchControls::drawEditor ()
 	{
 		GLRect rect;
 		rect.resize(sel->controlPos.right - sel->controlPos.left, sel->controlPos.bottom - sel->controlPos.top);
-		glLoadIdentity();
-		glScalef(GLScaleWidth, GLScaleHeight, 1);
+		gl_loadIdentity();
+		gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 		gl_drawRect((GLfloat)0.5,(GLfloat)0.3,(GLfloat)0.8,(GLfloat)0.5,sel->controlPos.left,sel->controlPos.top,rect);
 	}
 
@@ -631,8 +631,8 @@ int  TouchControls::drawEditor ()
 	{
 		if (settingsButton)
 		{
-			glLoadIdentity();
-			glScalef(GLScaleWidth, GLScaleHeight, 1);
+			gl_loadIdentity();
+			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 		//	glColor4f(1.0, 0.7, 0.7, 1 );
 			settingsButton->drawGL();
 		}

@@ -142,7 +142,7 @@ bool DPadSelect::drawGL(bool forEditor)
     for( int n = 0; n < 4; n++ )
     {
         if( cellPressed[n] )
-            glColor4f( 0, 0, 1, 1 );
+            gl_color4f( 0, 0, 1, 1 );
 
         if( n == DPAD_LEFT )
         {
@@ -161,7 +161,7 @@ bool DPadSelect::drawGL(bool forEditor)
             gl_drawRect( cellGlTex[n], controlPos.left + gridWidth, controlPos.top  + gridHeight * 2, glRect );
         }
 
-        glColor4f( 1, 1, 1, 1 );
+        gl_color4f( 1, 1, 1, 1 );
 
     }
     return false;

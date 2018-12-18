@@ -135,11 +135,11 @@ int UI_Controls::draw ()
 		}
 		//LOGTOUCH("fadePos = %f",fadePos);
 
-		glColor4f(1, 1, 1, fadePos);
+		gl_color4f(1, 1, 1, fadePos);
 
 	}
 	else
-		glColor4f(1, 1, 1,1 );
+		gl_color4f(1, 1, 1,1 );
 
     int size = controls.size();
     for (int n=0;n<size;n++) //draw
@@ -147,20 +147,20 @@ int UI_Controls::draw ()
         ControlSuper *c = controls.at(n);
         if (c->isEnabled())
         {
-            glLoadIdentity();
+            gl_loadIdentity();
 
-            glScalef(GLScaleWidth, GLScaleHeight, 1);
+            gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
             // Scroll, but don't scroll the background window
             if( c->type != TC_TYPE_UI_WINDOW )
             {
-                glTranslatef( 0, yOffset, 0 );
+                gl_translatef( 0, yOffset, 0 );
             }
             c->drawGL();
         }
     }
     // The UI window enables this
-    glDisable( GL_SCISSOR_TEST );
+    gl_disable( GL_SCISSOR_TEST );
 
     return 0;
 }

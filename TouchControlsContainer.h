@@ -1,5 +1,3 @@
-
-
 #include <string>
 #include <stdbool.h>
 #include <vector>

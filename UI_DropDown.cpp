@@ -150,7 +150,7 @@ bool UI_DropDown::drawGL ( bool forEditor )
         glRect.resize( controlPos.width(), listBottom - listTop );
         gl_drawRect( 0,0,0,fadePos,controlPos.left, listTop, glRect);
 
-        glColor4f(1, 1, 1, fadePos);
+        gl_color4f(1, 1, 1, fadePos);
 
         float y = listTop; //Inital offset from bottom for the list
         for( int n = 0; n < listItems.size(); n++ )
@@ -161,7 +161,7 @@ bool UI_DropDown::drawGL ( bool forEditor )
             y += listItemHeight;
         }
 
-        glColor4f(1, 1, 1, 1);
+        gl_color4f(1, 1, 1, 1);
 
         if( isOpen )
         {

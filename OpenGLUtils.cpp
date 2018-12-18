@@ -1,9 +1,15 @@
 #include "OpenGLUtils.h"
 #include <map>
 
+#ifdef USE_GLES2
+#include <GLES2/gl2.h>
+#else
+#include <GLES/gl.h>
+#endif
+
+
 namespace touchcontrols
 {
-
 
 
 float GLScaleWidth = 400;
@@ -56,37 +62,55 @@ float GLESscaleY( float Y )
 }
 
 #ifdef USE_GLES2
-extern "C"
+
+static float glTranslateX, glTranslateY, glTranslateZ;
+
+static float glColorR, glColorG, glColorB, glColorA;
+void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+{
+    glColorR = r;
+    glColorG = g;
+    glColorB = b;
+    glColorA = a;
+}
+
+void gl_loadIdentity()
+{
+    glTranslateX = glTranslateY = glTranslateZ = 0;
+}
+
+void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
 {
 
-    float glTranslateX, glTranslateY, glTranslateZ;
-
-    float glColorR, glColorG, glColorB, glColorA;
-    void glColor4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
-    {
-        glColorR = r;
-        glColorG = g;
-        glColorB = b;
-        glColorA = a;
-    }
-
-    void glLoadIdentity()
-    {
-        glTranslateX = glTranslateY = glTranslateZ = 0;
-    }
-
-    void glScalef( GLfloat x, GLfloat y, GLfloat z )
-    {
-
-    }
-
-    void glTranslatef( GLfloat x, GLfloat y, GLfloat z )
-    {
-        glTranslateX += x;
-        glTranslateY -= y;
-        glTranslateZ += z;
-    }
 }
+
+void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
+{
+    glTranslateX += x;
+    glTranslateY -= y;
+    glTranslateZ += z;
+}
+
+void gl_disable (GLuint v)
+{
+    glDisable(v);
+}
+
+void gl_enable(GLuint v)
+{
+    glEnable(v);
+}
+
+void gl_scissor( GLint x, GLint y, GLint width, GLint height)
+{
+    glScissor(x, y, width, height);
+}
+
+void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+{
+    glClearColor(r, g, b, a);
+}
+
 
 float translateX( float X )
 {
@@ -249,6 +273,51 @@ void initGLES2()
     mColorLocColor               = glGetUniformLocation( mProgramObjectColor, "u_color" );
     mPositionTranslateLocColor   = glGetUniformLocation( mProgramObjectColor, "u_translate" );
 }
+
+#else //GLES1
+
+
+void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+{
+    glColor4f(r, g, b, a);
+}
+
+void gl_loadIdentity()
+{
+    glLoadIdentity();
+}
+
+void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
+{
+    glScalef(x, y, z);
+}
+
+void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
+{
+    glTranslatef(x, y, z);
+}
+
+void gl_disable (GLuint v)
+{
+    glDisable(v);
+}
+
+void gl_enable(GLuint v)
+{
+    glEnable(v);
+}
+
+void gl_scissor( GLint x, GLint y, GLint width, GLint height)
+{
+    glScissor(x, y, width, height);
+}
+
+void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+{
+    glClearColor(r, g, b, a);
+}
+
+
 #endif
 
 
@@ -338,7 +407,7 @@ void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, 
 {
     glUseProgram( mProgramObjectColor );
 
-    glColor4f( r, g, b, a );
+    gl_color4f( r, g, b, a );
 
 
     glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
@@ -357,7 +426,7 @@ void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, 
 
     glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 
-    glColor4f( 1, 1, 1, 1 );
+    gl_color4f( 1, 1, 1, 1 );
 }
 
 #else

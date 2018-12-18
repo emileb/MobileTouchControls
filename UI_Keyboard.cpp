@@ -327,7 +327,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
     glRect.resize( 1, 0.5 );
     gl_drawRect( 0, 0, 0, 0.8, 0, rowYPos, glRect );
 
-    glColor4f(1,1,1,0.8);
+    gl_color4f(1,1,1,0.8);
 
     for( int row = 0; row < 4; row++ )
     {
@@ -341,7 +341,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 // Draw key background
                 if( key == pressedKey ) //Make dark if pressed
                 {
-                    glColor4f( 0.5, 0.5, 0.5, 1 );
+                    gl_color4f( 0.5, 0.5, 0.5, 1 );
 
                     // Check if button is held down
                     if( key->keyAlt && getMS() > timeDown + 500 )
@@ -351,13 +351,13 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 }
                 else if( (row == selectedRow) && (n == selectedX) ) // Show selected gamepad key
                 {
-                     glColor4f( 0, 0, 1, 1 ); // Make very blue
+                     gl_color4f( 0, 0, 1, 1 ); // Make very blue
                 }
 
                 glRect.resize( key->width, rowHeight );
                 gl_drawRect( glKeyBg, rowXPos, rowYPos, glRect );
 
-                glColor4f(1,1,1,0.8);
+                gl_color4f(1,1,1,0.8);
 
                 // Check for custom image, otherwise use font
                 if( key->glPrim != 0 )
@@ -383,7 +383,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
         }
         rowYPos = rowYPos + rowHeight + rowGap;
     }
-    glColor4f(1,1,1,1);
+    gl_color4f(1,1,1,1);
 
     gl_setFixAspect( true );
 

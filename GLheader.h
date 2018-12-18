@@ -10,37 +10,12 @@
 #define GLheader_h
 
 
-#ifdef __ANDROID__
+typedef float        GLfloat;
+typedef unsigned int GLuint;
+typedef int          GLint;
 
-#ifdef USE_GLES2
-#include <GLES2/gl2.h>
-#else
-#include <GLES/gl.h>
-#endif
+#define GL_BLEND				0x0BE2
+#define GL_SCISSOR_TEST				0x0C11
 
-#endif
-
-
-
-#ifdef __IOS__
-
-
-#ifdef USE_GLES2
-#include "OpenGLES/ES2/gl.h"
-
-//These are emulated in OpenGLUtils
-void glColor4f(GLfloat r,GLfloat g,GLfloat b,GLfloat a);
-
-void glLoadIdentity();
-
-void glScalef(GLfloat x,GLfloat y,GLfloat z);
-
-void glTranslatef(GLfloat x,GLfloat y,GLfloat z);
-
-#else
-#include "OpenGLES/ES1/gl.h"
-#endif
 
 #endif
-
-#endif /* GLheader_h */
