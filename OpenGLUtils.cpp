@@ -1,5 +1,6 @@
 #include "OpenGLUtils.h"
 #include <map>
+#include <dlfcn.h>
 
 #ifdef USE_GLES2
 //#include <GLES2/gl2.h>
@@ -121,6 +122,96 @@ void (CODEGEN_FUNCPTR *_ptrc_glVertexAttribPointer)(GLuint index, GLint size, GL
 void (CODEGEN_FUNCPTR *_ptrc_glActiveTexture)(GLenum texture);
 #define glActiveTexture _ptrc_glActiveTexture
 
+
+static void *glesLib = NULL;
+
+static void* loadGlesFunc( const char * name )
+{
+    void * ret = NULL;
+	ret =  dlsym(glesLib, name);
+
+    if( !ret )
+    {
+        LOGTOUCH("Failed to load: %s", name);
+    }
+    else
+    {
+        LOGTOUCH("Loaded %s func OK", name);
+    }
+
+    return ret;
+}
+
+static void loadGles( int version )
+{
+    int flags = RTLD_LOCAL | RTLD_NOW;
+
+    if( version == 1 )
+    {
+        glesLib = dlopen("libGLESv1_CM.so", flags);
+        if( !glesLib )
+        {
+            glesLib = dlopen("libGLES_CM.so", flags);
+        }
+    }
+    else
+    {
+        glesLib = dlopen("libGLESv2_CM.so", flags);
+        if( !glesLib )
+        {
+            glesLib = dlopen("libGLESv2.so", flags);
+        }
+    }
+
+    if( glesLib )
+    {
+        // Common
+        _ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
+        _ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glDisable");
+        _ptrc_glEnable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glEnable");
+        _ptrc_glScissor = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glScissor");
+        _ptrc_glBindTexture = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint texture))loadGlesFunc("glBindTexture");
+        _ptrc_glDrawArrays = (void (CODEGEN_FUNCPTR *)(GLenum mode, GLint first, GLsizei count))loadGlesFunc("glDrawArrays");
+        _ptrc_glGenTextures = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * textures))loadGlesFunc("glGenTextures");
+        _ptrc_glTexImage2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels))loadGlesFunc("glTexImage2D");
+        _ptrc_glTexParameteri = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLint param))loadGlesFunc("glTexParameteri");
+
+       if( version == 1 )
+       {
+            _ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
+            _ptrc_glLoadIdentity = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glLoadIdentity");
+            _ptrc_glScalef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glScalef");
+            _ptrc_glTranslatef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glTranslatef");
+            _ptrc_glPushMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPushMatrix");
+            _ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
+            _ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
+            _ptrc_glPopMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPopMatrix");
+       }
+       else // GLES 2
+       {
+            _ptrc_glCreateShader = (GLuint (CODEGEN_FUNCPTR *)(GLenum type))loadGlesFunc("glCreateShader");
+            _ptrc_glShaderSource = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei count, const GLchar *const* string, const GLint * length))loadGlesFunc("glShaderSource");
+            _ptrc_glCompileShader = (void (CODEGEN_FUNCPTR *)(GLuint shader))loadGlesFunc("glCompileShader");
+            _ptrc_glGetShaderInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetShaderInfoLog");
+            _ptrc_glCreateProgram = (GLuint (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glCreateProgram");
+            _ptrc_glLinkProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glLinkProgram");
+            _ptrc_glGetAttribLocation = (GLint (CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetAttribLocation");
+            _ptrc_glGetShaderiv = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLenum pname, GLint * params))loadGlesFunc("glGetShaderiv");
+            _ptrc_glAttachShader = (void (CODEGEN_FUNCPTR *)(GLuint program, GLuint shader))loadGlesFunc("glAttachShader");
+            _ptrc_glGetUniformLocation = (GLint (CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetUniformLocation");
+            _ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
+            _ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
+            _ptrc_glUniform4f = (void (CODEGEN_FUNCPTR *)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3))loadGlesFunc("glUniform4f");
+            _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
+            _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
+            _ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
+       }
+    }
+    else
+    {
+        LOGTOUCH("FAILED TO LOAD GLES LIB");
+    }
+}
 
 namespace touchcontrols
 {
@@ -390,8 +481,6 @@ static int mColorLocColor;
 static int mPositionTranslateLocColor;
 
 
-static int gles2InitDone = 0;
-
 static void initGLES2()
 {
     // Load the shaders and get a linked program object
@@ -415,49 +504,6 @@ static void initGLES2()
 }
 
 
-
-#ifdef USE_GLES2
-void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
-{
-    //LOGTOUCH("gl_drawRect");
-    glUseProgram( mProgramObject );
-
-    glVertexAttribPointer( mPositionLoc, 3, GL_FLOAT,
-                           false,
-                           3 * 4, rect.vertices );
-
-	// I messed up the corrdinates for GLES so not the game as GLES2
-	GLfloat texVert[] =
-	{
-	    rect.texture[2],rect.texture[3], // TexCoord 0
-	    rect.texture[0],rect.texture[1], // TexCoord 1
-	    rect.texture[4],rect.texture[5], // TexCoord 2
-	    rect.texture[6],rect.texture[7] // TexCoord 3
-	};
-
-    glVertexAttribPointer( mTexCoordLoc, 2, GL_FLOAT,
-                           false,
-                           2 * 4,
-                           //mTexVertices );
-                           texVert);
-
-    glEnableVertexAttribArray( mPositionLoc );
-    glEnableVertexAttribArray( mTexCoordLoc );
-
-    // Bind the texture
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, texture );
-
-    // Set the sampler texture unit to 0
-    glUniform1i( mSamplerLoc, 0 );
-
-    glUniform4f( mPositionTranslateLoc,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-    glUniform4f( mColorLoc, glColorR, glColorG, glColorB, glColorA );
-
-    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-}
-
-#else
 void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 {
     if( texture == -1 )
@@ -465,123 +511,158 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
         return;
     }
 
-    glPushMatrix();
-
-    //LOGTOUCH("gl_drawRect %d",texture);
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
-    glTexCoordPointer( 2, GL_FLOAT, 0, rect.texture );
-
-
-    glTranslatef( x, -y, 0 );
-
-    if( fixAspect )
+    if( isGLES2 )
     {
-        float nominal = ( float )ScaleX / ( float )ScaleY;
-        float actual = GLScaleWidth / -GLScaleHeight;
+        glUseProgram( mProgramObject );
 
-        //printf("%f     %f\n",nominal,actual);
-        float yScale = actual / nominal;
+        glVertexAttribPointer( mPositionLoc, 3, GL_FLOAT,
+                               false,
+                               3 * 4, rect.vertices );
 
+        // I messed up the corrdinates for GLES so not the game as GLES2
+        GLfloat texVert[] =
+        {
+            rect.texture[2],rect.texture[3], // TexCoord 0
+            rect.texture[0],rect.texture[1], // TexCoord 1
+            rect.texture[4],rect.texture[5], // TexCoord 2
+            rect.texture[6],rect.texture[7] // TexCoord 3
+        };
 
-        glScalef( 1, yScale, 1 );
-        glTranslatef( 0, -( 1 - yScale ) * rect.height / 2, 0 );
+        glVertexAttribPointer( mTexCoordLoc, 2, GL_FLOAT,
+                               false,
+                               2 * 4,
+                               //mTexVertices );
+                               texVert);
+
+        glEnableVertexAttribArray( mPositionLoc );
+        glEnableVertexAttribArray( mTexCoordLoc );
+
+        // Bind the texture
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, texture );
+
+        // Set the sampler texture unit to 0
+        glUniform1i( mSamplerLoc, 0 );
+
+        glUniform4f( mPositionTranslateLoc,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
+        glUniform4f( mColorLoc, glColorR, glColorG, glColorB, glColorA );
+
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
     }
+    else
+    {
+        glPushMatrix();
+
+        //LOGTOUCH("gl_drawRect %d",texture);
+        glBindTexture( GL_TEXTURE_2D, texture );
+        glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
+        glTexCoordPointer( 2, GL_FLOAT, 0, rect.texture );
+
+        glTranslatef( x, -y, 0 );
+
+        if( fixAspect )
+        {
+            float nominal = ( float )ScaleX / ( float )ScaleY;
+            float actual = GLScaleWidth / -GLScaleHeight;
+
+            //printf("%f     %f\n",nominal,actual);
+            float yScale = actual / nominal;
 
 
-    glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+            glScalef( 1, yScale, 1 );
+            glTranslatef( 0, -( 1 - yScale ) * rect.height / 2, 0 );
+        }
 
-    glPopMatrix();
-    //Move back to original pos in case other rects to draw
-    //glTranslatef(-x, y*(1.2), 0);
+
+        glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+
+        glPopMatrix();
+    }
 }
-#endif
 
-#ifdef USE_GLES2
+
 void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
 {
-    glUseProgram( mProgramObjectColor );
+    if( isGLES2 )
+    {
+        glUseProgram( mProgramObjectColor );
 
-    gl_color4f( r, g, b, a );
-
-
-    glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
-                           false,
-                           3 * 4, rect.vertices );
+        gl_color4f( r, g, b, a );
 
 
-    glEnableVertexAttribArray( mPositionLocColor );
+        glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
+                               false,
+                               3 * 4, rect.vertices );
 
-    // Bind the texture
-    //glDeactiveTexture ( GL_TEXTURE0 );
+
+        glEnableVertexAttribArray( mPositionLocColor );
+
+        // Bind the texture
+        //glDeactiveTexture ( GL_TEXTURE0 );
 
 
-    glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-    glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
+        glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
+        glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
 
-    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 
-    gl_color4f( 1, 1, 1, 1 );
+        gl_color4f( 1, 1, 1, 1 );
+    }
+    else
+    {
+        glPushMatrix();
+
+        glDisable( GL_TEXTURE_2D );
+        glColor4f( r, g, b, a );
+
+        glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
+        glTranslatef( x, -y, 0 );
+        glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+
+        glColor4f( 1, 1, 1, 1 );
+        glEnable( GL_TEXTURE_2D );
+
+        glPopMatrix();
+    }
 }
 
-#else
-void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
-{
-    glPushMatrix();
-
-    glDisable( GL_TEXTURE_2D );
-    glColor4f( r, g, b, a );
-
-    glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
-    glTranslatef( x, -y, 0 );
-    glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-
-    glColor4f( 1, 1, 1, 1 );
-    glEnable( GL_TEXTURE_2D );
-
-    glPopMatrix();
-}
-#endif
-
-
-#ifdef USE_GLES2
 void gl_drawLines( float x, float y, GLLines &lines )
 {
-    glUseProgram( mProgramObjectColor );
+    if( isGLES2 )
+    {
+        glUseProgram( mProgramObjectColor );
 
-    glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
-                           false,
-                           3 * 4, lines.vertices );
+        glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
+                               false,
+                               3 * 4, lines.vertices );
 
 
 
-    glEnableVertexAttribArray( mPositionLocColor );
+        glEnableVertexAttribArray( mPositionLocColor );
 
-    // Bind the texture
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_2D, 0 );
+        // Bind the texture
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, 0 );
 
-    glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-    glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
+        glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
+        glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
 
-    glDrawArrays( GL_LINES, 0,  lines.len );
+        glDrawArrays( GL_LINES, 0,  lines.len );
+    }
+    else
+    {
+        glDisable( GL_TEXTURE_2D );
+
+        glVertexPointer( 3, GL_FLOAT, 0, lines.vertices );
+
+        glTranslatef( x, -y, 0 );
+
+        glDrawArrays( GL_LINES, 0, lines.len );
+
+        glEnable( GL_TEXTURE_2D );
+    }
 }
 
-#else
-void gl_drawLines( float x, float y, GLLines &lines )
-{
-
-    glDisable( GL_TEXTURE_2D );
-
-    glVertexPointer( 3, GL_FLOAT, 0, lines.vertices );
-
-    glTranslatef( x, -y, 0 );
-
-    glDrawArrays( GL_LINES, 0, lines.len );
-
-    glEnable( GL_TEXTURE_2D );
-}
-#endif
 
 
 #define GET_ALPHA_PIXEL( X, Y ) imageData[ (height - 1 - Y) * (width * 4) + (X * 4) + 0 ]
@@ -706,14 +787,19 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
 
     //LOGTOUCH( "Loading png: %s\n", filename.c_str() );
 
-#ifdef USE_GLES2
-    if( !gles2InitDone )
-    {
-        initGLES2();
-        gles2InitDone = 1;
-    }
-#endif
+    static bool initGlesDone = false;
 
+    if( !initGlesDone )
+    {
+
+        loadGles( isGLES2 ? 2 : 1 );
+
+        if( isGLES2 )
+        {
+            initGLES2();
+        }
+        initGlesDone = true;
+    }
     //Check if already loaded
     std::map<std::string, GLuint>::iterator it = glTextureCache.find( filename );
     if( it != glTextureCache.end() )
@@ -909,7 +995,5 @@ GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::v
     return texture;
 
 }
-
-
 
 }

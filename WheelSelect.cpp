@@ -193,21 +193,15 @@ bool WheelSelect::drawGL(bool forEditor)
 void WheelSelect::reset()
 {
 	id = -1;
-
-
 	doUpdate();
-
 }
 
 void WheelSelect::calcNewValue()
 {
-
-
 }
 
 void WheelSelect::doUpdate()
 {
-
 }
 
 void WheelSelect::saveXML(TiXmlDocument &doc)
