@@ -2,10 +2,124 @@
 #include <map>
 
 #ifdef USE_GLES2
-#include <GLES2/gl2.h>
+//#include <GLES2/gl2.h>
 #else
-#include <GLES/gl.h>
+//#include <GLES/gl.h>
 #endif
+
+#define CODEGEN_FUNCPTR
+
+
+#define GL_TRUE 1
+#define GL_INFO_LOG_LENGTH 0x8B84
+#define GL_COMPILE_STATUS 0x8B81
+#define GL_VERTEX_SHADER 0x8B31
+#define GL_FRAGMENT_SHADER 0x8B30
+
+
+// COMMON -------------------------------------------------
+void (CODEGEN_FUNCPTR *_ptrc_glClearColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+#define glClearColor _ptrc_glClearColor
+
+void (CODEGEN_FUNCPTR *_ptrc_glDisable)(GLenum cap);
+#define glDisable _ptrc_glDisable
+
+void (CODEGEN_FUNCPTR *_ptrc_glEnable)(GLenum cap);
+#define glEnable _ptrc_glEnable
+
+void (CODEGEN_FUNCPTR *_ptrc_glScissor)(GLint x, GLint y, GLsizei width, GLsizei height);
+#define glScissor _ptrc_glScissor
+
+void (CODEGEN_FUNCPTR *_ptrc_glBindTexture)(GLenum target, GLuint texture);
+#define glBindTexture _ptrc_glBindTexture
+
+void (CODEGEN_FUNCPTR *_ptrc_glDrawArrays)(GLenum mode, GLint first, GLsizei count);
+#define glDrawArrays _ptrc_glDrawArrays
+
+void (CODEGEN_FUNCPTR *_ptrc_glGenTextures)(GLsizei n, GLuint * textures);
+#define glGenTextures _ptrc_glGenTextures
+
+void (CODEGEN_FUNCPTR *_ptrc_glTexImage2D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels);
+#define glTexImage2D _ptrc_glTexImage2D
+
+void (CODEGEN_FUNCPTR *_ptrc_glTexParameteri)(GLenum target, GLenum pname, GLint param);
+#define glTexParameteri _ptrc_glTexParameteri
+
+// GLES1 -------------------------------------------------
+void (CODEGEN_FUNCPTR *_ptrc_glColor4f)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+#define glColor4f _ptrc_glColor4f
+
+void (CODEGEN_FUNCPTR *_ptrc_glLoadIdentity)(void);
+#define glLoadIdentity _ptrc_glLoadIdentity
+
+void (CODEGEN_FUNCPTR *_ptrc_glScalef)(GLfloat x, GLfloat y, GLfloat z);
+#define glScalef _ptrc_glScalef
+
+void (CODEGEN_FUNCPTR *_ptrc_glTranslatef)(GLfloat x, GLfloat y, GLfloat z);
+#define glTranslatef _ptrc_glTranslatef
+
+void (CODEGEN_FUNCPTR *_ptrc_glPushMatrix)(void);
+#define glPushMatrix _ptrc_glPushMatrix
+
+void (CODEGEN_FUNCPTR *_ptrc_glVertexPointer)(GLint size, GLenum type, GLsizei stride, const void * pointer);
+#define glVertexPointer _ptrc_glVertexPointer
+
+void (CODEGEN_FUNCPTR *_ptrc_glTexCoordPointer)(GLint size, GLenum type, GLsizei stride, const void * pointer);
+#define glTexCoordPointer _ptrc_glTexCoordPointer
+
+void (CODEGEN_FUNCPTR *_ptrc_glPopMatrix)(void);
+#define glPopMatrix _ptrc_glPopMatrix
+
+
+
+// GLES2 -------------------------------------------------
+GLuint (CODEGEN_FUNCPTR *_ptrc_glCreateShader)(GLenum type);
+#define glCreateShader _ptrc_glCreateShader
+
+void (CODEGEN_FUNCPTR *_ptrc_glShaderSource)(GLuint shader, GLsizei count, const GLchar *const* string, const GLint * length);
+#define glShaderSource _ptrc_glShaderSource
+
+void (CODEGEN_FUNCPTR *_ptrc_glCompileShader)(GLuint shader);
+#define glCompileShader _ptrc_glCompileShader
+
+void (CODEGEN_FUNCPTR *_ptrc_glGetShaderInfoLog)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog);
+#define glGetShaderInfoLog _ptrc_glGetShaderInfoLog
+
+GLuint (CODEGEN_FUNCPTR *_ptrc_glCreateProgram)(void);
+#define glCreateProgram _ptrc_glCreateProgram
+
+void (CODEGEN_FUNCPTR *_ptrc_glLinkProgram)(GLuint program);
+#define glLinkProgram _ptrc_glLinkProgram
+
+GLint (CODEGEN_FUNCPTR *_ptrc_glGetAttribLocation)(GLuint program, const GLchar * name);
+#define glGetAttribLocation _ptrc_glGetAttribLocation
+
+void (CODEGEN_FUNCPTR *_ptrc_glGetShaderiv)(GLuint shader, GLenum pname, GLint * params);
+#define glGetShaderiv _ptrc_glGetShaderiv
+
+void (CODEGEN_FUNCPTR *_ptrc_glAttachShader)(GLuint program, GLuint shader);
+#define glAttachShader _ptrc_glAttachShader
+
+GLint (CODEGEN_FUNCPTR *_ptrc_glGetUniformLocation)(GLuint program, const GLchar * name);
+#define glGetUniformLocation _ptrc_glGetUniformLocation
+
+void (CODEGEN_FUNCPTR *_ptrc_glUseProgram)(GLuint program);
+#define glUseProgram _ptrc_glUseProgram
+
+void (CODEGEN_FUNCPTR *_ptrc_glEnableVertexAttribArray)(GLuint index);
+#define glEnableVertexAttribArray _ptrc_glEnableVertexAttribArray
+
+void (CODEGEN_FUNCPTR *_ptrc_glUniform4f)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+#define glUniform4f _ptrc_glUniform4f
+
+void (CODEGEN_FUNCPTR *_ptrc_glUniform1i)(GLint location, GLint v0);
+#define glUniform1i _ptrc_glUniform1i
+
+void (CODEGEN_FUNCPTR *_ptrc_glVertexAttribPointer)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer);
+#define glVertexAttribPointer _ptrc_glVertexAttribPointer
+
+void (CODEGEN_FUNCPTR *_ptrc_glActiveTexture)(GLenum texture);
+#define glActiveTexture _ptrc_glActiveTexture
 
 
 namespace touchcontrols
@@ -61,34 +175,60 @@ float GLESscaleY( float Y )
         return Y;
 }
 
-#ifdef USE_GLES2
-
 static float glTranslateX, glTranslateY, glTranslateZ;
 
 static float glColorR, glColorG, glColorB, glColorA;
 void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
 {
-    glColorR = r;
-    glColorG = g;
-    glColorB = b;
-    glColorA = a;
+    if( isGLES2 )
+    {
+        glColorR = r;
+        glColorG = g;
+        glColorB = b;
+        glColorA = a;
+    }
+    else
+    {
+        glColor4f(r, g, b, a);
+    }
 }
 
 void gl_loadIdentity()
 {
-    glTranslateX = glTranslateY = glTranslateZ = 0;
+    if( isGLES2 )
+    {
+        glTranslateX = glTranslateY = glTranslateZ = 0;
+    }
+    else
+    {
+        glLoadIdentity();
+    }
 }
 
 void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
 {
+    if( isGLES2 )
+    {
 
+    }
+    else
+    {
+        glScalef(x, y, z);
+    }
 }
 
 void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
 {
-    glTranslateX += x;
-    glTranslateY -= y;
-    glTranslateZ += z;
+    if( isGLES2 )
+    {
+        glTranslateX += x;
+        glTranslateY -= y;
+        glTranslateZ += z;
+    }
+    else
+    {
+        glTranslatef(x, y, z);
+    }
 }
 
 void gl_disable (GLuint v)
@@ -252,7 +392,7 @@ static int mPositionTranslateLocColor;
 
 static int gles2InitDone = 0;
 
-void initGLES2()
+static void initGLES2()
 {
     // Load the shaders and get a linked program object
     mProgramObject = createProgram( vShaderStr, fShaderStr );
@@ -274,51 +414,6 @@ void initGLES2()
     mPositionTranslateLocColor   = glGetUniformLocation( mProgramObjectColor, "u_translate" );
 }
 
-#else //GLES1
-
-
-void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
-{
-    glColor4f(r, g, b, a);
-}
-
-void gl_loadIdentity()
-{
-    glLoadIdentity();
-}
-
-void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
-{
-    glScalef(x, y, z);
-}
-
-void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
-{
-    glTranslatef(x, y, z);
-}
-
-void gl_disable (GLuint v)
-{
-    glDisable(v);
-}
-
-void gl_enable(GLuint v)
-{
-    glEnable(v);
-}
-
-void gl_scissor( GLint x, GLint y, GLint width, GLint height)
-{
-    glScissor(x, y, width, height);
-}
-
-void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
-{
-    glClearColor(r, g, b, a);
-}
-
-
-#endif
 
 
 #ifdef USE_GLES2
