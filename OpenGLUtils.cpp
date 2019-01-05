@@ -222,7 +222,7 @@ float GLScaleHeight = -300;
 
 bool isGLES2 = false;
 
-static bool fixAspect = true;
+static bool m_fixAspect = true;
 
 void gl_setGLESVersion( int v )
 {
@@ -242,12 +242,12 @@ int  gl_getGLESVersion()
 
 void gl_setFixAspect( bool v )
 {
-    fixAspect = v;
+    m_fixAspect = v;
 }
 
 bool gl_getFixAspect()
 {
-    return fixAspect;
+    return m_fixAspect;
 }
 
 float GLESscaleX( float X )
@@ -560,7 +560,7 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 
         glTranslatef( x, -y, 0 );
 
-        if( fixAspect )
+        if( m_fixAspect )
         {
             float nominal = ( float )ScaleX / ( float )ScaleY;
             float actual = GLScaleWidth / -GLScaleHeight;
