@@ -30,6 +30,13 @@ int  gl_getGLESVersion();
 
 void gl_setGraphicsBasePath(std::string path);
 
+void gl_useGL4ES();
+
+void gl_resetGL4ES();
+
+void gl_startRender();
+void gl_endRender();
+
 float GLESscaleX(float X);
 float GLESscaleY(float Y);
 

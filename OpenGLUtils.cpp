@@ -122,8 +122,30 @@ void (CODEGEN_FUNCPTR *_ptrc_glVertexAttribPointer)(GLuint index, GLint size, GL
 void (CODEGEN_FUNCPTR *_ptrc_glActiveTexture)(GLenum texture);
 #define glActiveTexture _ptrc_glActiveTexture
 
+void (CODEGEN_FUNCPTR *_ptrc_glBindBuffer)(GLenum target, GLuint buffer);
+#define glBindBuffer _ptrc_glBindBuffer
+
+void (CODEGEN_FUNCPTR *_ptrc_glBindFramebuffer)(GLenum target, GLuint framebuffer);
+#define glBindFramebuffer _ptrc_glBindFramebuffer
+
+void (CODEGEN_FUNCPTR *_ptrc_glBlendFunc)(GLenum sfactor, GLenum dfactor);
+#define glBlendFunc _ptrc_glBlendFunc
+
+void (CODEGEN_FUNCPTR *_ptrc_glLoadMatrixf)(const GLfloat * m);
+#define glLoadMatrixf _ptrc_glLoadMatrixf
+
+void (CODEGEN_FUNCPTR *_ptrc_glMatrixMode)(GLenum mode);
+#define glMatrixMode _ptrc_glMatrixMode
+
+void (CODEGEN_FUNCPTR *_ptrc_glGetFloatv)(GLenum pname, GLfloat * data);
+#define glGetFloatv _ptrc_glGetFloatv
+
+void (CODEGEN_FUNCPTR *_ptrc_glGetIntegerv)(GLenum pname, GLint * data);
+#define glGetIntegerv _ptrc_glGetIntegerv
 
 static void *glesLib = NULL;
+
+static bool useGL4ES = false;
 
 static void* loadGlesFunc( const char * name )
 {
@@ -146,7 +168,11 @@ static void loadGles( int version )
 {
     int flags = RTLD_LOCAL | RTLD_NOW;
 
-    if( version == 1 )
+    if( useGL4ES )
+    {
+        glesLib = dlopen("libGL4ES.so", flags);
+    }
+    else if( version == 1 )
     {
         glesLib = dlopen("libGLESv1_CM.so", flags);
         if( !glesLib )
@@ -157,6 +183,7 @@ static void loadGles( int version )
     else
     {
         glesLib = dlopen("libGLESv2_CM.so", flags);
+        //glesLib = dlopen("libGLESv3.so", flags);
         if( !glesLib )
         {
             glesLib = dlopen("libGLESv2.so", flags);
@@ -176,6 +203,11 @@ static void loadGles( int version )
         _ptrc_glTexImage2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels))loadGlesFunc("glTexImage2D");
         _ptrc_glTexParameteri = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLint param))loadGlesFunc("glTexParameteri");
 
+
+        _ptrc_glBindBuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint buffer))loadGlesFunc("glBindBuffer");
+        _ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
+        _ptrc_glBlendFunc = (void (CODEGEN_FUNCPTR *)(GLenum sfactor, GLenum dfactor))loadGlesFunc("glBlendFunc");
+
        if( version == 1 )
        {
             _ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
@@ -186,6 +218,10 @@ static void loadGles( int version )
             _ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
             _ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
             _ptrc_glPopMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPopMatrix");
+            _ptrc_glLoadMatrixf =  (void (CODEGEN_FUNCPTR *)(const GLfloat * m))loadGlesFunc("glLoadMatrixf");
+            _ptrc_glMatrixMode = (void (CODEGEN_FUNCPTR *)(GLenum mode))loadGlesFunc("glMatrixMode");
+            _ptrc_glGetFloatv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLfloat * data))loadGlesFunc("glGetFloatv");
+            _ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLint * data))loadGlesFunc("glGetIntegerv");
        }
        else // GLES 2
        {
@@ -205,6 +241,7 @@ static void loadGles( int version )
             _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
             _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
             _ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
+
        }
     }
     else
@@ -220,9 +257,12 @@ namespace touchcontrols
 float GLScaleWidth = 400;
 float GLScaleHeight = -300;
 
-bool isGLES2 = false;
+static bool isGLES2 = false;
 
 static bool m_fixAspect = true;
+
+static int mCurrentProgram = -1;
+
 
 void gl_setGLESVersion( int v )
 {
@@ -411,10 +451,72 @@ int loadShader( int shaderType, const char * source )
                 LOGTOUCH( "ERROR compiling shader\n" );
             }
         }
-
-
+    }
+    else
+    {
+        LOGTOUCH( "FAILED to create shader");
     }
     return shader;
+}
+
+void gl_useGL4ES()
+{
+    useGL4ES = true;
+}
+
+void gl_resetGL4ES()
+{
+    glUseProgram( 0 );
+}
+
+
+static GLint     matrixMode;
+static GLfloat   projection[16];
+static GLfloat   model[16];
+
+void gl_startRender()
+{
+#define GL_ARRAY_BUFFER                   0x8892
+#define GL_ELEMENT_ARRAY_BUFFER           0x8893
+#define GL_FRAMEBUFFER                    0x8D40
+#define GL_RENDERBUFFER                   0x8D41
+#define GL_SRC_ALPHA                      0x0302
+#define GL_ONE_MINUS_SRC_ALPHA                           0x0303
+#define GL_MATRIX_MODE				0x0BA0
+#define GL_MODELVIEW				0x1700
+#define GL_PROJECTION				0x1701
+#define GL_MODELVIEW_MATRIX               0x0BA6
+#define GL_PROJECTION_MATRIX              0x0BA7
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    if( gl_getGLESVersion() == 1 )
+    {
+        glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+        glGetFloatv(GL_PROJECTION_MATRIX, projection);
+        glGetFloatv(GL_MODELVIEW_MATRIX, model);
+    }
+
+    mCurrentProgram = -1;
+
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    //glEnable (GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_TEXTURE_2D);
+}
+
+void gl_endRender()
+{
+    if( gl_getGLESVersion() == 1 )
+    {
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(model);
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(projection);
+        glMatrixMode(matrixMode);
+    }
 }
 
 int createProgram( const char * vertexSource, const char *  fragmentSource )
@@ -442,6 +544,10 @@ int createProgram( const char * vertexSource, const char *  fragmentSource )
          */
 
     }
+    else
+    {
+        LOGTOUCH("FAILED to create program");
+    }
     return program;
 }
 
@@ -464,6 +570,8 @@ GLfloat mTexVertices[] =
 // Handle to a program object
 static int mProgramObject;
 static int mProgramObjectColor;
+
+
 
 // Attribute locations
 static int mPositionLoc;
@@ -503,6 +611,14 @@ static void initGLES2()
     mPositionTranslateLocColor   = glGetUniformLocation( mProgramObjectColor, "u_translate" );
 }
 
+static void gl_useProgram( int prog )
+{
+    if( prog != mCurrentProgram )
+    {
+        mCurrentProgram = prog;
+        glUseProgram( mProgramObject );
+    }
+}
 
 void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 {
@@ -513,7 +629,11 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 
     if( isGLES2 )
     {
-        glUseProgram( mProgramObject );
+        // Bind the texture
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, texture );
+
+        gl_useProgram( mProgramObject );
 
         glVertexAttribPointer( mPositionLoc, 3, GL_FLOAT,
                                false,
@@ -537,9 +657,6 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
         glEnableVertexAttribArray( mPositionLoc );
         glEnableVertexAttribArray( mTexCoordLoc );
 
-        // Bind the texture
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, texture );
 
         // Set the sampler texture unit to 0
         glUniform1i( mSamplerLoc, 0 );
@@ -585,7 +702,7 @@ void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, 
 {
     if( isGLES2 )
     {
-        glUseProgram( mProgramObjectColor );
+        gl_useProgram( mProgramObjectColor );
 
         gl_color4f( r, g, b, a );
 
@@ -630,7 +747,7 @@ void gl_drawLines( float x, float y, GLLines &lines )
 {
     if( isGLES2 )
     {
-        glUseProgram( mProgramObjectColor );
+        gl_useProgram( mProgramObjectColor );
 
         glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
                                false,
