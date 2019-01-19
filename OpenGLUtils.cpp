@@ -616,7 +616,7 @@ static void gl_useProgram( int prog )
     if( prog != mCurrentProgram )
     {
         mCurrentProgram = prog;
-        glUseProgram( mProgramObject );
+        glUseProgram( mCurrentProgram );
     }
 }
 
