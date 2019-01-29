@@ -487,9 +487,14 @@ void gl_startRender()
 #define GL_PROJECTION				0x1701
 #define GL_MODELVIEW_MATRIX               0x0BA6
 #define GL_PROJECTION_MATRIX              0x0BA7
+#define GL_ALPHA_TEST                     0x0BC0
+#define GL_DEPTH_TEST                     0x0B71
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable (GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
 
     if( gl_getGLESVersion() == 1 )
     {
@@ -497,7 +502,10 @@ void gl_startRender()
         glGetFloatv(GL_PROJECTION_MATRIX, projection);
         glGetFloatv(GL_MODELVIEW_MATRIX, model);
     }
-
+    else if( gl_getGLESVersion() == 2 )
+    {
+        //glActiveTexture(GL_TEXTURE0);
+    }
     mCurrentProgram = -1;
 
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
