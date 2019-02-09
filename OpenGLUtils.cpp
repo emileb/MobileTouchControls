@@ -494,13 +494,13 @@ void gl_startRender()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable (GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
 
     if( gl_getGLESVersion() == 1 )
     {
         glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
         glGetFloatv(GL_PROJECTION_MATRIX, projection);
         glGetFloatv(GL_MODELVIEW_MATRIX, model);
+        glEnable(GL_TEXTURE_2D);
     }
     else if( gl_getGLESVersion() == 2 )
     {
