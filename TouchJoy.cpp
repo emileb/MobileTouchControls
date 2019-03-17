@@ -166,6 +166,10 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
                         LOGTOUCH("SWAPFIX");
                         otherTouchJoySWAPFIX->processPointer( P_UP, tpid, x, y ); // Force finger up on the other one
                         //processPointer( P_DOWN, tpid, x, y ); // ALSO give the pointer to this one. Acctually don't do this, confusing movment otherwise
+                        // Changed, actually DO take PID, but filter first few samples
+                        pid = tpid;
+                        glitchFix = 3; // Still swapping, so try to ignore the next few
+
                         return true;
                     }
                 }
@@ -219,9 +223,9 @@ void TouchJoy::calcNewValue()
 {
 	float dx = last.x - fingerPos.x;
 	float dy = last.y - fingerPos.y;
-
+    //LOGTOUCH("%s %f  %f   %f %f",tag.c_str(),fingerPos.x,fingerPos.y,dx,dy);
     // SWAPFIX. Filter out very fast movments when a swap occurs
-    if(( abs(dx) > 0.1 ) || ( abs(dy) > 0.1 ))
+    if(( abs(dx) > 0.09 ) || ( abs(dy) > 0.09 ))
     {
         dx = 0;
         dy = 0;
@@ -230,15 +234,16 @@ void TouchJoy::calcNewValue()
 
 	valueTouch.x = dx;
 	valueTouch.y = dy;
+
 	last.x =  fingerPos.x;
 	last.y = fingerPos.y;
 
-
-
 	dx = anchor.x - fingerPos.x;
 	dy = anchor.y - fingerPos.y;
+
 	valueJoy.x = dx;
 	valueJoy.y = dy;
+
 	if (valueJoy.x > 1)
 		valueJoy.x = 1;
 	else if (valueJoy.x < -1)

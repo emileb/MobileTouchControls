@@ -93,7 +93,7 @@ bool TouchControlsContainer::gamepadInput(bool down, GamePadKey key)
 
 bool TouchControlsContainer::processPointer(int action, int pid, float x, float y)
 {
-
+    //LOGTOUCH("%d  %d  %f  %f",action,pid,x,y);
     // Check if the UI is active
     if( uiControls != NULL )
 	{
