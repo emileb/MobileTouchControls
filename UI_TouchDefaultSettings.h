@@ -23,6 +23,7 @@ namespace touchcontrols
   		bool autoHideNumbers;
 		bool weaponWheelEnabled;
         bool fixedMoveStick;
+        bool precisionShoot;
 
         uint32_t dblTapLeft;
         uint32_t dblTapRight;

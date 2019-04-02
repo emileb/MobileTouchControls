@@ -489,11 +489,12 @@ void gl_startRender()
 #define GL_PROJECTION_MATRIX              0x0BA7
 #define GL_ALPHA_TEST                     0x0BC0
 #define GL_DEPTH_TEST                     0x0B71
-
+#define GL_CULL_FACE                      0x0B44
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable (GL_BLEND);
+    glDisable (GL_CULL_FACE);
 
     if( gl_getGLESVersion() == 1 )
     {
