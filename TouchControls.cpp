@@ -1,4 +1,4 @@
- #include "GLheader.h"
+ #include "GLheader_TC.h"
 
 #include "TouchControls.h"
 #include <math.h>

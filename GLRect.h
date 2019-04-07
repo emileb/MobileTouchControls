@@ -1,4 +1,4 @@
-#include "GLheader.h"
+#include "GLheader_TC.h"
 
 #ifndef _GLRect_H_
 #define _GLRect_H_

@@ -1,4 +1,4 @@
-#include "GLheader.h"
+#include "GLheader_TC.h"
 
 #ifndef _GLLines_H_
 #define _GLLines_H_

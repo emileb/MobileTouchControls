@@ -70,6 +70,6 @@ LOCAL_SRC_FILES:= $(TC_LOCAL_SRC_FILES)
 LOCAL_LDLIBS := -lGLESv2 -ldl -llog -landroid
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY) //DONT BUILD
 
 endif
