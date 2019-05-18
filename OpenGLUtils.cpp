@@ -46,6 +46,12 @@ void (CODEGEN_FUNCPTR *_ptrc_glTexImage2D)(GLenum target, GLint level, GLint int
 void (CODEGEN_FUNCPTR *_ptrc_glTexParameteri)(GLenum target, GLenum pname, GLint param);
 #define glTexParameteri _ptrc_glTexParameteri
 
+void (CODEGEN_FUNCPTR *_ptrc_glDepthMask)(GLboolean flag);
+#define glDepthMask _ptrc_glDepthMask
+
+void (CODEGEN_FUNCPTR *_ptrc_glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
+#define glViewport _ptrc_glViewport
+
 // GLES1 -------------------------------------------------
 void (CODEGEN_FUNCPTR *_ptrc_glColor4f)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #define glColor4f _ptrc_glColor4f
@@ -167,6 +173,7 @@ static void* loadGlesFunc( const char * name )
 static void loadGles( int version )
 {
     int flags = RTLD_LOCAL | RTLD_NOW;
+	//int flags = RTLD_NOLOAD | RTLD_GLOBAL;
 
     if( useGL4ES )
     {
@@ -208,6 +215,10 @@ static void loadGles( int version )
         _ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
         _ptrc_glBlendFunc = (void (CODEGEN_FUNCPTR *)(GLenum sfactor, GLenum dfactor))loadGlesFunc("glBlendFunc");
 
+		_ptrc_glDepthMask = (void (CODEGEN_FUNCPTR *)(GLboolean))loadGlesFunc("glDepthMask");
+		_ptrc_glViewport = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glViewport");
+
+
        if( version == 1 )
        {
             _ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
@@ -241,7 +252,6 @@ static void loadGles( int version )
             _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
             _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
             _ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
-
        }
     }
     else
