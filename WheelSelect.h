@@ -26,7 +26,6 @@ class WheelSelect : public ControlSuper
     GLRect glRect;
     GLRect glRectFade;
 
-
     PointF last;
     PointF fingerPos;
     PointF anchor;

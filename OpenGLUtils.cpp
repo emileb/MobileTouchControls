@@ -149,6 +149,18 @@ void (CODEGEN_FUNCPTR *_ptrc_glGetFloatv)(GLenum pname, GLfloat * data);
 void (CODEGEN_FUNCPTR *_ptrc_glGetIntegerv)(GLenum pname, GLint * data);
 #define glGetIntegerv _ptrc_glGetIntegerv
 
+void (CODEGEN_FUNCPTR *_ptrc_glGetProgramiv)(GLuint program, GLenum pname, GLint * params);
+#define glGetProgramiv _ptrc_glGetProgramiv
+
+void (CODEGEN_FUNCPTR *_ptrc_glGetProgramInfoLog)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog);
+#define glGetProgramInfoLog _ptrc_glGetProgramInfoLog
+
+void (CODEGEN_FUNCPTR *_ptrc_glBindSampler)(GLuint unit, GLuint sampler);
+#define glBindSampler _ptrc_glBindSampler
+
+void (CODEGEN_FUNCPTR *_ptrc_glBindVertexArray)(GLuint ren_array);
+#define glBindVertexArray _ptrc_glBindVertexArray
+
 static void *glesLib = NULL;
 
 static bool useGL4ES = false;
@@ -252,6 +264,13 @@ static void loadGles( int version )
             _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
             _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
             _ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
+
+            _ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
+            _ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");;
+            _ptrc_glBindSampler = (void (CODEGEN_FUNCPTR *)(GLuint unit, GLuint sampler))loadGlesFunc("glBindSampler");
+
+            _ptrc_glBindVertexArray = (void (CODEGEN_FUNCPTR *)(GLuint ren_array))loadGlesFunc("glBindVertexArray");;
+
        }
     }
     else
@@ -267,6 +286,8 @@ namespace touchcontrols
 float GLScaleWidth = 400;
 float GLScaleHeight = -300;
 
+static int glesVersion = 1;
+
 static bool isGLES2 = false;
 
 static bool m_fixAspect = true;
@@ -276,7 +297,8 @@ static int mCurrentProgram = -1;
 
 void gl_setGLESVersion( int v )
 {
-    if( v == 2 )
+    glesVersion = v;
+    if( v >= 2 )
         isGLES2 = true;
     else
         isGLES2 = false;
@@ -284,10 +306,7 @@ void gl_setGLESVersion( int v )
 
 int  gl_getGLESVersion()
 {
-    if( isGLES2 )
-        return 2;
-    else
-        return 1;
+    return glesVersion;
 }
 
 void gl_setFixAspect( bool v )
@@ -488,6 +507,7 @@ void gl_startRender()
 {
 #define GL_ARRAY_BUFFER                   0x8892
 #define GL_ELEMENT_ARRAY_BUFFER           0x8893
+#define GL_UNIFORM_BUFFER                 0x8A11
 #define GL_FRAMEBUFFER                    0x8D40
 #define GL_RENDERBUFFER                   0x8D41
 #define GL_SRC_ALPHA                      0x0302
@@ -500,6 +520,10 @@ void gl_startRender()
 #define GL_ALPHA_TEST                     0x0BC0
 #define GL_DEPTH_TEST                     0x0B71
 #define GL_CULL_FACE                      0x0B44
+
+#define GL_DRAW_FRAMEBUFFER 0x8CA9
+#define GL_READ_FRAMEBUFFER 0x8CA8
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -515,11 +539,27 @@ void gl_startRender()
     }
     else if( gl_getGLESVersion() == 2 )
     {
-        //glActiveTexture(GL_TEXTURE0);
+        glActiveTexture( GL_TEXTURE0 );
+       /*
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindSampler(0,0);
+        glBindVertexArray(0);
+        */
+    }
+    else if( gl_getGLESVersion() == 3 )
+    {
+        glViewport(0,0,GLScaleWidth,-GLScaleHeight);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindSampler(0,0);
+        glBindVertexArray(0);
     }
     mCurrentProgram = -1;
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     //glEnable (GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -551,22 +591,25 @@ int createProgram( const char * vertexSource, const char *  fragmentSource )
         glAttachShader( program, pixelShader );
         // checkGlError("glAttachShader");
         glLinkProgram( program );
-        /*
-        int[] linkStatus = new int[1];
-        glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-        if (linkStatus[0] != GLES20.GL_TRUE) {
-            LOGE("Could not link program: ");
-            LOGE(glGetProgramInfoLog(program));
-            glDeleteProgram(program);
+#define GL_LINK_STATUS 0x8B82
+        int linkStatus[1];
+        glGetProgramiv(program, GL_LINK_STATUS, linkStatus);
+        if (linkStatus[0] != GL_TRUE) {
+            LOGTOUCH("Could not link program: ");
+            char log[256];
+            GLsizei size;
+            glGetProgramInfoLog(program,256,&size,log);
+            LOGTOUCH("Log: %s",log);
+            //glDeleteProgram(program);
             program = 0;
         }
-         */
 
     }
     else
     {
         LOGTOUCH("FAILED to create program");
     }
+    LOGTOUCH("Program linked OK %d", program);
     return program;
 }
 
@@ -649,7 +692,6 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
     if( isGLES2 )
     {
         // Bind the texture
-        glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, texture );
 
         gl_useProgram( mProgramObject );
@@ -703,7 +745,6 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 
             //printf("%f     %f\n",nominal,actual);
             float yScale = actual / nominal;
-
 
             glScalef( 1, yScale, 1 );
             glTranslatef( 0, -( 1 - yScale ) * rect.height / 2, 0 );

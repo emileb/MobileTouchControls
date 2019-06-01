@@ -27,7 +27,7 @@ void GLRect::resize(float w, float h) {
 	width = w;
 	height = h;
 
-    if( gl_getGLESVersion() == 2 )
+    if( gl_getGLESVersion() >= 2 )
 	    vertices[4] = GLESscaleY(-height);
     else
         vertices[1] = GLESscaleY(-height);
