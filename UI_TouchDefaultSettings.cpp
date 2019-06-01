@@ -14,6 +14,8 @@ namespace touchcontrols
 #define SLIDER_MOVE  12
 #define SLIDER_TURN  13
 
+#define SLIDER_PRECISION  14
+
 #define SWITCH_INVERT_LOOK   20
 #define SWITCH_JOYSTICKS     22
 #define SWITCH_JOYSTICK_MODE 23
@@ -55,6 +57,7 @@ static void saveSettings ( std::string filename )
     root->SetDoubleAttribute ( "look_sens", settings.lookSensitivity );
     root->SetDoubleAttribute ( "turn_sens", settings.turnSensitivity );
     root->SetDoubleAttribute ( "move_sens", settings.moveSensitivity );
+    root->SetDoubleAttribute ( "precision_sens", settings.precisionSenitivity );
 
     root->SetAttribute( "dbl_tap_left", settings.dblTapLeft );
     root->SetAttribute( "dbl_tap_right", settings.dblTapRight );
@@ -91,6 +94,7 @@ static void loadSettings ( std::string filename )
     root->QueryFloatAttribute ( "look_sens",  &settings.lookSensitivity );
     root->QueryFloatAttribute ( "turn_sens",  &settings.turnSensitivity );
     root->QueryFloatAttribute ( "move_sens",  &settings.moveSensitivity );
+    root->QueryFloatAttribute ( "precision_sens",  &settings.precisionSenitivity );
 
     root->QueryUnsignedAttribute( "dbl_tap_left",  &settings.dblTapLeft );
     root->QueryUnsignedAttribute( "dbl_tap_right",  &settings.dblTapRight );
@@ -111,6 +115,8 @@ static void resetDefaults()
     settings.autoHideNumbers = true;
     settings.weaponWheelEnabled = true;
     settings.fixedMoveStick = false;
+    settings.precisionShoot =false;
+    settings.precisionSenitivity = 0.3;
 
     settings.dblTapLeft = 0;
     settings.dblTapRight = 0;
@@ -135,6 +141,7 @@ static void applyControlValues()
 		((UI_Switch *)rootControls->getControl("show_joy_sticks"))->setValue( settings.showJoysticks );
 
         ((UI_Switch *)rootControls->getControl("precision_shoot"))->setValue( settings.precisionShoot );
+	    ((UI_Slider *)rootControls->getControl("slider_precision"))->setValue( (settings.precisionSenitivity - 0.2f) / 0.5f );
 
 		((UI_DropDown *)rootControls->getControl("dbl_tap_left"))->setSelected( settings.dblTapLeft );
 		((UI_DropDown *)rootControls->getControl("dbl_tap_right"))->setSelected( settings.dblTapRight );
@@ -181,6 +188,10 @@ static void sliderChange ( uint32_t uid, float value )
     else if( uid == SLIDER_MOVE )
     {
         settings.moveSensitivity = value * 2;
+    }
+    else if( uid == SLIDER_PRECISION )
+    {
+        settings.precisionSenitivity =  0.2 + (value * 0.5);
     }
 }
 
@@ -248,8 +259,6 @@ sigc::signal<void, tTouchSettings> *getSettingsSignal()
 {
     return &signal_settingChange;
 }
-
-
 
 
 UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string settingsFile )
@@ -329,17 +338,21 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look mode:", textSize ) );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look:", textSize ) );
         swtch =      new UI_Switch ( "joystick_look_switch",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off" );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
 
         y += 2;
 
-        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( 13, y, 21, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Precision shoot:", textSize ) );
-        swtch =      new UI_Switch ( "precision_shoot",  touchcontrols::RectF ( 21, y+0.2, 24, y+1.8 ), SWITCH_PRECISION_SHOOT, "ui_switch2_on", "ui_switch2_off" );
+        rootControls->addControl ( new UI_TextBox ( "text",   touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Precision shoot:", textSize ) );
+        swtch =      new UI_Switch ( "precision_shoot",  touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), SWITCH_PRECISION_SHOOT, "ui_switch2_on", "ui_switch2_off" );
         swtch->signal.connect(sigc::ptr_fun ( &switchChange) );
         rootControls->addControl ( swtch );
+
+        slider =   new UI_Slider ( "slider_precision",  touchcontrols::RectF ( 13, y, windowRight - 1, y+2 ), SLIDER_PRECISION, "ui_slider_bg1", "ui_slider_handle" );
+        slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
+        rootControls->addControl ( slider );
 
         y += 2;
 

@@ -16,6 +16,8 @@ namespace touchcontrols
         float turnSensitivity;
         float moveSensitivity;
 
+        float precisionSenitivity;
+
         bool  invertLook;
         bool showJoysticks;
         bool joystickLookMode;
