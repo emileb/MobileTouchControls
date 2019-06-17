@@ -6,6 +6,7 @@
 #include <time.h>
 #include <inttypes.h>
 #include <math.h>
+#include "sigc++/sigc++.h"
 
 #ifdef __ANDROID__
 #include <android/log.h>
@@ -22,6 +23,8 @@
 #define P_UP   2
 #define P_MOVE 3
 #define P_ALLUP 4
+
+#define SHORT_VIBRATE 10
 
 namespace touchcontrols
 {
@@ -44,6 +47,9 @@ namespace touchcontrols
         }
         return (s * 1000ull) + ms;
     }
+
+    extern sigc::signal<void,int> signal_vibrate;
+
 }
 
 

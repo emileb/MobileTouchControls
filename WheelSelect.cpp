@@ -44,10 +44,9 @@ void WheelSelect::setSegmentEnabled(int seg, bool v)
 
 void WheelSelect::updateSize()
 {
-
 	glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
-
 	glRectFade.resize(glRect.width/5,glRect.height/5);
+	glRectSelected.resize(0.1,0.16);
 
 	centre.x = controlPos.left + (controlPos.right - controlPos.left)/2;
 	centre.y = controlPos.top + (controlPos.bottom - controlPos.top)/2;
@@ -100,7 +99,6 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 	{
 		if (id == pid)
 		{
-
 			signal_selected.emit(selectedSeg);
 			signal_enabled.emit(0);
 
@@ -128,13 +126,18 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 
 			angle += PI/2;
 
-
 			if (angle < 0)
 				angle = (2*PI) + angle;
 
 			if (distCentre(x,y) > CENTRE_SIZE) //Only update if moved out of circle
 			{
-				selectedSeg =  angle * nbrSegs/(2*PI) ;
+				int selectedSegNew = angle * nbrSegs/(2*PI) ;
+				if( selectedSeg != selectedSegNew )
+				{
+				    signal_vibrate.emit(SHORT_VIBRATE);
+				    selectedSeg = selectedSegNew;
+				}
+
 				signal_scroll.emit(selectedSeg);
 			}
 			return true;
@@ -151,7 +154,9 @@ bool WheelSelect::initGL()
 	glTex = loadTextureFromPNG(image,x,y);
 
 	glTexFade  = loadTextureFromPNG("red_cross",x,y);
-    
+
+    glTexSelected = loadTextureFromPNG("weapon_wheel_select",x,y);
+
     return true;
 }
 
@@ -160,32 +165,38 @@ bool WheelSelect::drawGL(bool forEditor)
 	if ((id != -1) || forEditor)
 		gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
-	if (useFadeSegs)
-	{
-		if ((id != -1))
-		{
 
-			float ang = 360/nbrSegs/2;
+    if ((id != -1) && useFadeSegs)
+    {
+        float ang = 360.0/nbrSegs/2;
 
-			for (int n=0;n<nbrSegs;n++)
-			{
-				//Work out presuming square
-				float h_len = (glRect.height/2) * 0.7;
+        for (int n=0;n<nbrSegs;n++)
+        {
+            //Work out presuming square
+            float h_len = (glRect.height/2) * 0.7;
+            float a = cos(ang * PI / 180.0 ) * h_len;
+            float o = sin(ang * PI / 180.0 ) * h_len;
+            //Now scale as prob not square..
+            o = o * (glRect.width/glRect.height);
 
-				float a = cos(ang * PI / 180.0 ) * h_len;
+            if (!(enabledSegs & 1<<n))
+                gl_drawRect(glTexFade,centre.x + o - glRectFade.width/2 ,centre.y - a -glRectFade.height/2 ,glRectFade);
 
-				float o = sin(ang * PI / 180.0 ) * h_len;
+            ang += 360.0/nbrSegs;
+        }
+    }
 
-				//Now scale as prob not square..
-				o = o * (glRect.width/glRect.height);
-				if (!(enabledSegs & 1<<n))
-					gl_drawRect(glTexFade,centre.x + o - glRectFade.width/2 ,centre.y - a -glRectFade.height/2 ,glRectFade);
+    if((id != -1) && (selectedSeg != -1))
+    {
+        float ang = (360.0/nbrSegs/2) + (360.0/nbrSegs * selectedSeg);
+        float h_len = (glRect.height/2) * 0.5;
+        float a = cos(ang * PI / 180.0 ) * h_len;
+        float o = sin(ang * PI / 180.0 ) * h_len;
+            o = o * (glRect.width/glRect.height);
 
-				ang += 360/nbrSegs;
-			}
-		}
-	}
-    
+        gl_drawRect(glTexSelected,centre.x + o - glRectSelected.width/2 ,centre.y - a - glRectSelected.height/2 ,glRectSelected);
+    }
+
     return false;
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
 }

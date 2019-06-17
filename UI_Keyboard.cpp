@@ -126,6 +126,9 @@ void UI_Keyboard::keyUp()
 	        else
 	            signal.emit( shiftKey(pressedKey->keyPrim) );
 		}
+
+		signal_vibrate.emit(SHORT_VIBRATE);
+
         pressedKey = NULL;
     }
 }

@@ -3,6 +3,14 @@
 #include <android/log.h>
 
 #include "TouchControlsContainer.h"
+
+
+namespace touchcontrols
+{
+    sigc::signal<void,int> signal_vibrate;
+}
+
+
 extern "C"
 {
 
@@ -11,6 +19,7 @@ extern "C"
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"JNITouchControlsUtils", __VA_ARGS__))
 
 //static JNIEnv* jni_env_UI = 0;
+
 
 static JavaVM* jvm;
 

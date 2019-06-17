@@ -22,9 +22,11 @@ class WheelSelect : public ControlSuper
 
     GLuint glTex;
     GLuint glTexFade;
+    GLuint glTexSelected;
 
     GLRect glRect;
     GLRect glRectFade;
+    GLRect glRectSelected;
 
     PointF last;
     PointF fingerPos;

@@ -43,7 +43,6 @@ public:
 	float alpha;
 	std::string tag;
 	bool enabled;
-
 };
 
 

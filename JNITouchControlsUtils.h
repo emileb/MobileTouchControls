@@ -17,7 +17,6 @@ void showCustomCommands();
 void showTouchSettings();
 void showEditButtons();
 
-
 void toggleKeyboard();
 void showKeyboard(int val);
 
