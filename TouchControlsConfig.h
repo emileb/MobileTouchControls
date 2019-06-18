@@ -24,7 +24,7 @@
 #define P_MOVE 3
 #define P_ALLUP 4
 
-#define SHORT_VIBRATE 10
+#define SHORT_VIBRATE 50
 
 namespace touchcontrols
 {
