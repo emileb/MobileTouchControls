@@ -56,6 +56,8 @@ public:
 
     bool processPointer ( int action, int pid, float x, float y );
 
+    bool processGamepad ( float x, float y );
+
     bool drawGL ( bool forEditor = false );
 
     bool initGL();

@@ -148,6 +148,38 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
     return false;
 }
 
+bool WheelSelect::processGamepad ( float x, float y )
+{
+	float a = x;
+    float o = y;
+
+    float angle = atan2(o,a);
+
+    angle += PI/2;
+
+    if (angle < 0)
+        angle = (2*PI) + angle;
+
+    float dist = x*x + y*y;
+	dist = sqrt(dist);
+
+    if (dist > 0.1)
+    {
+        int selectedSegNew = angle * nbrSegs/(2*PI) ;
+        if( selectedSeg != selectedSegNew )
+        {
+            signal_vibrate.emit(SHORT_VIBRATE);
+            selectedSeg = selectedSegNew;
+        }
+
+        signal_scroll.emit(selectedSeg);
+    }
+    LOGTOUCH("%f %f angle = %f", x, y, angle);
+
+    return false;
+}
+
+
 bool WheelSelect::initGL()
 {
 	int x,y;
