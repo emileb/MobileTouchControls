@@ -11,8 +11,9 @@
 #include "OpenGLUtils.h"
 #include "TextDraw.h"
 
-#define UI_KEYBOARD_HIDE 1
-#define UI_KEYBOARD_SHIFT 2
+#define UI_KEYBOARD_HIDE    1
+#define UI_KEYBOARD_SHIFT   2
+#define UI_KEYBOARD_SYMBOLS 3
 
 namespace touchcontrols
 {
@@ -30,6 +31,7 @@ struct KeyboardKey
     GLuint glPrim;
     GLuint glAlt;
     float width;
+    float padLeft;
 };
 
 struct KeyboardRow
@@ -51,7 +53,7 @@ class UI_Keyboard : public ControlSuper
     KeyboardLayout layout;
     GLuint glKeyBg;
 
-    void setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, const char* primImg = NULL, const char * altImg = NULL );
+    void setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, float padLeft, const char* primImg = NULL, const char * altImg = NULL );
 
     float findXCenter( uint32_t row, uint32_t key );
 
@@ -72,6 +74,8 @@ class UI_Keyboard : public ControlSuper
     float fadePos;
 
     bool shiftActive;
+
+    bool symbolActive;
 
 public:
 	UI_Keyboard( std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize );

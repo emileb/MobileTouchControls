@@ -5,6 +5,8 @@
 #include "UI_Keyboard.h"
 #include "TouchControlsConfig.h"
 #include <math.h>
+#include <iostream>
+#include <cstring>
 
 #include "SDL_keycode.h"
 
@@ -21,58 +23,61 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     font_filename(font_filename),
     fontSet(fontSet)
 {
-    setKey( 0, 0, 'Q', '1', EVEN_SPACE );
-    setKey( 0, 1, 'W', '2', EVEN_SPACE );
-    setKey( 0, 2, 'E', '3', EVEN_SPACE );
-    setKey( 0, 3, 'R', '4', EVEN_SPACE );
-    setKey( 0, 4, 'T', '5', EVEN_SPACE );
-    setKey( 0, 5, 'Y', '6', EVEN_SPACE );
-    setKey( 0, 6, 'U', '7', EVEN_SPACE );
-    setKey( 0, 7, 'I', '8', EVEN_SPACE );
-    setKey( 0, 8, 'O', '9', EVEN_SPACE );
-    setKey( 0, 9, 'P', '0', EVEN_SPACE );
-    setKey( 0, 9, 'P', '0', EVEN_SPACE );
-    setKey( 0, 10, 8,    0, EVEN_SPACE, "key_backspace" );  //Backspace
+    std::memset(&layout,0,sizeof(layout));
 
-    setKey( 1, 0, '\t', 0,     0.05f,"key_tab" );  //blank
-    setKey( 1, 1, 'A', '@', EVEN_SPACE );
-    setKey( 1, 2, 'S', '#', EVEN_SPACE );
-    setKey( 1, 3, 'D', '&', EVEN_SPACE );
-    setKey( 1, 4, 'F', '*', EVEN_SPACE );
-    setKey( 1, 5, 'G', '-', EVEN_SPACE );
-    setKey( 1, 6, 'H', '+', EVEN_SPACE );
-    setKey( 1, 7, 'J', '=', EVEN_SPACE );
-    setKey( 1, 8, 'K', '(', EVEN_SPACE );
-    setKey( 1, 9, 'L', ')', EVEN_SPACE );
-    setKey( 1, 10, 13,   0,   0.145f,"enter_key" );  //Enter
+    setKey( 0, 0, 'Q', '1', EVEN_SPACE, 0 );
+    setKey( 0, 1, 'W', '2', EVEN_SPACE, 0 );
+    setKey( 0, 2, 'E', '3', EVEN_SPACE, 0 );
+    setKey( 0, 3, 'R', '4', EVEN_SPACE, 0 );
+    setKey( 0, 4, 'T', '5', EVEN_SPACE, 0 );
+    setKey( 0, 5, 'Y', '6', EVEN_SPACE, 0 );
+    setKey( 0, 6, 'U', '7', EVEN_SPACE, 0 );
+    setKey( 0, 7, 'I', '8', EVEN_SPACE, 0 );
+    setKey( 0, 8, 'O', '9', EVEN_SPACE, 0 );
+    setKey( 0, 9, 'P', '0', EVEN_SPACE, 0 );
+    setKey( 0, 9, 'P', '0', EVEN_SPACE, 0 );
+    setKey( 0, 10, 8,    0, EVEN_SPACE, 0, "key_backspace" );  //Backspace
 
-    setKey( 2, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, "key_shift" );  //Shift key
-    setKey( 2, 1, 'Z', '_', EVEN_SPACE );
-    setKey( 2, 2, 'X', '$', EVEN_SPACE );
-    setKey( 2, 3, 'C', '"', EVEN_SPACE );
-    setKey( 2, 4, 'V', '\'', EVEN_SPACE );
-    setKey( 2, 5, 'B', ':', EVEN_SPACE );
-    setKey( 2, 6, 'N', ';', EVEN_SPACE );
-    setKey( 2, 7, 'M', '/', EVEN_SPACE );
-    setKey( 2, 8, '_',  0, EVEN_SPACE );
-    setKey( 2, 9, 0, 0, 0.032f );
-    setKey( 2, 10, SDLK_UP, 0, 0.07f, "key_arrow_up" );
+    setKey( 1, 0, '\t', 0,     0.05f, 0,"key_tab" );  //blank
+    setKey( 1, 1, 'A', '@', EVEN_SPACE, 0 );
+    setKey( 1, 2, 'S', '#', EVEN_SPACE, 0 );
+    setKey( 1, 3, 'D', '&', EVEN_SPACE, 0 );
+    setKey( 1, 4, 'F', '*', EVEN_SPACE, 0 );
+    setKey( 1, 5, 'G', '-', EVEN_SPACE, 0 );
+    setKey( 1, 6, 'H', '+', EVEN_SPACE, 0 );
+    setKey( 1, 7, 'J', '=', EVEN_SPACE, 0 );
+    setKey( 1, 8, 'K', '(', EVEN_SPACE, 0 );
+    setKey( 1, 9, 'L', ')', EVEN_SPACE, 0 );
+    setKey( 1, 10, 13,   0,   0.145f, 0,"enter_key" );  //Enter
 
-    setKey( 3, 0, UI_KEYBOARD_HIDE, 0, 0.10f, "hide_key" ); //Hide keyboard
-    setKey( 3, 1, ',', 0, 0.1f );
-    setKey( 3, 2, ' ', 0, 0.48f );
-    setKey( 3, 3, '.', 0, 0.1f );
-    setKey( 3, 4, SDLK_LEFT, 0, 0.07f, "key_arrow_left" );
-    setKey( 3, 5, SDLK_DOWN, 0, 0.07f, "key_arrow_down"  );
-    setKey( 3, 6, SDLK_RIGHT, 0, 0.07f, "key_arrow_right" );
-    setKey( 3, 7, 0, 0, 0.1f );
-    setKey( 3, 8, 0, 0, 0.1f );
-    setKey( 3, 9, 0, 0, 0.1f );
-    setKey( 3, 10, 0, 0, 0.1f );
+    setKey( 2, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, 0, "key_shift" );  //Shift key
+    setKey( 2, 1, 'Z', '_', EVEN_SPACE, 0 );
+    setKey( 2, 2, 'X', '$', EVEN_SPACE, 0 );
+    setKey( 2, 3, 'C', '"', EVEN_SPACE, 0 );
+    setKey( 2, 4, 'V', '\'', EVEN_SPACE, 0 );
+    setKey( 2, 5, 'B', ':', EVEN_SPACE, 0 );
+    setKey( 2, 6, 'N', ';', EVEN_SPACE, 0 );
+    setKey( 2, 7, 'M', '/', EVEN_SPACE, 0 );
+    setKey( 2, 8, '_',  0, EVEN_SPACE, 0 );
+    setKey( 2, 9, SDLK_UP, 0, 0.07f, 0.016f, "key_arrow_up" );
+    setKey( 2, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.016f, "key_symbol_shift" );
+
+    setKey( 3, 0, UI_KEYBOARD_HIDE, 0, 0.10f, 0, "hide_key" ); //Hide keyboard
+    setKey( 3, 1, ',', 0, 0.1f, 0 );
+    setKey( 3, 2, ' ', 0, 0.48f, 0 );
+    setKey( 3, 3, '.', 0, 0.084f, 0 );
+    setKey( 3, 4, SDLK_LEFT, 0, 0.07f, 0, "key_arrow_left" );
+    setKey( 3, 5, SDLK_DOWN, 0, 0.07f, 0, "key_arrow_down"  );
+    setKey( 3, 6, SDLK_RIGHT, 0, 0.07f, 0, "key_arrow_right" );
+    setKey( 3, 7, 0, 0, 0.1f, 0 );
+    setKey( 3, 8, 0, 0, 0.1f, 0 );
+    setKey( 3, 9, 0, 0, 0.1f, 0 );
+    setKey( 3, 10, 0, 0, 0.1f, 0 );
 
     pressedKey = NULL;
     touchId = -1;
 	shiftActive = false;
+    symbolActive = false;
 
     // -1 is not yet used
     selectedX = -1;
@@ -91,11 +96,12 @@ uint32_t UI_Keyboard::shiftKey( uint32_t key )
 	}
 }
 
-void UI_Keyboard::setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, const char* primImg, const char * altImg )
+void UI_Keyboard::setKey( uint32_t row, uint32_t key, uint32_t keyPrim, uint32_t keyAlt, float width, float padLeft, const char* primImg, const char * altImg )
 {
     layout.rows[row].keys[key].keyPrim = keyPrim;
     layout.rows[row].keys[key].keyAlt  = keyAlt;
     layout.rows[row].keys[key].width   = width;
+    layout.rows[row].keys[key].padLeft = padLeft;
     layout.rows[row].keys[key].primImg = primImg;
     layout.rows[row].keys[key].altImg  = altImg;
     layout.rows[row].keys[key].glPrim  = 0;
@@ -119,12 +125,18 @@ void UI_Keyboard::keyUp()
         {
 			shiftActive = !shiftActive;
         }
+        else if( pressedKey->keyPrim == UI_KEYBOARD_SYMBOLS )
+        {
+            symbolActive = !symbolActive;
+        }
         else
         {
-	        if( useAltKey )
+	        if( useAltKey  || (symbolActive && pressedKey->keyAlt ))
 	            signal.emit( pressedKey->keyAlt );
 	        else
-	            signal.emit( shiftKey(pressedKey->keyPrim) );
+	        {
+                signal.emit( shiftKey(pressedKey->keyPrim) );
+            }
 		}
 
 		signal_vibrate.emit(SHORT_VIBRATE);
@@ -151,13 +163,13 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
                     for(int n = 0; n < MAX_ROW_KEYS; n++ )
                     {
                         KeyboardKey *key = &(layout.rows[row].keys[n]);
-                        if( x < xPos + key->width)
+                        if( x < xPos + key->width + key->padLeft)
                         {
                             keyDown( key );
                             break;
                         }
 
-                        xPos = xPos + key->width;
+                        xPos = xPos + key->width + key->padLeft;
                     }
                 }
 
@@ -312,7 +324,7 @@ bool UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
 
 void UI_Keyboard::resetOutput()
 {
-
+    symbolActive = false;
 }
 
 bool UI_Keyboard::drawGL(bool forEditor)
@@ -341,6 +353,9 @@ bool UI_Keyboard::drawGL(bool forEditor)
 
             if( key->keyPrim != 0 )
             {
+                // Add any padding
+                rowXPos += key->padLeft;
+
                 // Draw key background
                 if( key == pressedKey ) //Make dark if pressed
                 {
@@ -362,18 +377,27 @@ bool UI_Keyboard::drawGL(bool forEditor)
 
                 gl_color4f(1,1,1,0.8);
 
-                // Check for custom image, otherwise use font
-                if( key->glPrim != 0 )
+                // Check is symbol shift is active and if there is an alt key
+                // Just show the alt key if so
+                if( symbolActive && key->keyAlt )
                 {
-                    gl_drawRect( key->glPrim , rowXPos, rowYPos, glRect );
+                    textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
                 }
                 else
                 {
-                    textDrawer.drawChar( shiftKey(key->keyPrim), fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
-                }
+                    // Check for custom image, otherwise use font
+                    if( key->glPrim != 0 )
+                    {
+                        gl_drawRect( key->glPrim , rowXPos, rowYPos, glRect );
+                    }
+                    else
+                    {
+                        textDrawer.drawChar( shiftKey(key->keyPrim), fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
 
-                if( key->keyAlt )
-                    textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.8), rowYPos, 0.05, TEXT_DRAW_X_CENTER );
+                        if( key->keyAlt )
+                           textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.8), rowYPos, 0.05, TEXT_DRAW_X_CENTER );
+                    }
+                }
 
                 // Finger has been press for a while so show the altkey above the finger
                 if( key == pressedKey && useAltKey )
