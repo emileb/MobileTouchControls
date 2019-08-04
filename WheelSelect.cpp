@@ -15,12 +15,19 @@ ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
 	id = -1;
 	nbrSegs = segments;
 
+    visible = false;
 	hideGraphics = false;
 	updateSize();
 	selectedSeg = -1;
 	enabledSegs = 0;
 	useFadeSegs = false;
 };
+
+void WheelSelect::setWheelVisible( bool visible )
+{
+    this->visible = visible;
+    signal_enabled.emit(visible);
+}
 
 void WheelSelect::setHideGraphics(bool v)
 {
@@ -79,7 +86,7 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 			if (inCentre(x, y))
 			{
 				id = pid;
-
+                setWheelVisible( true );
 
 				last.x = x;
 				last.y = y;
@@ -88,7 +95,6 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 				fingerPos.x = x;
 				fingerPos.y = y;
 				selectedSeg = -1;
-				signal_enabled.emit(1);
 
 				return true;
 			}
@@ -100,7 +106,6 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 		if (id == pid)
 		{
 			signal_selected.emit(selectedSeg);
-			signal_enabled.emit(0);
 
 			reset();
 			return true;
@@ -194,11 +199,11 @@ bool WheelSelect::initGL()
 
 bool WheelSelect::drawGL(bool forEditor)
 {
-	if ((id != -1) || forEditor)
+	if ((visible) || forEditor)
 		gl_drawRect(glTex,controlPos.left,controlPos.top,glRect);
 
 
-    if ((id != -1) && useFadeSegs)
+    if ((visible) && useFadeSegs)
     {
         float ang = 360.0/nbrSegs/2;
 
@@ -218,7 +223,7 @@ bool WheelSelect::drawGL(bool forEditor)
         }
     }
 
-    if((id != -1) && (selectedSeg != -1))
+    if((visible) && (selectedSeg != -1))
     {
         float ang = (360.0/nbrSegs/2) + (360.0/nbrSegs * selectedSeg);
         float h_len = (glRect.height/2) * 0.5;
@@ -236,6 +241,9 @@ bool WheelSelect::drawGL(bool forEditor)
 void WheelSelect::reset()
 {
 	id = -1;
+
+    setWheelVisible( false );
+
 	doUpdate();
 }
 

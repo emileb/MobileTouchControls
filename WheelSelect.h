@@ -34,6 +34,8 @@ class WheelSelect : public ControlSuper
 
     PointF centre;
 
+    bool visible;
+
     int nbrSegs;
 
     int selectedSeg;
@@ -47,6 +49,8 @@ public:
     sigc::signal<void, int> signal_scroll;
 
     WheelSelect ( std::string tag, RectF pos, std::string image_filename, int segments );
+
+    void setWheelVisible( bool visible );
 
     void setSegmentEnabled ( int seg, bool v );
 
