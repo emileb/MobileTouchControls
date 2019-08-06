@@ -8,8 +8,32 @@
 //#include <GLES/gl.h>
 #endif
 
-#define CODEGEN_FUNCPTR
+// Handle to a program object
+static int mProgramObject;
+static int mProgramObjectColor;
 
+
+
+// Attribute locations
+static int mPositionLoc;
+static int mTexCoordLoc;
+
+// Sampler location
+static int mSamplerLoc;
+static int mColorLoc;
+static int mPositionTranslateLoc;
+static int mModelMatrixLoc;
+
+static int mPositionLocColor;
+static int mColorLocColor;
+static int mPositionTranslateLocColor;
+static int mModelMatrixColorLoc;
+
+static float mModelMatrixGLSL[16]={1,0,0,0,
+                                   0,1,0,0,
+                                   0,0,1,0,
+                                   0,0,0,1};
+#define CODEGEN_FUNCPTR
 
 #define GL_TRUE 1
 #define GL_INFO_LOG_LENGTH 0x8B84
@@ -161,6 +185,9 @@ void (CODEGEN_FUNCPTR *_ptrc_glBindSampler)(GLuint unit, GLuint sampler);
 void (CODEGEN_FUNCPTR *_ptrc_glBindVertexArray)(GLuint ren_array);
 #define glBindVertexArray _ptrc_glBindVertexArray
 
+void (CODEGEN_FUNCPTR *_ptrc_glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value);
+#define glUniformMatrix4fv _ptrc_glUniformMatrix4fv
+
 static void *glesLib = NULL;
 
 static bool useGL4ES = false;
@@ -271,6 +298,8 @@ static void loadGles( int version )
 
             _ptrc_glBindVertexArray = (void (CODEGEN_FUNCPTR *)(GLuint ren_array))loadGlesFunc("glBindVertexArray");;
 
+            _ptrc_glUniformMatrix4fv = (void (CODEGEN_FUNCPTR *)(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value))loadGlesFunc("glUniformMatrix4fv");
+
        }
     }
     else
@@ -358,6 +387,11 @@ void gl_loadIdentity()
     if( isGLES2 )
     {
         glTranslateX = glTranslateY = glTranslateZ = 0;
+        float ident[16] =    {1,0,0,0,
+                              0,1,0,0,
+                              0,0,1,0,
+                              0,0,0,1};
+        memcpy( mModelMatrixGLSL, ident, sizeof(ident));
     }
     else
     {
@@ -369,7 +403,9 @@ void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
 {
     if( isGLES2 )
     {
-
+        //mModelMatrixGLSL[0] = mModelMatrixGLSL[0] * x;
+        //mModelMatrixGLSL[5] = mModelMatrixGLSL[5] * y;
+        //mModelMatrixGLSL[10] = mModelMatrixGLSL[10] * z;
     }
     else
     {
@@ -412,29 +448,31 @@ void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
 }
 
 
-float translateX( float X )
+static float translateX( float X )
 {
     return -( 1 - X * 2 );
 }
-float translateY( float Y )
+static float translateY( float Y )
 {
     return ( -Y * 2 + 1 );
 }
 
 const char vShaderStr [] =
-    "attribute vec4 a_position;  \
-			attribute vec2 a_texCoord;   \
-			varying vec2 v_texCoord;     \
-			uniform vec4 u_translate;    \
-			void main()                 \
-			{                           \
-			   gl_Position = a_position + u_translate; \
-			   v_texCoord = a_texCoord;  \
-			}                            \
+           "attribute vec4 a_position;                                     \n \
+			attribute vec2 a_texCoord;                                     \n \
+			varying vec2 v_texCoord;                                       \n \
+			uniform vec4 u_translate;                                      \n \
+			uniform mat4 u_modelMatrix;                                    \n \
+			void main()                                                    \n \
+			{                                                              \n \
+			   //gl_Position = (a_position + u_translate);                   \n \
+			   gl_Position = (u_modelMatrix * a_position) + u_translate; \n \
+			   v_texCoord = a_texCoord;                                    \n \
+			}                                                              \n \
 			";
 
 const char  fShaderStr [] =
-    "precision mediump float;                            \
+           "precision mediump float;                            \
 			varying vec2 v_texCoord;                            \
 			uniform sampler2D s_texture;                        \
 		    uniform vec4 u_color;    \
@@ -446,7 +484,7 @@ const char  fShaderStr [] =
 			";
 
 const char  fShaderColorStr [] =
-    "precision mediump float;                            \
+           "precision mediump float;                            \
 		    uniform vec4 u_color;    \
 			void main()                                         \
 			{                                                   \
@@ -629,26 +667,6 @@ GLfloat mTexVertices[] =
         1.0f, 0.0f // TexCoord 3
 };
  */
-// Handle to a program object
-static int mProgramObject;
-static int mProgramObjectColor;
-
-
-
-// Attribute locations
-static int mPositionLoc;
-static int mTexCoordLoc;
-
-// Sampler location
-static int mSamplerLoc;
-static int mColorLoc;
-
-static int mPositionTranslateLoc;
-
-
-static int mPositionLocColor;
-static int mColorLocColor;
-static int mPositionTranslateLocColor;
 
 
 static void initGLES2()
@@ -662,15 +680,17 @@ static void initGLES2()
     mTexCoordLoc = glGetAttribLocation( mProgramObject, "a_texCoord" );
 
     // Get the sampler location
-    mSamplerLoc = glGetUniformLocation( mProgramObject, "s_texture" );
+    mSamplerLoc           = glGetUniformLocation( mProgramObject, "s_texture" );
     mPositionTranslateLoc = glGetUniformLocation( mProgramObject, "u_translate" );
-    mColorLoc  = glGetUniformLocation( mProgramObject, "u_color" );
-
+    mColorLoc             = glGetUniformLocation( mProgramObject, "u_color" );
+    mModelMatrixLoc       =  glGetUniformLocation( mProgramObject, "u_modelMatrix" );
 
     //COLOR
     mPositionLocColor            = glGetAttribLocation( mProgramObjectColor, "a_position" );
     mColorLocColor               = glGetUniformLocation( mProgramObjectColor, "u_color" );
     mPositionTranslateLocColor   = glGetUniformLocation( mProgramObjectColor, "u_translate" );
+    mModelMatrixColorLoc        =  glGetUniformLocation( mProgramObjectColor, "u_modelMatrix" );
+
 }
 
 static void gl_useProgram( int prog )
@@ -722,10 +742,33 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
         // Set the sampler texture unit to 0
         glUniform1i( mSamplerLoc, 0 );
 
+        float yAspectFixTranslate = 0;
+        //Such a hack.The model matrix is just used to scale for gles2
+        // Need to fix all of this so GLES1 and GLES2 coordinates behave the same and model matrix is used properly
+        if( m_fixAspect )
+        {
+            float nominal = ( float )ScaleX / ( float )ScaleY;
+            float actual = GLScaleWidth / -GLScaleHeight;
+
+            //printf("%f     %f\n",nominal,actual);
+            float yScale = actual / nominal;
+            yAspectFixTranslate =  -( 1 - yScale ) * rect.height / 2;
+            mModelMatrixGLSL[5] = yScale;
+            //glTranslateY = glTranslateY *
+            gl_translatef(0,yAspectFixTranslate,0);
+        }
+        
+        glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
         glUniform4f( mPositionTranslateLoc,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
         glUniform4f( mColorLoc, glColorR, glColorG, glColorB, glColorA );
-
+      
         glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+        if( m_fixAspect )
+        {
+            mModelMatrixGLSL[5] = 1;
+            gl_translatef(0,-yAspectFixTranslate,0);
+        }
     }
     else
     {
@@ -777,7 +820,7 @@ void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, 
         // Bind the texture
         //glDeactiveTexture ( GL_TEXTURE0 );
 
-
+        glUniformMatrix4fv( mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
         glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
         glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
 
@@ -821,6 +864,7 @@ void gl_drawLines( float x, float y, GLLines &lines )
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, 0 );
 
+        glUniformMatrix4fv( mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
         glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
         glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
 
