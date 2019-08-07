@@ -12,9 +12,9 @@
 
 using namespace touchcontrols;
 
-#define Y_START_POS  0.55
+#define Y_START_POS  0.50
 #define ROW_HEIGHT   0.1
-#define ROW_GAP      0.01
+#define ROW_GAP      0.001
 
 #define EVEN_SPACE ( 1.f / MAX_ROW_KEYS )
 
@@ -24,55 +24,66 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     fontSet(fontSet)
 {
     std::memset(&layout,0,sizeof(layout));
+    setKey( 0, 0, 'X',  0, 0.05f, 0, "key_tab"  );
+    setKey( 0, 1, '1', '1', EVEN_SPACE, 0 );
+    setKey( 0, 2, '2', '1', EVEN_SPACE, 0 );
+    setKey( 0, 3, '3', '1', EVEN_SPACE, 0 );
+    setKey( 0, 4, '4', '1', EVEN_SPACE, 0 );
+    setKey( 0, 5, '5', '1', EVEN_SPACE, 0 );
+    setKey( 0, 6, '6', '1', EVEN_SPACE, 0 );
+    setKey( 0, 7, '7', '1', EVEN_SPACE, 0 );
+    setKey( 0, 8, '8', '1', EVEN_SPACE, 0 );
+    setKey( 0, 9, '9', '1', EVEN_SPACE, 0 );
+    setKey( 0, 10, '0', '1', EVEN_SPACE, 0 );
 
-    setKey( 0, 0, 'Q', '1', EVEN_SPACE, 0 );
-    setKey( 0, 1, 'W', '2', EVEN_SPACE, 0 );
-    setKey( 0, 2, 'E', '3', EVEN_SPACE, 0 );
-    setKey( 0, 3, 'R', '4', EVEN_SPACE, 0 );
-    setKey( 0, 4, 'T', '5', EVEN_SPACE, 0 );
-    setKey( 0, 5, 'Y', '6', EVEN_SPACE, 0 );
-    setKey( 0, 6, 'U', '7', EVEN_SPACE, 0 );
-    setKey( 0, 7, 'I', '8', EVEN_SPACE, 0 );
-    setKey( 0, 8, 'O', '9', EVEN_SPACE, 0 );
-    setKey( 0, 9, 'P', '0', EVEN_SPACE, 0 );
-    setKey( 0, 9, 'P', '0', EVEN_SPACE, 0 );
-    setKey( 0, 10, 8,    0, EVEN_SPACE, 0, "key_backspace" );  //Backspace
 
-    setKey( 1, 0, '\t', 0,     0.05f, 0,"key_tab" );  //blank
-    setKey( 1, 1, 'A', '@', EVEN_SPACE, 0 );
-    setKey( 1, 2, 'S', '#', EVEN_SPACE, 0 );
-    setKey( 1, 3, 'D', '&', EVEN_SPACE, 0 );
-    setKey( 1, 4, 'F', '*', EVEN_SPACE, 0 );
-    setKey( 1, 5, 'G', '-', EVEN_SPACE, 0 );
-    setKey( 1, 6, 'H', '+', EVEN_SPACE, 0 );
-    setKey( 1, 7, 'J', '=', EVEN_SPACE, 0 );
-    setKey( 1, 8, 'K', '(', EVEN_SPACE, 0 );
-    setKey( 1, 9, 'L', ')', EVEN_SPACE, 0 );
-    setKey( 1, 10, 13,   0,   0.145f, 0,"enter_key" );  //Enter
+    setKey( 1, 0, 'Q', '~', EVEN_SPACE, 0 );
+    setKey( 1, 1, 'W', '!', EVEN_SPACE, 0 );
+    setKey( 1, 2, 'E', '\\', EVEN_SPACE, 0 );
+    setKey( 1, 3, 'R', '%', EVEN_SPACE, 0 );
+    setKey( 1, 4, 'T', '^', EVEN_SPACE, 0 );
+    setKey( 1, 5, 'Y', '?', EVEN_SPACE, 0 );
+    setKey( 1, 6, 'U', '<', EVEN_SPACE, 0 );
+    setKey( 1, 7, 'I', '>', EVEN_SPACE, 0 );
+    setKey( 1, 8, 'O', '[', EVEN_SPACE, 0 );
+    setKey( 1, 9, 'P', ']', EVEN_SPACE, 0 );
+    setKey( 1, 10, 8,    0, EVEN_SPACE, 0, "key_backspace" );  //Backspace
 
-    setKey( 2, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, 0, "key_shift" );  //Shift key
-    setKey( 2, 1, 'Z', '_', EVEN_SPACE, 0 );
-    setKey( 2, 2, 'X', '$', EVEN_SPACE, 0 );
-    setKey( 2, 3, 'C', '"', EVEN_SPACE, 0 );
-    setKey( 2, 4, 'V', '\'', EVEN_SPACE, 0 );
-    setKey( 2, 5, 'B', ':', EVEN_SPACE, 0 );
-    setKey( 2, 6, 'N', ';', EVEN_SPACE, 0 );
-    setKey( 2, 7, 'M', '/', EVEN_SPACE, 0 );
-    setKey( 2, 8, '_',  0, EVEN_SPACE, 0 );
-    setKey( 2, 9, SDLK_UP, 0, 0.07f, 0.016f, "key_arrow_up" );
-    setKey( 2, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.016f, "key_symbol_shift" );
+    setKey( 2, 0, '\t', 0,     0.05f, 0,"key_tab" );  //blank
+    setKey( 2, 1, 'A', '@', EVEN_SPACE, 0 );
+    setKey( 2, 2, 'S', '#', EVEN_SPACE, 0 );
+    setKey( 2, 3, 'D', '&', EVEN_SPACE, 0 );
+    setKey( 2, 4, 'F', '*', EVEN_SPACE, 0 );
+    setKey( 2, 5, 'G', '-', EVEN_SPACE, 0 );
+    setKey( 2, 6, 'H', '+', EVEN_SPACE, 0 );
+    setKey( 2, 7, 'J', '=', EVEN_SPACE, 0 );
+    setKey( 2, 8, 'K', '(', EVEN_SPACE, 0 );
+    setKey( 2, 9, 'L', ')', EVEN_SPACE, 0 );
+    setKey( 2, 10, 13,   0,   0.145f, 0,"enter_key" );  //Enter
 
-    setKey( 3, 0, UI_KEYBOARD_HIDE, 0, 0.10f, 0, "hide_key" ); //Hide keyboard
-    setKey( 3, 1, ',', 0, 0.1f, 0 );
-    setKey( 3, 2, ' ', 0, 0.48f, 0 );
-    setKey( 3, 3, '.', 0, 0.084f, 0 );
-    setKey( 3, 4, SDLK_LEFT, 0, 0.07f, 0, "key_arrow_left" );
-    setKey( 3, 5, SDLK_DOWN, 0, 0.07f, 0, "key_arrow_down"  );
-    setKey( 3, 6, SDLK_RIGHT, 0, 0.07f, 0, "key_arrow_right" );
-    setKey( 3, 7, 0, 0, 0.1f, 0 );
-    setKey( 3, 8, 0, 0, 0.1f, 0 );
-    setKey( 3, 9, 0, 0, 0.1f, 0 );
-    setKey( 3, 10, 0, 0, 0.1f, 0 );
+    setKey( 3, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, 0, "key_shift" );  //Shift key
+    setKey( 3, 1, 'Z', '_', EVEN_SPACE, 0 );
+    setKey( 3, 2, 'X', '$', EVEN_SPACE, 0 );
+    setKey( 3, 3, 'C', '"', EVEN_SPACE, 0 );
+    setKey( 3, 4, 'V', '\'', EVEN_SPACE, 0 );
+    setKey( 3, 5, 'B', ':', EVEN_SPACE, 0 );
+    setKey( 3, 6, 'N', ';', EVEN_SPACE, 0 );
+    setKey( 3, 7, 'M', '/', EVEN_SPACE, 0 );
+    setKey( 3, 8, '_',  0, EVEN_SPACE, 0 );
+    setKey( 3, 9, SDLK_UP, 0, 0.07f, 0.016f, "key_arrow_up" );
+    setKey( 3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.016f, "key_symbol_shift" );
+
+    setKey( 4, 0, UI_KEYBOARD_HIDE, 0, 0.10f, 0, "hide_key" ); //Hide keyboard
+    setKey( 4, 1, ',', 0, 0.1f, 0 );
+    setKey( 4, 2, ' ', 0, 0.48f, 0 );
+    setKey( 4, 3, '.', 0, 0.084f, 0 );
+    setKey( 4, 4, SDLK_LEFT, 0, 0.07f, 0, "key_arrow_left" );
+    setKey( 4, 5, SDLK_DOWN, 0, 0.07f, 0, "key_arrow_down"  );
+    setKey( 4, 6, SDLK_RIGHT, 0, 0.07f, 0, "key_arrow_right" );
+    setKey( 4, 7, 0, 0, 0.1f, 0 );
+    setKey( 4, 8, 0, 0, 0.1f, 0 );
+    setKey( 4, 9, 0, 0, 0.1f, 0 );
+    setKey( 4, 10, 0, 0, 0.1f, 0 );
 
     pressedKey = NULL;
     touchId = -1;
@@ -156,7 +167,7 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 				touchId = pid;
 
 				int row = (y - Y_START_POS) / (ROW_HEIGHT + ROW_GAP);
-                if(row < 4)
+                if(row < NBR_ROWS)
                 {
                     float xPos = 0;
 
@@ -329,10 +340,12 @@ void UI_Keyboard::resetOutput()
 
 bool UI_Keyboard::drawGL(bool forEditor)
 {
-    float rowXPos = 0;
-    float rowYPos = 0.55;
-    float rowHeight = 0.1;
-    float rowGap = 0.01;
+    float rowXPos   = 0;
+    float rowYPos   = Y_START_POS;
+    float rowHeight = ROW_HEIGHT;
+    float rowGap    = ROW_GAP;
+
+    float alpha = 0.8;
 
     gl_setFixAspect( false );
 
@@ -342,12 +355,12 @@ bool UI_Keyboard::drawGL(bool forEditor)
     glRect.resize( 1, 0.5 );
     gl_drawRect( 0, 0, 0, 0.8, 0, rowYPos, glRect );
 
-    gl_color4f(1,1,1,0.8);
+    gl_color4f(1,1,1,alpha);
 
-    for( int row = 0; row < 4; row++ )
+    for( int row = 0; row < NBR_ROWS; row++ )
     {
         rowXPos = 0;
-        for(int n = 0; n < MAX_ROW_KEYS; n++ )
+        for( int n = 0; n < MAX_ROW_KEYS; n++ )
         {
             KeyboardKey *key = &(layout.rows[row].keys[n]);
 
@@ -371,11 +384,19 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 {
                      gl_color4f( 0, 0, 1, 1 ); // Make very blue
                 }
+                else
+                {
+                    gl_color4f( 1, 1, 1, alpha );
+                }
 
                 glRect.resize( key->width, rowHeight );
                 gl_drawRect( glKeyBg, rowXPos, rowYPos, glRect );
 
-                gl_color4f(1,1,1,0.8);
+                //Top row is different color
+                if( row == 0 )
+                    gl_color4f( 0.7, 0.7, 1, alpha );
+                else
+                    gl_color4f( 1, 1, 1, alpha );
 
                 // Check is symbol shift is active and if there is an alt key
                 // Just show the alt key if so
@@ -388,6 +409,8 @@ bool UI_Keyboard::drawGL(bool forEditor)
                     // Check for custom image, otherwise use font
                     if( key->glPrim != 0 )
                     {
+                        // Make images a bit greyer than letters
+                        gl_color4f( 0.5, 0.5, 0.5, alpha );
                         gl_drawRect( key->glPrim , rowXPos, rowYPos, glRect );
                     }
                     else
@@ -424,7 +447,7 @@ bool UI_Keyboard::initGL()
     glKeyBg = loadTextureFromPNG( "key_background", x, y );
 
     // Load any custom image for the keys
-    for( int row = 0; row < 4; row++ )
+    for( int row = 0; row < NBR_ROWS; row++ )
     {
         for(int n = 0; n < MAX_ROW_KEYS; n++ )
         {

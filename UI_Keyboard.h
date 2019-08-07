@@ -19,7 +19,7 @@ namespace touchcontrols
 {
 
 #define MAX_ROW_KEYS 11
-#define NBR_ROWS 4
+#define NBR_ROWS 5
 
 struct KeyboardKey
 {
