@@ -14,6 +14,7 @@
 #define UI_KEYBOARD_HIDE    1
 #define UI_KEYBOARD_SHIFT   2
 #define UI_KEYBOARD_SYMBOLS 3
+#define UI_KEYBOARD_MOVE    4
 
 namespace touchcontrols
 {
@@ -63,6 +64,11 @@ class UI_Keyboard : public ControlSuper
 	uint32_t shiftKey( uint32_t key );
 
     int touchId;
+    int moveTouchId;
+
+    float keyboardYPos;
+    float moveYAnchor;
+
     KeyboardKey *pressedKey;
     double timeDown;
     bool useAltKey;

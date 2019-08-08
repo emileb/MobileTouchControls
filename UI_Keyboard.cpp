@@ -24,20 +24,20 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     fontSet(fontSet)
 {
     std::memset(&layout,0,sizeof(layout));
-    setKey( 0, 0, 'X',  0, 0.05f, 0, "key_tab"  );
-    setKey( 0, 1, '1', '1', EVEN_SPACE, 0 );
-    setKey( 0, 2, '2', '1', EVEN_SPACE, 0 );
-    setKey( 0, 3, '3', '1', EVEN_SPACE, 0 );
-    setKey( 0, 4, '4', '1', EVEN_SPACE, 0 );
-    setKey( 0, 5, '5', '1', EVEN_SPACE, 0 );
-    setKey( 0, 6, '6', '1', EVEN_SPACE, 0 );
-    setKey( 0, 7, '7', '1', EVEN_SPACE, 0 );
-    setKey( 0, 8, '8', '1', EVEN_SPACE, 0 );
-    setKey( 0, 9, '9', '1', EVEN_SPACE, 0 );
-    setKey( 0, 10, '0', '1', EVEN_SPACE, 0 );
+    setKey( 0, 0, UI_KEYBOARD_MOVE,  0, 0.05f, 0, "key_move"  );
+    setKey( 0, 1, '1', SDLK_F1, EVEN_SPACE, 0 );
+    setKey( 0, 2, '2', SDLK_F2, EVEN_SPACE, 0 );
+    setKey( 0, 3, '3', SDLK_F3, EVEN_SPACE, 0 );
+    setKey( 0, 4, '4', SDLK_F4, EVEN_SPACE, 0 );
+    setKey( 0, 5, '5', SDLK_F5, EVEN_SPACE, 0 );
+    setKey( 0, 6, '6', SDLK_F6, EVEN_SPACE, 0 );
+    setKey( 0, 7, '7', SDLK_F7, EVEN_SPACE, 0 );
+    setKey( 0, 8, '8', SDLK_F8, EVEN_SPACE, 0 );
+    setKey( 0, 9, '9', SDLK_F9, EVEN_SPACE, 0 );
+    setKey( 0, 10, '0', SDLK_F10, EVEN_SPACE, 0 );
 
 
-    setKey( 1, 0, 'Q', '~', EVEN_SPACE, 0 );
+    setKey( 1, 0, 'Q', '`', EVEN_SPACE, 0 );
     setKey( 1, 1, 'W', '!', EVEN_SPACE, 0 );
     setKey( 1, 2, 'E', '\\', EVEN_SPACE, 0 );
     setKey( 1, 3, 'R', '%', EVEN_SPACE, 0 );
@@ -70,16 +70,16 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
     setKey( 3, 6, 'N', ';', EVEN_SPACE, 0 );
     setKey( 3, 7, 'M', '/', EVEN_SPACE, 0 );
     setKey( 3, 8, '_',  0, EVEN_SPACE, 0 );
-    setKey( 3, 9, SDLK_UP, 0, 0.07f, 0.016f, "key_arrow_up" );
-    setKey( 3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.016f, "key_symbol_shift" );
+    setKey( 3, 9, SDLK_UP, SDLK_PAGEUP, 0.07f, 0.020f, "key_arrow_up" );
+    setKey( 3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.020f, "key_symbol_shift" );
 
     setKey( 4, 0, UI_KEYBOARD_HIDE, 0, 0.10f, 0, "hide_key" ); //Hide keyboard
     setKey( 4, 1, ',', 0, 0.1f, 0 );
     setKey( 4, 2, ' ', 0, 0.48f, 0 );
     setKey( 4, 3, '.', 0, 0.084f, 0 );
-    setKey( 4, 4, SDLK_LEFT, 0, 0.07f, 0, "key_arrow_left" );
-    setKey( 4, 5, SDLK_DOWN, 0, 0.07f, 0, "key_arrow_down"  );
-    setKey( 4, 6, SDLK_RIGHT, 0, 0.07f, 0, "key_arrow_right" );
+    setKey( 4, 4, SDLK_LEFT, SDLK_HOME, 0.07f, 0.004, "key_arrow_left" );
+    setKey( 4, 5, SDLK_DOWN, SDLK_PAGEDOWN, 0.07f, 0, "key_arrow_down"  );
+    setKey( 4, 6, SDLK_RIGHT, SDLK_END, 0.07f, 0, "key_arrow_right" );
     setKey( 4, 7, 0, 0, 0.1f, 0 );
     setKey( 4, 8, 0, 0, 0.1f, 0 );
     setKey( 4, 9, 0, 0, 0.1f, 0 );
@@ -87,12 +87,15 @@ UI_Keyboard::UI_Keyboard( std::string tag, RectF pos, std::string font_filename,
 
     pressedKey = NULL;
     touchId = -1;
+    moveTouchId = -1;
 	shiftActive = false;
     symbolActive = false;
 
     // -1 is not yet used
     selectedX = -1;
     selectedRow = -1;
+
+    keyboardYPos = Y_START_POS;
 }
 
 uint32_t UI_Keyboard::shiftKey( uint32_t key )
@@ -162,11 +165,9 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 	{
 		if (touchId == -1) //Only process if not active
 		{
-			if( y > Y_START_POS )
+			if( y > keyboardYPos )
 			{
-				touchId = pid;
-
-				int row = (y - Y_START_POS) / (ROW_HEIGHT + ROW_GAP);
+				int row = (y - keyboardYPos) / (ROW_HEIGHT + ROW_GAP);
                 if(row < NBR_ROWS)
                 {
                     float xPos = 0;
@@ -176,15 +177,24 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
                         KeyboardKey *key = &(layout.rows[row].keys[n]);
                         if( x < xPos + key->width + key->padLeft)
                         {
-                            keyDown( key );
+                            if( key->keyPrim == UI_KEYBOARD_MOVE )
+                            {
+                                moveYAnchor = y - keyboardYPos;
+                                moveTouchId = pid;
+                            }
+                            else
+                            {
+                                touchId = pid;
+                                keyDown( key );
+                            }
                             break;
                         }
 
                         xPos = xPos + key->width + key->padLeft;
                     }
-                }
 
-				return true;
+				    return true;
+                }
 			}
 		}
 		return false;
@@ -198,10 +208,31 @@ bool UI_Keyboard::processPointer(int action, int pid, float x, float y)
 		    touchId = -1;
 			return true;
 		}
+		else if( pid == moveTouchId )
+		{
+		    moveTouchId = -1;
+            return true;
+		}
 		return false;
+	}
+	else if (action == P_ALLUP) // Should not need this, just in case..
+	{
+	    touchId = -1;
+	    moveTouchId = -1;
 	}
 	else if(action == P_MOVE)
 	{
+        if( pid == moveTouchId )
+        {
+            keyboardYPos = y - moveYAnchor;
+            // Clamp
+            if( keyboardYPos < 0 )
+                keyboardYPos = 0;
+            // Allow the keyboard to go further down than visible
+            if( keyboardYPos > 0.75 )
+                keyboardYPos = 0.75;
+            return true;
+        }
 		return false;
 	}
 
@@ -341,11 +372,18 @@ void UI_Keyboard::resetOutput()
 bool UI_Keyboard::drawGL(bool forEditor)
 {
     float rowXPos   = 0;
-    float rowYPos   = Y_START_POS;
+    float rowYPos   = keyboardYPos;
     float rowHeight = ROW_HEIGHT;
     float rowGap    = ROW_GAP;
 
+    // Default alpha
     float alpha = 0.8;
+
+    // If moving also make it more transparent
+    if( moveTouchId != -1 )
+    {
+        alpha = 0.2;
+    }
 
     gl_setFixAspect( false );
 
@@ -402,7 +440,36 @@ bool UI_Keyboard::drawGL(bool forEditor)
                 // Just show the alt key if so
                 if( symbolActive && key->keyAlt )
                 {
-                    textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
+                    float middleX = rowXPos + (key->width * 0.5);
+                    float middleY = rowYPos + (rowHeight * 0.5);
+
+                    if( (key->keyAlt >= SDLK_F1) && (key->keyAlt <= SDLK_F12) )
+                    {
+                        int nbr = key->keyAlt - SDLK_F1 + 1;
+                        char text[4];
+                        snprintf( text, 4, "F%d", nbr );
+                        textDrawer.drawText( text, fontSet, middleX, rowYPos, 0.1, TEXT_DRAW_X_CENTER );
+                    }
+                    else if( key->keyAlt == SDLK_HOME )
+                    {
+                        textDrawer.drawText( "Home", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER | TEXT_DRAW_Y_CENTER);
+                    }
+                    else if( key->keyAlt == SDLK_END )
+                    {
+                        textDrawer.drawText( "End", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+                    }
+                    else if( key->keyAlt == SDLK_PAGEUP )
+                    {
+                        textDrawer.drawText( "PgUp", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+                    }
+                    else if( key->keyAlt == SDLK_PAGEDOWN )
+                    {
+                        textDrawer.drawText( "PgDn", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+                    }
+                    else if( key->keyAlt < 256 )
+                    {
+                        textDrawer.drawChar( key->keyAlt, fontSet, middleX, rowYPos, 0.1, TEXT_DRAW_X_CENTER );
+                    }
                 }
                 else
                 {
@@ -415,17 +482,17 @@ bool UI_Keyboard::drawGL(bool forEditor)
                     }
                     else
                     {
-                        textDrawer.drawChar( shiftKey(key->keyPrim), fontSet, rowXPos +  (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
+                        textDrawer.drawChar( shiftKey(key->keyPrim), fontSet, rowXPos + (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER );
 
-                        if( key->keyAlt )
-                           textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.8), rowYPos, 0.05, TEXT_DRAW_X_CENTER );
+                        if( key->keyAlt && key->keyAlt < 256 )
+                            textDrawer.drawChar( key->keyAlt, fontSet, rowXPos + (key->width * 0.8), rowYPos, 0.05, TEXT_DRAW_X_CENTER );
                     }
                 }
 
                 // Finger has been press for a while so show the altkey above the finger
                 if( key == pressedKey && useAltKey )
                 {
-                    textDrawer.drawChar( key->keyAlt, fontSet, rowXPos +  (key->width * 0.5), rowYPos - rowHeight, 0.1, TEXT_DRAW_X_CENTER );
+                    textDrawer.drawChar( key->keyAlt, fontSet, rowXPos + (key->width * 0.5), rowYPos - rowHeight, 0.1, TEXT_DRAW_X_CENTER );
                 }
             }
 

@@ -11,13 +11,17 @@ namespace touchcontrols
 {
 
 #define TEXT_DRAW_X_CENTER 0x1
-#define TEXT_DRAW_Y_CENTRE 0x2
+#define TEXT_DRAW_Y_CENTER 0x2
 
 class TextDraw
 {
     std::string font_filename;
     std::vector< FontInfo > fontInfoVec;
     GLuint glTex;
+
+    float getCharWidth( unsigned char c, int fontSet, float height );
+    float getTotalWidth(  const char *text, int fontSet, float height );
+
 public:
     TextDraw();
 

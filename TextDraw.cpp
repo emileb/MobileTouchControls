@@ -22,12 +22,45 @@ void TextDraw::initGL( std::string font_filename )
 }
 
 
-#define CHAR_TO_GLYPH( C, F ) ((C - 32) + 128 * F)
+#define CHAR_TO_GLYPH( C, F ) (((unsigned char)C - 32) + 128 * F)
+float TextDraw::getCharWidth( unsigned char c, int fontSet, float height )
+{
+    float width = height * ( -GLScaleHeight / GLScaleWidth );
+
+    if( c == ' ' )
+    {
+        return width / 4;
+    }
+    else
+    {
+        float leftPad = fontInfoVec[CHAR_TO_GLYPH( c, fontSet )].leftGap;
+        float rightPad = fontInfoVec[CHAR_TO_GLYPH( c, fontSet )].rightGap;
+
+        return width * (1 - (leftPad + rightPad) );
+    }
+}
+
+float TextDraw::getTotalWidth( const char *text, int fontSet, float height )
+{
+    float ret = 0;
+
+    uint32_t pos = 0;
+
+    while( text[pos] )
+    {
+        ret += getCharWidth( text[pos], fontSet, height );
+        pos++;
+    }
+
+    return ret;
+}
 
 float TextDraw::drawChar( char c, int fontSet, float x, float y, float height, uint32_t params )
 {
     // Scale width
-    float width = height * ( -GLScaleHeight / GLScaleWidth );
+    //float width = height * ( -GLScaleHeight / GLScaleWidth );
+
+    float charWidth = getCharWidth( c, fontSet, height );
 
     char g = CHAR_TO_GLYPH( c, fontSet );
 
@@ -52,24 +85,14 @@ float TextDraw::drawChar( char c, int fontSet, float x, float y, float height, u
     glRectTemp.texture[6] = fx + 0.0625f - (rightPad / 16.f);
     glRectTemp.texture[7] = fy;
 
-    float charWidth;
-    if( c == ' ' )
-    {
-        charWidth = width / 4;
-    }
-    else
-    {
-        float leftPad = fontInfoVec[CHAR_TO_GLYPH( c, fontSet )].leftGap;
-        float rightPad = fontInfoVec[CHAR_TO_GLYPH( c, fontSet )].rightGap;
-
-        charWidth = width * (1 - (leftPad + rightPad) );
-    }
-
     glRectTemp.resize( charWidth, height );
 
     // Center on the x axis
     if( params & TEXT_DRAW_X_CENTER )
         x = x - (charWidth / 2);
+
+    if( params & TEXT_DRAW_Y_CENTER )
+        y = y - (height / 2);
 
     gl_drawRect( glTex, x, y, glRectTemp );
 
@@ -80,9 +103,22 @@ float TextDraw::drawText( const char *text, int fontSet, float x, float y, float
 {
     uint32_t pos = 0;
 
+    float xPos = x;
+    float yPos = y;
+
+    if( params & TEXT_DRAW_X_CENTER )
+    {
+        xPos = x - getTotalWidth( text, fontSet, height ) / 2;
+    }
+
+    if( params & TEXT_DRAW_Y_CENTER )
+    {
+        yPos = y - height / 2;
+    }
+
     while( text[pos] )
     {
-        x += drawChar( text[pos], fontSet, x, y, height, params );
+        xPos += drawChar( text[pos], fontSet, xPos, yPos, height, 0 );
         pos++;
     }
 
