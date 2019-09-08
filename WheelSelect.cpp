@@ -6,7 +6,13 @@
 
 #define CENTRE_SIZE  0.1
 
+#define AXIS_BLOCK_DELAY_MS 300
+
 using namespace touchcontrols;
+
+//#define GAMEPAD_MODE_START 1
+//#define GAMEPAD_MODE_TAP   2
+//#define GAMEPAD_MOVE_HOLD  3
 
 WheelSelect::WheelSelect(std::string tag,RectF pos,std::string image_filename, int segments):
 ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
@@ -20,7 +26,11 @@ ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
 	updateSize();
 	selectedSeg = -1;
 	enabledSegs = 0;
+	gamepadMode = WHEELSELECT_GP_MODE_TAP;
+	gamepadAutoTimeout = 0;
 	useFadeSegs = false;
+	axisBlock = false;
+	axisBlockDelay = 0;
 };
 
 void WheelSelect::setWheelVisible( bool visible )
@@ -32,6 +42,12 @@ void WheelSelect::setWheelVisible( bool visible )
 void WheelSelect::setHideGraphics(bool v)
 {
 	hideGraphics = v;
+}
+
+void WheelSelect::setGamepadMode( WheelSelectMode mode, int autoTimeout )
+{
+    gamepadMode = mode;
+    gamepadAutoTimeout = autoTimeout;
 }
 
 void WheelSelect::resetOutput(){
@@ -106,7 +122,6 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 		if (id == pid)
 		{
 			signal_selected.emit(selectedSeg);
-
 			reset();
 			return true;
 		}
@@ -153,37 +168,119 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
     return false;
 }
 
-bool WheelSelect::processGamepad ( float x, float y )
+bool WheelSelect::gamepadActionButton( int state )
 {
-	float a = x;
-    float o = y;
+    LOGTOUCH( "gamepadActionButton  %d", state );
 
-    float angle = atan2(o,a);
-
-    angle += PI/2;
-
-    if (angle < 0)
-        angle = (2*PI) + angle;
-
-    float dist = x*x + y*y;
-	dist = sqrt(dist);
-
-    if (dist > 0.1)
+    if( gamepadMode == WHEELSELECT_GP_MODE_HOLD )
     {
-        int selectedSegNew = angle * nbrSegs/(2*PI) ;
-        if( selectedSeg != selectedSegNew )
+        if ( state == 1 ) // button down
         {
-            signal_vibrate.emit(SHORT_VIBRATE);
-            selectedSeg = selectedSegNew;
+            selectedSeg = -1;
+            setWheelVisible( true );
         }
-
-        signal_scroll.emit(selectedSeg);
+        else // button up
+        {
+            if( visible == true )
+            {
+                gamepadSelect();
+            }
+        }
     }
-    LOGTOUCH("%f %f angle = %f", x, y, angle);
+    else if( gamepadMode == WHEELSELECT_GP_MODE_TAP )
+    {
+        if ( state == 1 ) // button down
+        {
+            if( visible == false )
+            {
+                selectedSeg = -1;
+                setWheelVisible( true );
+            }
+            else // Already visible, now select
+            {
+                gamepadSelect();
+            }
+        }
+    }
 
-    return false;
+    return true;
 }
 
+void WheelSelect::gamepadSelect()
+{
+    // Send weapon if selected
+    if( selectedSeg != -1 )
+    {
+        axisBlock = true;
+        axisBlockDelay = getMS() + AXIS_BLOCK_DELAY_MS;
+        signal_selected.emit(selectedSeg);
+    }
+
+    reset();
+}
+
+void WheelSelect::processGamepad ( float x, float y )
+{
+    if( visible )
+    {
+        // TODO check amount moved
+        gamepadLastMoveTime = getMS();
+
+        float a = x;
+        float o = y;
+
+        float angle = atan2(o,a);
+
+        angle += PI/2;
+
+        if (angle < 0)
+            angle = (2*PI) + angle;
+
+        float dist = x*x + y*y;
+        dist = sqrt(dist);
+
+        if (dist > 0.1)
+        {
+            int selectedSegNew = angle * nbrSegs/(2*PI) ;
+            if( selectedSeg != selectedSegNew )
+            {
+                signal_vibrate.emit(SHORT_VIBRATE);
+                selectedSeg = selectedSegNew;
+            }
+
+            signal_scroll.emit(selectedSeg);
+        }
+        else
+        {
+            selectedSeg = -1;
+        }
+        LOGTOUCH("%f %f angle = %f", x, y, angle);
+    }
+}
+
+// This is needed because we only get axis values when it changes, therefor the gameloop needs to check this
+bool WheelSelect::blockGamepad()
+{
+    if( visible )
+    {
+        return true;
+    }
+    else
+    {
+        if( axisBlock ) // Block axis working for a bit to stop random movments
+        {
+            if( getMS() > axisBlockDelay ) // Check timeout
+            {
+                axisBlock = false;
+            }
+            return axisBlock;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
 
 bool WheelSelect::initGL()
 {
@@ -232,6 +329,18 @@ bool WheelSelect::drawGL(bool forEditor)
             o = o * (glRect.width/glRect.height);
 
         gl_drawRect(glTexSelected,centre.x + o - glRectSelected.width/2 ,centre.y - a - glRectSelected.height/2 ,glRectSelected);
+
+        // There are poential threading issues here, but unlikely to happen.
+        if( gamepadAutoTimeout != 0 && gamepadLastMoveTime != 0 )
+        {
+            // gamepad autoselect timeout
+            if( getMS() > (gamepadLastMoveTime + gamepadAutoTimeout))
+            {
+                gamepadLastMoveTime = 0;
+                gamepadSelect();
+            }
+
+        }
     }
 
     return false;

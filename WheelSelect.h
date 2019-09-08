@@ -11,6 +11,12 @@
 namespace touchcontrols
 {
 
+enum WheelSelectMode
+{
+    WHEELSELECT_GP_MODE_HOLD,
+    WHEELSELECT_GP_MODE_TAP,
+};
+
 class WheelSelect : public ControlSuper
 {
     bool pressed;
@@ -40,6 +46,14 @@ class WheelSelect : public ControlSuper
 
     int selectedSeg;
 
+    WheelSelectMode gamepadMode;
+    int gamepadAutoTimeout;
+
+    uint64_t gamepadLastMoveTime; // Store the time the gamepad axis last moved, used for auto timout
+
+    bool axisBlock;
+    uint64_t axisBlockDelay; // Stop the gamepad axis working for a short amount of time after selection
+
     bool useFadeSegs; //default no
     int enabledSegs;
 public:
@@ -60,7 +74,13 @@ public:
 
     bool processPointer ( int action, int pid, float x, float y );
 
-    bool processGamepad ( float x, float y );
+    void processGamepad ( float x, float y );
+
+    bool blockGamepad(); // Returns true if need to block the axis values
+
+    void setGamepadMode( WheelSelectMode mode, int autoTimeout );
+
+    bool gamepadActionButton( int state );
 
     bool drawGL ( bool forEditor = false );
 
@@ -78,6 +98,7 @@ private:
     void doUpdate();
     float distCentre ( float x, float y );
     bool inCentre ( float x, float y );
+    void gamepadSelect();
 };
 
 }
