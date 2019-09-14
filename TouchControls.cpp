@@ -25,6 +25,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	fading = false;
 	editing = false;
 	fixAspect = true;
+	hideEditButton = false;
 	alpha = 0.5;
 	r = g = b = 1.0f;
 	editGroup = edit_group;

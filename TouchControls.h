@@ -85,6 +85,7 @@ private:
 	std::string xmlFilename;
 
 	bool editing;
+
 	GLLines *grid;
 	ControlSuper *selectedCtrl;
 	PointF finger1,finger2;
@@ -124,6 +125,7 @@ public:
 	float alpha,r,g,b;
 
 	int editGroup;
+    bool hideEditButton;
 
 	std::string tag;
 
@@ -133,7 +135,7 @@ public:
 
 	sigc::signal<void, int> signal_settingsButton;
 
-	TouchControls(std::string t,bool en, bool editable,int edit_group = -1,bool showExtraSettgins = true);
+	TouchControls(std::string t,bool en, bool editable,int edit_group = -1,bool showExtraSettings = true);
 
 	void setColor(float r,float g, float b);
 

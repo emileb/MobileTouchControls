@@ -170,7 +170,7 @@ int TouchControlsContainer::draw ()
 			{
 				c->draw();
 
-				if (c->editGroup != -1)
+				if ( (c->hideEditButton == false) && c->editGroup != -1)
 					drawEditButton_ = 1;
 			}
 		}

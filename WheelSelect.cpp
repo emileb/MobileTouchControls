@@ -23,6 +23,7 @@ ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
 
     visible = false;
 	hideGraphics = false;
+	gamepadInUse = false;
 	updateSize();
 	selectedSeg = -1;
 	enabledSegs = 0;
@@ -30,6 +31,7 @@ ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
 	gamepadAutoTimeout = 0;
 	useFadeSegs = false;
 	axisBlock = false;
+	gamepadMultiTap = false;
 	axisBlockDelay = 0;
 };
 
@@ -112,6 +114,8 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 				fingerPos.y = y;
 				selectedSeg = -1;
 
+                gamepadInUse = false;
+
 				return true;
 			}
 		}
@@ -170,13 +174,25 @@ bool WheelSelect::processPointer(int action, int pid, float x, float y)
 
 bool WheelSelect::gamepadActionButton( int state )
 {
-    LOGTOUCH( "gamepadActionButton  %d", state );
+    // LOGTOUCH( "gamepadActionButton  %d", state );
+
+    gamepadInUse = true;
+
+    // Update segment position
+    gamepadUpdateSeg();
+
+    // check if rapidly pressing the button to reselect last number again
+    if( state == 1 && gamepadMultiTap && blockGamepad() )
+    {
+        gamepadSelect();
+        return true;
+    }
 
     if( gamepadMode == WHEELSELECT_GP_MODE_HOLD )
     {
         if ( state == 1 ) // button down
         {
-            selectedSeg = -1;
+            //selectedSeg = -1;
             setWheelVisible( true );
         }
         else // button up
@@ -193,7 +209,7 @@ bool WheelSelect::gamepadActionButton( int state )
         {
             if( visible == false )
             {
-                selectedSeg = -1;
+                //selectedSeg = -1;
                 setWheelVisible( true );
             }
             else // Already visible, now select
@@ -214,6 +230,7 @@ void WheelSelect::gamepadSelect()
         axisBlock = true;
         axisBlockDelay = getMS() + AXIS_BLOCK_DELAY_MS;
         signal_selected.emit(selectedSeg);
+        signal_vibrate.emit(SHORT_VIBRATE);
     }
 
     reset();
@@ -221,47 +238,58 @@ void WheelSelect::gamepadSelect()
 
 void WheelSelect::processGamepad ( float x, float y )
 {
+    gamepadLastX = x;
+    gamepadLastY = y;
+
     if( visible )
     {
-        // TODO check amount moved
-        gamepadLastMoveTime = getMS();
-
-        float a = x;
-        float o = y;
-
-        float angle = atan2(o,a);
-
-        angle += PI/2;
-
-        if (angle < 0)
-            angle = (2*PI) + angle;
-
-        float dist = x*x + y*y;
-        dist = sqrt(dist);
-
-        if (dist > 0.1)
-        {
-            int selectedSegNew = angle * nbrSegs/(2*PI) ;
-            if( selectedSeg != selectedSegNew )
-            {
-                signal_vibrate.emit(SHORT_VIBRATE);
-                selectedSeg = selectedSegNew;
-            }
-
-            signal_scroll.emit(selectedSeg);
-        }
-        else
-        {
-            selectedSeg = -1;
-        }
-        LOGTOUCH("%f %f angle = %f", x, y, angle);
+        gamepadUpdateSeg();
     }
+}
+
+bool WheelSelect::gamepadUpdateSeg()
+{
+    bool changed = false;
+
+    // TODO check amount moved
+    gamepadLastMoveTime = getMS();
+
+    float x = gamepadLastX;
+    float y = gamepadLastY;
+
+    float a = x;
+    float o = y;
+
+    float angle = atan2(o,a);
+
+    angle += PI/2;
+
+    if (angle < 0)
+     angle = (2*PI) + angle;
+
+    float dist = x*x + y*y;
+    dist = sqrt(dist);
+
+    if (dist > 0.3)
+    {
+        int selectedSegNew = angle * nbrSegs/(2*PI) ;
+        if( selectedSeg != selectedSegNew )
+        {
+            signal_vibrate.emit(SHORT_VIBRATE);
+            selectedSeg = selectedSegNew;
+            changed = true;
+        }
+
+        signal_scroll.emit(selectedSeg);
+    }
+
+    return changed;
 }
 
 // This is needed because we only get axis values when it changes, therefor the gameloop needs to check this
 bool WheelSelect::blockGamepad()
 {
-    if( visible )
+    if( visible && gamepadInUse )
     {
         return true;
     }
@@ -344,7 +372,6 @@ bool WheelSelect::drawGL(bool forEditor)
     }
 
     return false;
-	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
 }
 
 void WheelSelect::reset()

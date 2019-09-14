@@ -47,15 +47,19 @@ class WheelSelect : public ControlSuper
     int selectedSeg;
 
     WheelSelectMode gamepadMode;
-    int gamepadAutoTimeout;
+    bool            gamepadMultiTap; // True to allow rapid taping of button to cycle weapons
+    int             gamepadAutoTimeout;
+    bool            gamepadInUse;
+    float           gamepadLastX;
+    float           gamepadLastY;
 
-    uint64_t gamepadLastMoveTime; // Store the time the gamepad axis last moved, used for auto timout
+    uint64_t        gamepadLastMoveTime; // Store the time the gamepad axis last moved, used for auto timout
 
-    bool axisBlock;
-    uint64_t axisBlockDelay; // Stop the gamepad axis working for a short amount of time after selection
+    bool            axisBlock;
+    uint64_t        axisBlockDelay; // Stop the gamepad axis working for a short amount of time after selection
 
-    bool useFadeSegs; //default no
-    int enabledSegs;
+    bool            useFadeSegs; //default no
+    int             enabledSegs;
 public:
 
     sigc::signal<void, int> signal_selected;
@@ -91,13 +95,16 @@ public:
     void saveXML ( TiXmlDocument &doc );
 
     void loadXML ( TiXmlDocument &doc );
-private:
 
     void reset();
+
+private:
+
     void calcNewValue();
     void doUpdate();
     float distCentre ( float x, float y );
     bool inCentre ( float x, float y );
+    bool gamepadUpdateSeg();
     void gamepadSelect();
 };
 
