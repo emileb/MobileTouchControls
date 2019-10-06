@@ -534,6 +534,9 @@ void gl_useGL4ES()
 void gl_resetGL4ES()
 {
     glUseProgram( 0 );
+    // This is a hack to force GL4ES to draw the remaning draw call
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    //glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 }
 
 
@@ -711,6 +714,7 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
 
     if( isGLES2 )
     {
+
         // Bind the texture
         glBindTexture( GL_TEXTURE_2D, texture );
 
@@ -761,7 +765,7 @@ void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
         glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
         glUniform4f( mPositionTranslateLoc,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
         glUniform4f( mColorLoc, glColorR, glColorG, glColorB, glColorA );
-      
+
         glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 
         if( m_fixAspect )

@@ -356,11 +356,11 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
 
         y += 2;
 
-        UI_DropDown *dblTapLeft = new UI_DropDown( "dbl_tap_left",  touchcontrols::RectF ( windownLeft, y, 13 , y+2 ), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Double tap left  :  ", "None:Use:Jump:Fire", textSize, "ui_dropdown_bg" );
+        UI_DropDown *dblTapLeft = new UI_DropDown( "dbl_tap_left",  touchcontrols::RectF ( windownLeft, y, 13 , y+2 ), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Double tap left  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg" );
         rootControls->addControl ( dblTapLeft );
         dblTapLeft->signal.connect(sigc::ptr_fun ( &dropDownChange) );
 
-        UI_DropDown *dblTapRight = new UI_DropDown( "dbl_tap_right",  touchcontrols::RectF ( 13, y, windowRight , y+2 ), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Double tap right  :  ", "None:Use:Jump:Fire", textSize, "ui_dropdown_bg" );
+        UI_DropDown *dblTapRight = new UI_DropDown( "dbl_tap_right",  touchcontrols::RectF ( 13, y, windowRight , y+2 ), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Double tap right  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg" );
         rootControls->addControl ( dblTapRight );
         dblTapRight->signal.connect(sigc::ptr_fun ( &dropDownChange) );
 
