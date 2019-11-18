@@ -20,9 +20,11 @@ public: // SWAPFIX. Make this avaible to the other TouchJoy
 	int pid;
 private:
 
-	std::string image;
+	std::string floating_image;
+	std::string background_image;
 
 	GLuint glTex;
+	GLuint glTexBackground;
 
 	GLRect glRect;
 
@@ -49,7 +51,7 @@ public:
 	sigc::signal<void, int> signal_double_tap;
 
 
-	TouchJoy(std::string tag,RectF pos,std::string image_filename);
+	TouchJoy(std::string tag,RectF pos,std::string floating_image, std::string background_image);
 
     void setCenterAnchor(bool v);
 

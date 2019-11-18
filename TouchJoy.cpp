@@ -7,10 +7,12 @@
 
 using namespace touchcontrols;
 
-TouchJoy::TouchJoy(std::string tag,RectF pos,std::string image_filename):
+TouchJoy::TouchJoy(std::string tag,RectF pos,std::string floating_image, std::string background_image):
 		ControlSuper(TC_TYPE_TOUCHJOY,tag,pos)
 {
-	image = image_filename;
+	this->floating_image = floating_image;
+	this->background_image = background_image;
+
 	pid = -1;
 	doubleTapState = 0;
 	hideGraphics = false;
@@ -184,8 +186,8 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 bool TouchJoy::initGL()
 {
 	int x,y;
-	glTex = loadTextureFromPNG(image,x,y);
-    
+	glTex = loadTextureFromPNG(floating_image,x,y);
+    glTexBackground = loadTextureFromPNG(background_image,x,y);
     return false;
 }
 
@@ -197,10 +199,32 @@ bool TouchJoy::drawGL(bool forEditor)
 
     if (!hideGraphics)
 	{
-		if (pid != -1)
-			gl_drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
+		if(centerAnchor) // If fixed joystick, show the background
+		{
+			GLRect bgRect;
+			float width, height;
+			// In case not square, size to fit
+			if(controlPos.width() * 1.6 < controlPos.height()) // tall and thin
+			{
+				width = controlPos.width();
+				height = width * 1.6;
+			}
+			else
+			{
+				width = controlPos.height() / 1.6;
+				height = width * 1.6;
+			}
+			bgRect.resize(width, height);
+			// draw centred
+	        gl_drawRect(glTexBackground, controlPos.left + (controlPos.width() - width) / 2,controlPos.top + (controlPos.height() - height) / 2,bgRect);
+		}
 		else
-			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+		{
+			if (pid != -1)
+				gl_drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
+			else
+				gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+		}
 	}
 
 	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
