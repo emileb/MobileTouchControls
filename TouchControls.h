@@ -24,7 +24,9 @@
 #include "UI_Switch.h"
 #include "UI_Keyboard.h"
 #include "UI_DropDown.h"
+#include "UI_ColorPicker.h"
 
+#include "Colors.h"
 
 #ifndef _TouchControls_H_
 #define _TouchControls_H_
@@ -122,7 +124,8 @@ public:
 
 	bool enabled;
 
-	float alpha,r,g,b;
+	uint32_t defaultColor;
+	float alpha;
 
 	int editGroup;
     bool hideEditButton;
@@ -136,8 +139,6 @@ public:
 	sigc::signal<void, int> signal_settingsButton;
 
 	TouchControls(std::string t,bool en, bool editable,int edit_group = -1,bool showExtraSettings = true);
-
-	void setColor(float r,float g, float b);
 
 	void setPassThroughTouch(PassThrough v);
 
@@ -160,6 +161,7 @@ public:
     bool isFixAspect();
 
 	void setAlpha(float a);
+	void setColour(uint32_t defaultColor);
 
 	void addControl(Button *cntrl);
 

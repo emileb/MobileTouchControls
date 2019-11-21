@@ -50,6 +50,8 @@ void gl_setFixAspect( bool v );
 bool gl_getFixAspect();
 
 void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a );
+void gl_color4f( uint32_t rgb, GLfloat a );
+void gl_color3f( uint32_t rgb );
 void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a );
 void gl_loadIdentity();
 void gl_scalef( GLfloat x, GLfloat y, GLfloat z );

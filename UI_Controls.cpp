@@ -12,6 +12,7 @@ tag(t)
 {
     yOffset = 0;
     scrolling = false;
+    controlActive = NULL;
 }
 
 void UI_Controls::setEnabled(bool v)
@@ -52,6 +53,12 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
     bool eventUsed = false;
     for (int n=0;n<size;n++)
     {
+        if( controlActive )
+        {
+            controlActive->processPointer(action,pid, x, y );
+            eventUsed = true;
+        }
+
         ControlSuper *cs = controls.at(size - 1 - n); // Start from top of stack
         if (cs->isEnabled() && !eventUsed) // Now !eventUsed, only one control should use the event, to fix DropDown control
         {
@@ -142,6 +149,7 @@ int UI_Controls::draw ()
 		gl_color4f(1, 1, 1,1 );
 
     int size = controls.size();
+    ControlSuper *controlActive_temp = NULL; // Use temp so reduce threading issues
     for (int n=0;n<size;n++) //draw
     {
         ControlSuper *c = controls.at(n);
@@ -156,8 +164,32 @@ int UI_Controls::draw ()
             {
                 gl_translatef( 0, yOffset, 0 );
             }
-            c->drawGL();
+
+            // Draw the controls, also check if it wants to show somethign over the screen, if it does, store it here.
+            if( c->UI_drawGL( false ) ) // drawGL really gets called
+            {
+                controlActive_temp = c;
+            }
         }
+    }
+
+	// Save current active control for the touch control to work
+    controlActive = controlActive_temp;
+
+    if( controlActive )
+    {
+		// Reset this so it's in the middle and not scrolled
+        gl_loadIdentity();
+        gl_scalef(GLScaleWidth, GLScaleHeight, 1);
+
+		// Grey out UI controls under
+        GLRect rect;
+        rect.resize(1,1);
+        gl_drawRect(0.0, 0.0, 0.0, 0.7, 0.0, 0.0, rect );
+
+
+        // Draw it (active = true)
+        controlActive->UI_drawGL( true ); // drawGL really gets called
     }
     // The UI window enables this
     gl_disable( GL_SCISSOR_TEST );

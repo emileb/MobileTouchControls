@@ -27,7 +27,7 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	fixAspect = true;
 	hideEditButton = false;
 	alpha = 0.5;
-	r = g = b = 1.0f;
+	defaultColor = COLOUR_WHITE;
 	editGroup = edit_group;
 	passThroughTouch = ALWAYS;
 
@@ -68,12 +68,6 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	}
 }
 
-void TouchControls::setColor(float r_,float g_, float b_)
-{
-	r = r_;
-	g = g_;
-	b = b_;
-}
 
 void TouchControls::setPassThroughTouch(PassThrough v)
 {
@@ -218,6 +212,11 @@ void TouchControls::resetOutput()
 void TouchControls::setAlpha(float a)
 {
 	alpha = a;
+}
+
+void TouchControls::setColour(uint32_t c)
+{
+	defaultColor = c;
 }
 
 bool TouchControls::isEnabled()
@@ -522,13 +521,11 @@ int TouchControls::draw ()
 				setEnabled(false); //now also disable the control
 			}
 		}
-		//LOGTOUCH("fadePos = %f",fadePos);
-
-		gl_color4f(r, g, b,alpha * fadePos);
-
 	}
 	else
-		gl_color4f(r, g, b,alpha);
+	{
+		fadePos = 1;
+	}
 
 	int size = controls.size();
 	for (int n=0;n<size;n++) //draw
@@ -541,7 +538,13 @@ int TouchControls::draw ()
             
 			if (animating)
 				gl_translatef(0, -slidePos, 0);
-            
+
+            // check if control has defualt color or not
+            if( c->color == COLOUR_NONE )
+                gl_color4f(defaultColor, alpha * fadePos);
+            else
+                gl_color4f(c->color, alpha * fadePos);
+
 			c->drawGL();
 		}
 	}
@@ -601,7 +604,11 @@ int  TouchControls::drawEditor ()
 
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-			gl_color4f(r, g, b, 1 );
+
+            if( c->color == COLOUR_NONE )
+                gl_color4f(defaultColor, 1);
+            else
+                gl_color4f(c->color, 1);
 
 			c->drawGL(true);
 
@@ -634,7 +641,7 @@ int  TouchControls::drawEditor ()
 		{
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-		//	glColor4f(1.0, 0.7, 0.7, 1 );
+			gl_color4f(COLOUR_WHITE, 1);
 			settingsButton->drawGL();
 		}
 	}

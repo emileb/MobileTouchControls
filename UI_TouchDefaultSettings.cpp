@@ -28,6 +28,8 @@ namespace touchcontrols
 #define DROPDOWN_DBL_TAP_LEFT 30
 #define DROPDOWN_DBL_TAP_RIGHT 31
 
+#define DEFAULT_COLOR 32
+
 static TouchControlsContainer *container = NULL;
 static UI_Controls *rootControls = NULL;
 static std::string settingsFilename;
@@ -61,6 +63,8 @@ static void saveSettings ( std::string filename )
 
     root->SetAttribute( "dbl_tap_left", settings.dblTapLeft );
     root->SetAttribute( "dbl_tap_right", settings.dblTapRight );
+
+	root->SetAttribute( "default_color", settings.defaultColor );
 
     LOGTOUCH("Saving settings to %s\n", filename.c_str() );
     doc.SaveFile ( filename );
@@ -99,6 +103,8 @@ static void loadSettings ( std::string filename )
     root->QueryUnsignedAttribute( "dbl_tap_left",  &settings.dblTapLeft );
     root->QueryUnsignedAttribute( "dbl_tap_right",  &settings.dblTapRight );
 
+    root->QueryUnsignedAttribute( "default_color",  &settings.defaultColor );
+
     delete doc;
 }
 
@@ -120,6 +126,8 @@ static void resetDefaults()
 
     settings.dblTapLeft = 0;
     settings.dblTapRight = 0;
+
+    settings.defaultColor = COLOUR_WHITE;
 }
 
 static void applyControlValues()
@@ -130,6 +138,8 @@ static void applyControlValues()
 		((UI_Slider *)rootControls->getControl("slider_look"))->setValue( settings.lookSensitivity / 2 );
 		((UI_Slider *)rootControls->getControl("slider_turn"))->setValue( settings.turnSensitivity / 2 );
 		((UI_Slider *)rootControls->getControl("slider_move"))->setValue( settings.moveSensitivity / 2 );
+
+		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor( settings.defaultColor );
 
 		((UI_Switch *)rootControls->getControl("invert_switch"))->setValue( settings.invertLook );
 		((UI_Switch *)rootControls->getControl("fixed_move_stick"))->setValue( settings.fixedMoveStick  );
@@ -244,6 +254,18 @@ static void dropDownChange ( uint32_t uid, uint32_t value )
     }
 }
 
+static bool colorChange(uint32_t uid, uint32_t color )
+{
+	if( color != COLOUR_NONE )
+	{
+		settings.defaultColor = color;
+		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor( settings.defaultColor );
+		return false; //OK color
+	}
+	else
+	    return true; //return true so picker does not close
+}
+
 // Gets called by a signal when the controls are enabled or disabled
 static void controlsEnabled( bool enabled )
 {
@@ -319,6 +341,13 @@ UI_Controls *createDefaultSettingsUI ( TouchControlsContainer *con, std::string 
         slider->signal.connect ( sigc::ptr_fun ( &sliderChange ) );
         rootControls->addControl ( slider );
 
+
+        y += 2;
+
+        rootControls->addControl ( new UI_TextBox ( "text",          touchcontrols::RectF ( windownLeft, y, 9.5, y+2 ), "font_dual", 0, UI_TEXT_RIGHT, "Default color:", textSize ) );
+        UI_ColorPicker *colorPicker = new UI_ColorPicker( "color_picker",  touchcontrols::RectF ( 10, y+0.2, 13, y+1.8 ), DEFAULT_COLOR, 0 );
+        rootControls->addControl ( colorPicker );
+        colorPicker->signal.connect(sigc::ptr_fun ( &colorChange) );
 
         y += 2;
 

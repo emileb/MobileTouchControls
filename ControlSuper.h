@@ -1,6 +1,7 @@
 #include <string>
 
 #include "RectF.h"
+#include "Colors.h"
 #define TIXML_USE_STL
 #include "TinyXML/tinyxml.h"
 
@@ -25,6 +26,7 @@
 #define TC_TYPE_UI_SWITCH       24
 #define TC_TYPE_UI_KEYBOARD     25
 #define TC_TYPE_UI_DROPDOWN     26
+#define TC_TYPE_UI_COLORPICKER  27
 
 
 namespace touchcontrols
@@ -69,6 +71,8 @@ public:
 
 	int type;
 
+	uint32_t color; // 0 = use default
+
 	ControlSuper(int type,std::string t,RectF pos);
     virtual ~ControlSuper();
 
@@ -78,7 +82,9 @@ public:
 
     virtual bool gamepadInput(bool down, GamePadKey key);
 
-	virtual bool drawGL(bool forEditor = false) = 0;
+	virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
+
+	bool UI_drawGL( bool UIActive );
 
 	virtual bool initGL() = 0;
 

@@ -11,7 +11,7 @@
 
 using namespace touchcontrols;
 
-Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_,std::string description_):
+Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,bool repeat_,bool hidden_,std::string description_, uint32_t color_ ):
 																						ControlSuper(TC_TYPE_BUTTON,tag,pos)
 {
 	value = value_;
@@ -21,6 +21,7 @@ Button::Button(std::string tag,RectF pos,std::string image_filename,int value_,b
 	id = -1;
 	repeat = repeat_;
 	hidden = hidden_;
+	color = color_;
 	updateSize();
 
 	flash = false;

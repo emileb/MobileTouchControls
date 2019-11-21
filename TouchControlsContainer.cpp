@@ -12,7 +12,6 @@ using namespace touchcontrols;
 TouchControlsContainer::TouchControlsContainer()
 {
 
-	editButtonAlpha = 0;
 }
 
 void TouchControlsContainer::resetDefaults()
@@ -35,6 +34,11 @@ void TouchControlsContainer::editControls(TouchControls * ctrl)
 {
 	editingControls = ctrl;
 	editingControls->edit();
+}
+
+void  TouchControlsContainer::setColour(uint32_t defaultColor)
+{
+	this->defaultColor = defaultColor;
 }
 
 bool TouchControlsContainer::isEditing()
@@ -180,15 +184,10 @@ int TouchControlsContainer::draw ()
 
 		if (drawEditButton && editorButton)
 		{
-			if (editButtonAlpha != 0)
-			{
-				//LOGTOUCH("editButtonAlpha");
-				gl_color4f(1, 1, 1,editButtonAlpha);
-			}
-
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-		//	glColor4f(1.0, 0.7, 0.7, 1 );
+
+			gl_color4f( defaultColor, 0.5 ); // TODO, this is alpha value of the settings button
 			editorButton->drawGL();
 		}
 

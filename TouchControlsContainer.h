@@ -37,11 +37,8 @@ class TouchControlsContainer: public TouchControlsInterface
  	UI_Controls * uiControlsTemp = NULL; // To try and avoid threading issues this is set then copied to uiControls
     uint32_t      uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
 
+	uint32_t defaultColor = COLOUR_WHITE; // Default white
 public:
-
-	float editButtonAlpha;
-
-
 
 	sigc::signal<void,int> signal_settings;
 
@@ -53,6 +50,8 @@ public:
 	void addControlGroup(TouchControls *cntrl);
 
 	void editControls(TouchControls * ctrl);
+
+	void setColour(uint32_t defaultColor);
 
 	int draw ();
 

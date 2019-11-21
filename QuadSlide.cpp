@@ -160,6 +160,8 @@ bool QuadSlide::initGL()
 
 bool QuadSlide::drawGL(bool forEditor)
 {
+	// Change to white because this control is currently colored
+	gl_color3f(COLOUR_WHITE);
 
     uint32_t drawArrows = 0;
 	if (forEditor)
@@ -174,6 +176,7 @@ bool QuadSlide::drawGL(bool forEditor)
 	{
 		if (!hidden)
 		{
+
             gl_drawRect(glBgTex,controlPos.left,controlPos.top,glRect);
 
             if( slideState == STATE_UP )
@@ -228,7 +231,7 @@ bool QuadSlide::drawGL(bool forEditor)
         uint64_t timeNow = getMS();
         uint64_t diff = timeNow - arrowSlideTime;
         arrowSlidePos = (float)(diff % SLIDE_TIME_MS) / (float)SLIDE_TIME_MS;
-        LOGTOUCH("time now = %" PRId64 " slid pos = %f",timeNow,arrowSlidePos);
+        //LOGTOUCH("time now = %" PRId64 " slid pos = %f",timeNow,arrowSlidePos);
     }
 
 

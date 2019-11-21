@@ -46,6 +46,8 @@ private:
     std::vector<ControlSuper *> controls;
 	bool enabled;
 
+	ControlSuper *controlActive; // If a control wants to show something over the screen use this
+
     float fadePos; //current fade
 	fadedir_t fadeDir;
 	float fadeStep;

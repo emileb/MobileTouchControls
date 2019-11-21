@@ -17,6 +17,7 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 	hidden = false;
 	editable = true;
 	allowPassThrough = true;
+	color = COLOUR_NONE; // 0 means use default
 }
 
 bool ControlSuper::gamepadInput(bool down, GamePadKey key)
@@ -28,6 +29,11 @@ bool ControlSuper::gamepadInput(bool down, GamePadKey key)
 ControlSuper::~ControlSuper()
 {
 
+}
+
+bool ControlSuper::UI_drawGL( bool UIActive )
+{
+	return drawGL(UIActive);
 }
 
 void ControlSuper::setEnabled(bool v)
@@ -79,7 +85,7 @@ void ControlSuper::saveXML(TiXmlElement &root)
 	root.SetDoubleAttribute("right",controlPos.right);
 	root.SetDoubleAttribute("top",controlPos.top);
 	root.SetDoubleAttribute("bottom",controlPos.bottom);
-
+	root.SetAttribute("color",color);
 }
 
 
@@ -91,5 +97,5 @@ void ControlSuper::loadXML(TiXmlElement &root)
 	root.QueryFloatAttribute("right", &controlPos.right);
 	root.QueryFloatAttribute("top",   &controlPos.top);
 	root.QueryFloatAttribute("bottom",&controlPos.bottom);
-
+	root.QueryUnsignedAttribute("color",&color);
 }

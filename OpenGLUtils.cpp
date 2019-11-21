@@ -369,24 +369,36 @@ static float glTranslateX, glTranslateY, glTranslateZ;
 static float glColorR, glColorG, glColorB, glColorA;
 void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
 {
-    if( isGLES2 )
-    {
-        glColorR = r;
-        glColorG = g;
-        glColorB = b;
-        glColorA = a;
-    }
-    else
+    glColorR = r;
+    glColorG = g;
+    glColorB = b;
+    glColorA = a;
+
+    if( isGLES2 == false )
     {
         glColor4f(r, g, b, a);
     }
 }
 
+void gl_color4f( uint32_t rgb, GLfloat a )
+{
+   gl_color4f(((rgb >>16 ) & 0xFF) / 255.f,
+              ((rgb >>8 ) & 0xFF) / 255.f,
+              ((rgb) & 0xFF) / 255.f,
+               a);
+}
+
+void gl_color3f( uint32_t rgb )
+{
+	gl_color4f(rgb, glColorA);
+}
+
 void gl_loadIdentity()
 {
+    glTranslateX = glTranslateY = glTranslateZ = 0;
+
     if( isGLES2 )
     {
-        glTranslateX = glTranslateY = glTranslateZ = 0;
         float ident[16] =    {1,0,0,0,
                               0,1,0,0,
                               0,0,1,0,
@@ -415,17 +427,17 @@ void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
 
 void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
 {
-    if( isGLES2 )
-    {
-        glTranslateX += x;
-        glTranslateY -= y;
-        glTranslateZ += z;
-    }
-    else
+
+    glTranslateX += x;
+    glTranslateY -= y;
+    glTranslateZ += z;
+
+    if( isGLES2 == false )
     {
         glTranslatef(x, y, z);
     }
 }
+
 
 void gl_disable (GLuint v)
 {
