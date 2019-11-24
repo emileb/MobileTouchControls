@@ -17,6 +17,14 @@ using namespace touchcontrols;
 WheelSelect::WheelSelect(std::string tag,RectF pos,std::string image_filename, int segments):
 ControlSuper(TC_TYPE_WHEELSEL,tag,pos)
 {
+	// Check is segments nubmer should be in filename
+	if (image_filename.find("%d") != std::string::npos) {
+		char newname[64];
+		snprintf(newname,64,image_filename.c_str(),segments);
+		image_filename = newname;
+		LOGTOUCH("WheelSelect new image filename = %s",image_filename.c_str());
+	}
+
 	image = image_filename;
 	id = -1;
 	nbrSegs = segments;
@@ -356,6 +364,7 @@ bool WheelSelect::drawGL(bool forEditor)
         float o = sin(ang * PI / 180.0 ) * h_len;
             o = o * (glRect.width/glRect.height);
 
+		gl_color3f(COLOUR_WHITE);
         gl_drawRect(glTexSelected,centre.x + o - glRectSelected.width/2 ,centre.y - a - glRectSelected.height/2 ,glRectSelected);
 
         // There are poential threading issues here, but unlikely to happen.
