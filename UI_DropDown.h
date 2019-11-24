@@ -23,36 +23,36 @@ class UI_DropDown : public ControlSuper
 
 	GLRect glRect;
 
-    std::string bg_image;
-    std::string font_filename;
+	std::string bg_image;
+	std::string font_filename;
 
-    std::string lableText;
-    std::vector<std::string> listItems;
+	std::string lableText;
+	std::vector<std::string> listItems;
 
-    uint32_t uid;
+	uint32_t uid;
 
-    TextDraw textDraw;
+	TextDraw textDraw;
 
-    uint32_t selectedItem;
-    bool isOpen;
-    float fadePos;
+	uint32_t selectedItem;
+	bool isOpen;
+	float fadePos;
 
-    float listTop, listBottom, listItemHeight;
+	float listTop, listBottom, listItemHeight;
 
-    TapDetect tapDetect;
+	TapDetect tapDetect;
 
 public:
 
-    sigc::signal<void, uint32_t, uint32_t> signal;
+	sigc::signal<void, uint32_t, uint32_t> signal;
 
-    void setSelected( uint32_t n );
+	void setSelected(uint32_t n);
 
-	UI_DropDown( std::string tag, RectF pos, uint32_t uid, std::string font_filename, int fontSet,
-	         std::string lableText, std::string optionList, float textSize, std::string bg_image );
+	UI_DropDown(std::string tag, RectF pos, uint32_t uid, std::string font_filename, int fontSet,
+	            std::string lableText, std::string optionList, float textSize, std::string bg_image);
 
 	bool processPointer(int action, int pid, float x, float y);
 
- 	void resetOutput();
+	void resetOutput();
 
 	bool drawGL(bool forEditor = false);
 

@@ -19,34 +19,34 @@ class UI_Slider : public ControlSuper
 	int touchId;
 
 	GLuint glTex;
-    GLuint glTexHandle;
+	GLuint glTexHandle;
 
 	GLRect glRect;
-    GLRect glRectHandle;
+	GLRect glRectHandle;
 
-    std::string bg_texture;
-    std::string handle_texture;
+	std::string bg_texture;
+	std::string handle_texture;
 
-    float value;
-    uint32_t uid;
+	float value;
+	uint32_t uid;
 
 	uint64_t timeDown;
 	PointF   anchor;
 	int32_t  lockState; // 0 = start, -1 = bad, 1 = good
 
-    void updateValue( float x );
+	void updateValue(float x);
 public:
 
-	UI_Slider( std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture );
+	UI_Slider(std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture);
 
-    float getValue();
-    void setValue( float );
+	float getValue();
+	void setValue(float);
 
-    sigc::signal<void, uint32_t, float> signal;
+	sigc::signal<void, uint32_t, float> signal;
 
 	bool processPointer(int action, int pid, float x, float y);
 
- 	void resetOutput();
+	void resetOutput();
 
 	bool drawGL(bool forEditor = false);
 

@@ -13,8 +13,8 @@
 
 using namespace touchcontrols;
 
-JoyStick::JoyStick(std::string tag,RectF pos,std::string image_filename):
-								ControlSuper(TC_TYPE_JOYSTICK,tag,pos)
+JoyStick::JoyStick(std::string tag, RectF pos, std::string image_filename):
+	ControlSuper(TC_TYPE_JOYSTICK, tag, pos)
 {
 	image = image_filename;
 	id = -1;
@@ -43,26 +43,27 @@ void JoyStick::setBackground(std::string image_filename)
 }
 
 
-void JoyStick::resetOutput(){
+void JoyStick::resetOutput()
+{
 	reset();
 }
 
 void JoyStick::updateSize()
 {
 	//glRect.resize((controlPos.right - controlPos.left) * 0.50, (controlPos.bottom - controlPos.top)* 0.50);
-	glRect.resize(controlPos.width(),controlPos.height());
-	glRectBg.resize(controlPos.width(),controlPos.height());
+	glRect.resize(controlPos.width(), controlPos.height());
+	glRectBg.resize(controlPos.width(), controlPos.height());
 	//glRect.resize(0.1, 0.16);
 }
 
 bool JoyStick::processPointer(int action, int pid, float x, float y)
 {
-	if (action == P_DOWN)
+	if(action == P_DOWN)
 	{
 		//if (id == -1) //Only process if not active
-		if (1) //Testing this, try to fix random pointer swap 08/12/13
+		if(1)  //Testing this, try to fix random pointer swap 08/12/13
 		{
-			if (controlPos.contains(x, y))
+			if(controlPos.contains(x, y))
 			{
 				id = pid;
 
@@ -75,14 +76,14 @@ bool JoyStick::processPointer(int action, int pid, float x, float y)
 				fingerPos.x = x;
 				fingerPos.y = y;
 
-				if (doubleTapState == 0) //First tap of double tap
+				if(doubleTapState == 0)  //First tap of double tap
 				{
 					doubleTapState = 1;
 					doubleTapCounter = getMS();
 				}
 				else if(doubleTapState == 2) //Second down of double tap
 				{
-					if ((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED)
+					if((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED)
 					{
 						signal_double_tap.emit(1);
 						doubleTapState = 3;
@@ -97,17 +98,18 @@ bool JoyStick::processPointer(int action, int pid, float x, float y)
 				return true;
 			}
 		}
+
 		return false;
 	}
-	else if (action == P_UP)
+	else if(action == P_UP)
 	{
-		if (id == pid)
+		if(id == pid)
 		{
-			if (doubleTapState == 1) //First up of double tap
+			if(doubleTapState == 1)  //First up of double tap
 			{
 				//Simple check to see if finger moved very much
-				if (((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
-						(((abs(anchor.x - fingerPos.x) + abs(anchor.y - fingerPos.y))) < 0.05))
+				if(((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
+				        (((abs(anchor.x - fingerPos.x) + abs(anchor.y - fingerPos.y))) < 0.05))
 				{
 					doubleTapState = 2;
 					doubleTapCounter = getMS();
@@ -115,7 +117,7 @@ bool JoyStick::processPointer(int action, int pid, float x, float y)
 				else
 					doubleTapState = 0;
 			}
-			else if (doubleTapState == 3) //Finger up, finished double tap
+			else if(doubleTapState == 3)  //Finger up, finished double tap
 			{
 				signal_double_tap.emit(0);
 				doubleTapState = 0;
@@ -126,25 +128,27 @@ bool JoyStick::processPointer(int action, int pid, float x, float y)
 			reset();
 			return true;
 		}
+
 		return false;
 	}
-	else if (action == P_ALLUP)
+	else if(action == P_ALLUP)
 	{
-		if (id != -1) //Should not get this, but could be buggy drivers
+		if(id != -1)  //Should not get this, but could be buggy drivers
 		{
 			reset();
 			return true;
 		}
+
 		return false;
 	}
 	else if(action == P_MOVE)
 	{
-		if (pid == id) //Finger already down
+		if(pid == id)  //Finger already down
 		{
 
-			if (glitchFix) //Need to wait untill the values have changed at least once, otherwise inital jump
+			if(glitchFix)  //Need to wait untill the values have changed at least once, otherwise inital jump
 			{
-				if ((last.x != x) || (last.y != y))
+				if((last.x != x) || (last.y != y))
 				{
 					last.x = x;
 					last.y = y;
@@ -157,50 +161,54 @@ bool JoyStick::processPointer(int action, int pid, float x, float y)
 			}
 
 
-			if (!glitchFix)
+			if(!glitchFix)
 			{
 				fingerPos.x = x;
 				fingerPos.y = y;
 				calcNewValue();
 			}
+
 			return true;
 		}
+
 		return false;
 	}
-    return false;
+
+	return false;
 }
 
 bool JoyStick::initGL()
 {
-	int x,y;
-	glTex = loadTextureFromPNG(image,x,y);
-	glTexBg = loadTextureFromPNG(imageBg,x,y);
-    
-    return false;
+	int x, y;
+	glTex = loadTextureFromPNG(image, x, y);
+	glTexBg = loadTextureFromPNG(imageBg, x, y);
+
+	return false;
 }
 
 bool JoyStick::drawGL(bool forEditor)
 {
 
-	if (!enabled)
+	if(!enabled)
 		return false;
 
-	if ((!hideGraphics && centreAnchor))
+	if((!hideGraphics && centreAnchor))
 	{
-		if (glTexBg)
-			gl_drawRect(glTexBg,controlPos.left,controlPos.top,glRectBg);
+		if(glTexBg)
+			gl_drawRect(glTexBg, controlPos.left, controlPos.top, glRectBg);
 
-		if (id != -1)
+		if(id != -1)
 		{
-			float dx =  controlPos.left + controlPos.width()/2 - fingerPos.x;
-			float dy =  controlPos.top + controlPos.height()/2 - fingerPos.y;
-			float dist = (dx * dx ) + (dy * dy);
+			float dx =  controlPos.left + controlPos.width() / 2 - fingerPos.x;
+			float dy =  controlPos.top + controlPos.height() / 2 - fingerPos.y;
+			float dist = (dx * dx) + (dy * dy);
 			dist = sqrt(dist);
 			float maxMovement = controlPos.width() * 0.15;
 			float scale = 1;
 
 			float xyStretch = 1; //fix aspect ratios
-			if (dist > maxMovement)
+
+			if(dist > maxMovement)
 			{
 				//xyStretch = ((float)touchcontrols::GLScaleWidth / -(float)touchcontrols::GLScaleHeight) /
 				//		(((float)touchcontrols::ScaleX / (float)touchcontrols::ScaleY));
@@ -209,14 +217,15 @@ bool JoyStick::drawGL(bool forEditor)
 				xyStretch = 0.8f;
 				scale = maxMovement / dist;
 			}
-			gl_drawRect(glTex,controlPos.left - dx*scale * (xyStretch),controlPos.top - dy*scale  * (1.f/xyStretch),glRect);
+
+			gl_drawRect(glTex, controlPos.left - dx * scale * (xyStretch), controlPos.top - dy * scale  * (1.f / xyStretch), glRect);
 		}
 		else
-			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
+			gl_drawRect(glTex, controlPos.left + controlPos.width() / 2 - glRect.width / 2, controlPos.top + controlPos.height() / 2 - glRect.height / 2, glRect);
 
 	}
 
-    return false;
+	return false;
 }
 
 void JoyStick::reset()
@@ -241,10 +250,10 @@ void JoyStick::calcNewValue()
 	last.y = fingerPos.y;
 
 
-	if (centreAnchor)
+	if(centreAnchor)
 	{
-		dx = controlPos.left + controlPos.width()/2 - fingerPos.x;
-		dy = controlPos.top + controlPos.height()/2 - fingerPos.y;
+		dx = controlPos.left + controlPos.width() / 2 - fingerPos.x;
+		dy = controlPos.top + controlPos.height() / 2 - fingerPos.y;
 	}
 	else
 	{
@@ -255,14 +264,15 @@ void JoyStick::calcNewValue()
 
 	valueJoy.x = dx;
 	valueJoy.y = dy;
-	if (valueJoy.x > 1)
+
+	if(valueJoy.x > 1)
 		valueJoy.x = 1;
-	else if (valueJoy.x < -1)
+	else if(valueJoy.x < -1)
 		valueJoy.x = -1;
 
-	if (valueJoy.y > 1)
+	if(valueJoy.y > 1)
 		valueJoy.y = 1;
-	else if (valueJoy.y < -1)
+	else if(valueJoy.y < -1)
 		valueJoy.y = -1;
 
 	doUpdate();
@@ -272,13 +282,13 @@ void JoyStick::calcNewValue()
 void JoyStick::doUpdate()
 {
 	//LOGTOUCH("xT = %f yT = %f,xJ = %f yJ = %f",valueTouch.x,valueTouch.y,valueJoy.x ,valueJoy.y);
-	signal_move.emit(valueJoy.x,valueJoy.y,valueTouch.x,valueTouch.y);
+	signal_move.emit(valueJoy.x, valueJoy.y, valueTouch.x, valueTouch.y);
 }
 
 void JoyStick::saveXML(TiXmlDocument &doc)
 {
 	TiXmlElement * root = new TiXmlElement(tag.c_str());
-	doc.LinkEndChild( root );
+	doc.LinkEndChild(root);
 
 	ControlSuper::saveXML(*root);
 }
@@ -286,9 +296,9 @@ void JoyStick::saveXML(TiXmlDocument &doc)
 void JoyStick::loadXML(TiXmlDocument &doc)
 {
 	TiXmlHandle hDoc(&doc);
-	TiXmlElement* pElem=hDoc.FirstChild( tag ).Element();
+	TiXmlElement* pElem = hDoc.FirstChild(tag).Element();
 
-	if (!pElem) //Check exists, if not just leave as default
+	if(!pElem)  //Check exists, if not just leave as default
 		return;
 
 	ControlSuper::loadXML(*pElem);

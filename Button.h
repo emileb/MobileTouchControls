@@ -36,7 +36,7 @@ public:
 	sigc::signal<void, int> signal_buttonUp;
 	sigc::signal<void, int, int> signal_button;
 
-	Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat=false,bool hidden=false,std::string description = "", uint32_t color = COLOUR_NONE);
+	Button(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false, std::string description = "", uint32_t color = COLOUR_NONE);
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 

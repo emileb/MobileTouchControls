@@ -8,7 +8,7 @@ namespace touchcontrols
 class PointF
 {
 public:
-	float x,y;
+	float x, y;
 	bool enabled;
 };
 

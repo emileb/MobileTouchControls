@@ -38,7 +38,7 @@ class MultitouchMouse : public ControlSuper
 	GLLines *glLines;
 
 
-	PointF last,last2;
+	PointF last, last2;
 
 	PointF anchor;
 
@@ -49,12 +49,12 @@ class MultitouchMouse : public ControlSuper
 
 	//enum mode{
 public:
-	sigc::signal<void,int, float,float,float,float> signal_action;
+	sigc::signal<void, int, float, float, float, float> signal_action;
 
 	sigc::signal<void, int> signal_double_tap;
 
 
-	MultitouchMouse(std::string tag,RectF pos,std::string image_filename);
+	MultitouchMouse(std::string tag, RectF pos, std::string image_filename);
 
 	void setHideGraphics(bool v);
 
@@ -74,7 +74,7 @@ public:
 private:
 
 	void reset();
-	float distancePoints(PointF p1,PointF p2);
+	float distancePoints(PointF p1, PointF p2);
 
 };
 

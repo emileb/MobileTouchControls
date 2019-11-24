@@ -32,13 +32,14 @@
 namespace touchcontrols
 {
 
-typedef enum {
-    FADE_IN,FADE_OUT
+typedef enum
+{
+	FADE_IN, FADE_OUT
 } fadedir_t;
 
 enum GamePadKey
 {
-    LEFT,RIGHT,UP,DOWN,SELECT,BACK
+	LEFT, RIGHT, UP, DOWN, SELECT, BACK
 };
 
 class ControlSuper
@@ -48,22 +49,22 @@ protected:
 
 	bool hidden; //Can hide control from view, but still enabled
 
-    bool editable; // If can edit position, default true
+	bool editable; // If can edit position, default true
 
-    bool allowPassThrough; // allow controls under to get pointer data. Default true.
+	bool allowPassThrough; // allow controls under to get pointer data. Default true.
 public:
 	RectF controlPos;
 
 	void setEnabled(bool v);
 	void setHidden(bool v);
-    void setEditable(bool v);
-    void setAllowPassThrough(bool v);
+	void setEditable(bool v);
+	void setAllowPassThrough(bool v);
 
 	bool isEnabled();
 	bool isHidden();
-    bool isEditable();
+	bool isEditable();
 
-    bool isAllowPassThrough();
+	bool isAllowPassThrough();
 
 	std::string description;
 
@@ -73,18 +74,18 @@ public:
 
 	uint32_t color; // 0 = use default
 
-	ControlSuper(int type,std::string t,RectF pos);
-    virtual ~ControlSuper();
+	ControlSuper(int type, std::string t, RectF pos);
+	virtual ~ControlSuper();
 
 	virtual void resetOutput() = 0; //This outputs a reset
 
 	virtual bool processPointer(int action, int pid, float x, float y) = 0;
 
-    virtual bool gamepadInput(bool down, GamePadKey key);
+	virtual bool gamepadInput(bool down, GamePadKey key);
 
 	virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
 
-	bool UI_drawGL( bool UIActive );
+	bool UI_drawGL(bool UIActive);
 
 	virtual bool initGL() = 0;
 

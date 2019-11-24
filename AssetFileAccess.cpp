@@ -10,32 +10,32 @@ extern "C"
 
 #include "AssetFileAccess.h"
 
-JNIEnv * getEnv();
+	JNIEnv * getEnv();
 
-int assetFopen(const char *filename, const char *mode)
-{
-    LOGI("assetFopen %s",filename);
+	int assetFopen(const char *filename, const char *mode)
+	{
+		LOGI("assetFopen %s", filename);
 
-    JNIEnv * env = getEnv();
+		JNIEnv * env = getEnv();
 
-	jclass cls =  env->FindClass("com/beloko/AssetFileAccess");
-	jmethodID method = env->GetStaticMethodID(cls,  "fopen", "(Ljava/lang/String;Ljava/lang/String;)I");
+		jclass cls =  env->FindClass("com/beloko/AssetFileAccess");
+		jmethodID method = env->GetStaticMethodID(cls,  "fopen", "(Ljava/lang/String;Ljava/lang/String;)I");
 
-	jstring filenameStr = env->NewStringUTF(filename);
-	jstring modeStr = env->NewStringUTF(mode);
+		jstring filenameStr = env->NewStringUTF(filename);
+		jstring modeStr = env->NewStringUTF(mode);
 
 
-	return env->CallStaticIntMethod(cls, method, filenameStr, modeStr);
-}
+		return env->CallStaticIntMethod(cls, method, filenameStr, modeStr);
+	}
 
-int assetFlen(int handle)
-{
-    JNIEnv * env = getEnv();
+	int assetFlen(int handle)
+	{
+		JNIEnv * env = getEnv();
 
-	jclass cls =  env->FindClass("com/beloko/AssetFileAccess");
-	jmethodID method = env->GetStaticMethodID(cls,  "flen", "(I)I");
+		jclass cls =  env->FindClass("com/beloko/AssetFileAccess");
+		jmethodID method = env->GetStaticMethodID(cls,  "flen", "(I)I");
 
-	return env->CallStaticIntMethod(cls, method, handle);
-}
+		return env->CallStaticIntMethod(cls, method, handle);
+	}
 
 }

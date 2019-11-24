@@ -25,36 +25,36 @@ class UI_ColorPicker : public ControlSuper
 
 	GLRect glRect;
 
-    std::string bg_image;
+	std::string bg_image;
 
 	uint32_t uid;
 
-    uint32_t selectedItem;
+	uint32_t selectedItem;
 
-    uint32_t currentColor;
+	uint32_t currentColor;
 
 	float colorGridTop;
 	float colorGridLeft;
 
 
-    bool isOpen;
-    float fadePos;
+	bool isOpen;
+	float fadePos;
 
-    float listTop, listBottom, listItemHeight;
+	float listTop, listBottom, listItemHeight;
 
-    TapDetect tapDetect;
+	TapDetect tapDetect;
 
 public:
 
-    sigc::signal<bool, uint32_t, uint32_t> signal;
+	sigc::signal<bool, uint32_t, uint32_t> signal;
 
-    void setColor( uint32_t color );
+	void setColor(uint32_t color);
 
-	UI_ColorPicker( std::string tag, RectF pos, uint32_t uid, uint32_t currentColor );
+	UI_ColorPicker(std::string tag, RectF pos, uint32_t uid, uint32_t currentColor);
 
 	bool processPointer(int action, int pid, float x, float y);
 
- 	void resetOutput();
+	void resetOutput();
 
 	bool drawGL(bool active = false);
 

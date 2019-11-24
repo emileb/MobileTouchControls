@@ -9,7 +9,7 @@ namespace touchcontrols
 class GLRect
 {
 public:
-	float width,height;
+	float width, height;
 
 	GLfloat vertices[12];
 
@@ -19,9 +19,9 @@ public:
 
 	void resize(float width, float height);
 
-	void mirror( bool v, bool h );
+	void mirror(bool v, bool h);
 
-	void rotate90( bool ccw );
+	void rotate90(bool ccw);
 };
 
 }

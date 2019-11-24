@@ -32,9 +32,9 @@ class PolarSelect : public ControlSuper
 
 public:
 
-	sigc::signal<void, int, float,float> signal_action;
+	sigc::signal<void, int, float, float> signal_action;
 
-	PolarSelect(std::string tag,RectF pos,std::string image_filename);
+	PolarSelect(std::string tag, RectF pos, std::string image_filename);
 
 
 	void setHideGraphics(bool v);

@@ -18,14 +18,14 @@ namespace touchcontrols
 
 struct FontInfo
 {
-    float leftGap;
-    float rightGap;
+	float leftGap;
+	float rightGap;
 };
 
 extern float GLScaleWidth ;
 extern float GLScaleHeight ;
 
-void gl_setGLESVersion( int v );
+void gl_setGLESVersion(int v);
 int  gl_getGLESVersion();
 
 void gl_setGraphicsBasePath(std::string path);
@@ -46,24 +46,24 @@ typedef unsigned int GLuint;
 void gl_drawRect(GLuint texture, float x, float y, GLRect &rect);
 void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
 void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
-void gl_setFixAspect( bool v );
+void gl_setFixAspect(bool v);
 bool gl_getFixAspect();
 
-void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a );
-void gl_color4f( uint32_t rgb, GLfloat a );
-void gl_color3f( uint32_t rgb );
-void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a );
+void gl_color4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+void gl_color4f(uint32_t rgb, GLfloat a);
+void gl_color3f(uint32_t rgb);
+void gl_clearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 void gl_loadIdentity();
-void gl_scalef( GLfloat x, GLfloat y, GLfloat z );
-void gl_translatef( GLfloat x, GLfloat y, GLfloat z );
-void gl_disable (GLuint v);
+void gl_scalef(GLfloat x, GLfloat y, GLfloat z);
+void gl_translatef(GLfloat x, GLfloat y, GLfloat z);
+void gl_disable(GLuint v);
 void gl_enable(GLuint v);
-void gl_scissor( GLint x, GLint y, GLint width, GLint height);
+void gl_scissor(GLint x, GLint y, GLint width, GLint height);
 
-GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* = NULL );
+GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* = NULL);
 void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
 void clearGlTexCache();
-void setTextureNumberStart( int start );
+void setTextureNumberStart(int start);
 /*
 #ifdef USE_GLES2
 extern "C"

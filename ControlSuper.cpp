@@ -3,7 +3,7 @@
 
 using namespace touchcontrols;
 
-ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
+ControlSuper::ControlSuper(int type_, std::string t, RectF pos)
 {
 	controlPos = pos;
 	controlPos.left /= ScaleX;
@@ -22,8 +22,8 @@ ControlSuper::ControlSuper(int type_,std::string t,RectF pos)
 
 bool ControlSuper::gamepadInput(bool down, GamePadKey key)
 {
-    // By default controls do no handle a gamepad
-    return false;
+	// By default controls do no handle a gamepad
+	return false;
 }
 
 ControlSuper::~ControlSuper()
@@ -31,7 +31,7 @@ ControlSuper::~ControlSuper()
 
 }
 
-bool ControlSuper::UI_drawGL( bool UIActive )
+bool ControlSuper::UI_drawGL(bool UIActive)
 {
 	return drawGL(UIActive);
 }
@@ -58,44 +58,44 @@ bool ControlSuper::isHidden()
 
 void ControlSuper::setAllowPassThrough(bool v)
 {
-    allowPassThrough = v;
+	allowPassThrough = v;
 }
 
 bool ControlSuper::isAllowPassThrough()
 {
-    return allowPassThrough;
+	return allowPassThrough;
 }
 
 void ControlSuper::setEditable(bool v)
 {
-    editable = v;
+	editable = v;
 }
 
 
 bool ControlSuper::isEditable()
 {
-    return editable;
+	return editable;
 }
 
 void ControlSuper::saveXML(TiXmlElement &root)
 {
-	root.SetAttribute("enabled",enabled);
-	root.SetAttribute("hidden",hidden);
-	root.SetDoubleAttribute("left",controlPos.left);
-	root.SetDoubleAttribute("right",controlPos.right);
-	root.SetDoubleAttribute("top",controlPos.top);
-	root.SetDoubleAttribute("bottom",controlPos.bottom);
-	root.SetAttribute("color",color);
+	root.SetAttribute("enabled", enabled);
+	root.SetAttribute("hidden", hidden);
+	root.SetDoubleAttribute("left", controlPos.left);
+	root.SetDoubleAttribute("right", controlPos.right);
+	root.SetDoubleAttribute("top", controlPos.top);
+	root.SetDoubleAttribute("bottom", controlPos.bottom);
+	root.SetAttribute("color", color);
 }
 
 
 void ControlSuper::loadXML(TiXmlElement &root)
 {
-	root.QueryBoolAttribute("enabled",&enabled);
-	root.QueryBoolAttribute("hidden",&hidden);
+	root.QueryBoolAttribute("enabled", &enabled);
+	root.QueryBoolAttribute("hidden", &hidden);
 	root.QueryFloatAttribute("left",  &controlPos.left);
 	root.QueryFloatAttribute("right", &controlPos.right);
 	root.QueryFloatAttribute("top",   &controlPos.top);
-	root.QueryFloatAttribute("bottom",&controlPos.bottom);
-	root.QueryUnsignedAttribute("color",&color);
+	root.QueryFloatAttribute("bottom", &controlPos.bottom);
+	root.QueryUnsignedAttribute("color", &color);
 }

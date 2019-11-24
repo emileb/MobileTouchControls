@@ -41,19 +41,19 @@ class JoyStick : public ControlSuper
 	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
 	double doubleTapCounter;
 public:
-	sigc::signal<void, float,float,float,float> signal_move;
+	sigc::signal<void, float, float, float, float> signal_move;
 
 	sigc::signal<void, int> signal_double_tap;
 
 
-	JoyStick(std::string tag,RectF pos,std::string image_filename);
+	JoyStick(std::string tag, RectF pos, std::string image_filename);
 
 	void setHideGraphics(bool v);
 	void setCentreAnchor(bool v);
 
 	void setBackground(std::string image_filename);
 
-    void resetOutput();
+	void resetOutput();
 
 	bool processPointer(int action, int pid, float x, float y);
 

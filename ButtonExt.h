@@ -41,13 +41,13 @@ class ButtonExt : public ControlSuper
 	int long long doubleTapCounter;
 	PointF doubleTapPos;
 
-    double tapTimer;
+	double tapTimer;
 
 public:
 	std::string image;
 	sigc::signal<void, int, int> signal_button;
 
-	ButtonExt(std::string tag,RectF pos,std::string image_filename,int value,bool repeat=false,bool hidden=false);
+	ButtonExt(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false);
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 

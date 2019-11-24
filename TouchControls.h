@@ -41,7 +41,7 @@ class ControlData
 {
 
 public:
-	float left,top,right,bottom;
+	float left, top, right, bottom;
 	float alpha;
 	std::string tag;
 	bool enabled;
@@ -49,17 +49,17 @@ public:
 
 
 
-void setGlobalXmlAppend( const char * append );
+void setGlobalXmlAppend(const char * append);
 
 class TouchControls
 {
 public:
-    enum PassThrough
-      {
-          ALWAYS,
-          NO_CONTROL,
-          NEVER
-      };
+	enum PassThrough
+	{
+		ALWAYS,
+		NO_CONTROL,
+		NEVER
+	};
 private:
 
 	std::vector<ControlSuper *> controls;
@@ -76,7 +76,7 @@ private:
 		signal_buttonUp.emit(code);
 	}
 
-	void button(int state,int code)
+	void button(int state, int code)
 	{
 		signal_button.emit(state, code);
 	}
@@ -90,7 +90,7 @@ private:
 
 	GLLines *grid;
 	ControlSuper *selectedCtrl;
-	PointF finger1,finger2;
+	PointF finger1, finger2;
 	PointF oldDist;
 
 	//Vars to detect a long press
@@ -102,7 +102,7 @@ private:
 
 	ButtonExt *settingsButton;
 
-	void settingsButtonPress(int state,int code);
+	void settingsButtonPress(int state, int code);
 
 	//ANIMATIONS STUFF
 	float slidePos; //current pos
@@ -119,7 +119,7 @@ private:
 
 	bool tapDeselect; //true if first press down in empty space
 
-    bool fixAspect; // Make circles circle, default on.
+	bool fixAspect; // Make circles circle, default on.
 public:
 
 	bool enabled;
@@ -128,7 +128,7 @@ public:
 	float alpha;
 
 	int editGroup;
-    bool hideEditButton;
+	bool hideEditButton;
 
 	std::string tag;
 
@@ -138,14 +138,14 @@ public:
 
 	sigc::signal<void, int> signal_settingsButton;
 
-	TouchControls(std::string t,bool en, bool editable,int edit_group = -1,bool showExtraSettings = true);
+	TouchControls(std::string t, bool en, bool editable, int edit_group = -1, bool showExtraSettings = true);
 
 	void setPassThroughTouch(PassThrough v);
 
 	void animateIn(int steps);
 	void animateOut(int steps);
 
-	void fade(fadedir_t dir,int steps);
+	void fade(fadedir_t dir, int steps);
 
 
 	void edit();
@@ -156,30 +156,30 @@ public:
 
 	bool isEnabled();
 
-    void setFixAspect(bool v);
+	void setFixAspect(bool v);
 
-    bool isFixAspect();
+	bool isFixAspect();
 
 	void setAlpha(float a);
 	void setColour(uint32_t defaultColor);
 
 	void addControl(Button *cntrl);
 
-    void addControl(ButtonExt *cntrl);
+	void addControl(ButtonExt *cntrl);
 
-    void addControl(ButtonGrid *cntrl);
+	void addControl(ButtonGrid *cntrl);
 
 	void addControl(ControlSuper *cntrl);
 
-	int draw ();
+	int draw();
 
-	int drawEditor ();
+	int drawEditor();
 
-	void initGL ();
+	void initGL();
 
 	bool processPointer(int action, int pid, float x, float y);
 
-    bool gamepadInput(bool down, GamePadKey key);
+	bool gamepadInput(bool down, GamePadKey key);
 
 	void saveXML(std::string filename);
 
@@ -189,14 +189,14 @@ public:
 
 	void resetDefault(); //Reset control positions to init XML
 
-    void resetOutput(); //Make all controls output the reset state
+	void resetOutput(); //Make all controls output the reset state
 
-    //Enable or disable all BUTTONS in control group
-    void setAllButtonsEnable(bool value);
+	//Enable or disable all BUTTONS in control group
+	void setAllButtonsEnable(bool value);
 
-    std::vector<ControlSuper *> * getControls();
+	std::vector<ControlSuper *> * getControls();
 
-    void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
+	void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
 };
 
 }

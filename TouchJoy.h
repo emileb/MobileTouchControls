@@ -36,28 +36,28 @@ private:
 	PointF anchor;
 	int glitchFix;
 
-    // Anchor point is centre of control, not where first tapped
-    bool centerAnchor;
+	// Anchor point is centre of control, not where first tapped
+	bool centerAnchor;
 
-    // POINTER SWAP FIX
-    TouchJoy * otherTouchJoySWAPFIX;
+	// POINTER SWAP FIX
+	TouchJoy * otherTouchJoySWAPFIX;
 
 	//Double tap stuff
 	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
 	double doubleTapCounter;
 public:
-	sigc::signal<void, float,float,float,float> signal_move;
+	sigc::signal<void, float, float, float, float> signal_move;
 
 	sigc::signal<void, int> signal_double_tap;
 
 
-	TouchJoy(std::string tag,RectF pos,std::string floating_image, std::string background_image);
+	TouchJoy(std::string tag, RectF pos, std::string floating_image, std::string background_image);
 
-    void setCenterAnchor(bool v);
+	void setCenterAnchor(bool v);
 
 	void setHideGraphics(bool v);
 
-    void resetOutput();
+	void resetOutput();
 
 	bool processPointer(int action, int pid, float x, float y);
 
@@ -67,7 +67,7 @@ public:
 
 	void updateSize();
 
-    void registerTouchJoySWAPFIX( TouchJoy * other );
+	void registerTouchJoySWAPFIX(TouchJoy * other);
 
 	void saveXML(TiXmlDocument &doc);
 

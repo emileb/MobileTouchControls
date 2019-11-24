@@ -24,22 +24,22 @@ class UI_Window : public ControlSuper
 	GLRect glRect;
 
 	Button *backButton;
-    UI_TextBox *titleText;
+	UI_TextBox *titleText;
 
 public:
 	std::string image;
 
-	UI_Window(std::string tag,RectF pos,std::string title, std::string image_filename);
+	UI_Window(std::string tag, RectF pos, std::string title, std::string image_filename);
 
-     sigc::signal<void, uint32_t, uint32_t> signal;
+	sigc::signal<void, uint32_t, uint32_t> signal;
 
-    float getScrollOffsetY();
+	float getScrollOffsetY();
 
 	bool processPointer(int action, int pid, float x, float y);
 
- 	void resetOutput();
+	void resetOutput();
 
-    void setScissor( void );
+	void setScissor(void);
 
 	bool drawGL(bool forEditor = false);
 

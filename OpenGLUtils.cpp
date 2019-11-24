@@ -29,10 +29,11 @@ static int mColorLocColor;
 static int mPositionTranslateLocColor;
 static int mModelMatrixColorLoc;
 
-static float mModelMatrixGLSL[16]={1,0,0,0,
-                                   0,1,0,0,
-                                   0,0,1,0,
-                                   0,0,0,1};
+static float mModelMatrixGLSL[16] = {1, 0, 0, 0,
+                                     0, 1, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1
+                                    };
 #define CODEGEN_FUNCPTR
 
 #define GL_TRUE 1
@@ -104,7 +105,7 @@ void (CODEGEN_FUNCPTR *_ptrc_glPopMatrix)(void);
 
 
 // GLES2 -------------------------------------------------
-GLuint (CODEGEN_FUNCPTR *_ptrc_glCreateShader)(GLenum type);
+GLuint(CODEGEN_FUNCPTR *_ptrc_glCreateShader)(GLenum type);
 #define glCreateShader _ptrc_glCreateShader
 
 void (CODEGEN_FUNCPTR *_ptrc_glShaderSource)(GLuint shader, GLsizei count, const GLchar *const* string, const GLint * length);
@@ -116,13 +117,13 @@ void (CODEGEN_FUNCPTR *_ptrc_glCompileShader)(GLuint shader);
 void (CODEGEN_FUNCPTR *_ptrc_glGetShaderInfoLog)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog);
 #define glGetShaderInfoLog _ptrc_glGetShaderInfoLog
 
-GLuint (CODEGEN_FUNCPTR *_ptrc_glCreateProgram)(void);
+GLuint(CODEGEN_FUNCPTR *_ptrc_glCreateProgram)(void);
 #define glCreateProgram _ptrc_glCreateProgram
 
 void (CODEGEN_FUNCPTR *_ptrc_glLinkProgram)(GLuint program);
 #define glLinkProgram _ptrc_glLinkProgram
 
-GLint (CODEGEN_FUNCPTR *_ptrc_glGetAttribLocation)(GLuint program, const GLchar * name);
+GLint(CODEGEN_FUNCPTR *_ptrc_glGetAttribLocation)(GLuint program, const GLchar * name);
 #define glGetAttribLocation _ptrc_glGetAttribLocation
 
 void (CODEGEN_FUNCPTR *_ptrc_glGetShaderiv)(GLuint shader, GLenum pname, GLint * params);
@@ -131,7 +132,7 @@ void (CODEGEN_FUNCPTR *_ptrc_glGetShaderiv)(GLuint shader, GLenum pname, GLint *
 void (CODEGEN_FUNCPTR *_ptrc_glAttachShader)(GLuint program, GLuint shader);
 #define glAttachShader _ptrc_glAttachShader
 
-GLint (CODEGEN_FUNCPTR *_ptrc_glGetUniformLocation)(GLuint program, const GLchar * name);
+GLint(CODEGEN_FUNCPTR *_ptrc_glGetUniformLocation)(GLuint program, const GLchar * name);
 #define glGetUniformLocation _ptrc_glGetUniformLocation
 
 void (CODEGEN_FUNCPTR *_ptrc_glUseProgram)(GLuint program);
@@ -192,120 +193,122 @@ static void *glesLib = NULL;
 
 static bool useGL4ES = false;
 
-static void* loadGlesFunc( const char * name )
+static void* loadGlesFunc(const char * name)
 {
-    void * ret = NULL;
+	void * ret = NULL;
 	ret =  dlsym(glesLib, name);
 
-    if( !ret )
-    {
-        LOGTOUCH("Failed to load: %s", name);
-    }
-    else
-    {
-        LOGTOUCH("Loaded %s func OK", name);
-    }
+	if(!ret)
+	{
+		LOGTOUCH("Failed to load: %s", name);
+	}
+	else
+	{
+		LOGTOUCH("Loaded %s func OK", name);
+	}
 
-    return ret;
+	return ret;
 }
 
-static void loadGles( int version )
+static void loadGles(int version)
 {
-    int flags = RTLD_LOCAL | RTLD_NOW;
+	int flags = RTLD_LOCAL | RTLD_NOW;
 	//int flags = RTLD_NOLOAD | RTLD_GLOBAL;
 
-    if( useGL4ES )
-    {
-        glesLib = dlopen("libGL4ES.so", flags);
-    }
-    else if( version == 1 )
-    {
-        glesLib = dlopen("libGLESv1_CM.so", flags);
-        if( !glesLib )
-        {
-            glesLib = dlopen("libGLES_CM.so", flags);
-        }
-    }
-    else
-    {
-        glesLib = dlopen("libGLESv2_CM.so", flags);
-        //glesLib = dlopen("libGLESv3.so", flags);
-        if( !glesLib )
-        {
-            glesLib = dlopen("libGLESv2.so", flags);
-        }
-    }
+	if(useGL4ES)
+	{
+		glesLib = dlopen("libGL4ES.so", flags);
+	}
+	else if(version == 1)
+	{
+		glesLib = dlopen("libGLESv1_CM.so", flags);
 
-    if( glesLib )
-    {
-        // Common
-        _ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
-        _ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glDisable");
-        _ptrc_glEnable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glEnable");
-        _ptrc_glScissor = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glScissor");
-        _ptrc_glBindTexture = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint texture))loadGlesFunc("glBindTexture");
-        _ptrc_glDrawArrays = (void (CODEGEN_FUNCPTR *)(GLenum mode, GLint first, GLsizei count))loadGlesFunc("glDrawArrays");
-        _ptrc_glGenTextures = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * textures))loadGlesFunc("glGenTextures");
-        _ptrc_glTexImage2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels))loadGlesFunc("glTexImage2D");
-        _ptrc_glTexParameteri = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLint param))loadGlesFunc("glTexParameteri");
+		if(!glesLib)
+		{
+			glesLib = dlopen("libGLES_CM.so", flags);
+		}
+	}
+	else
+	{
+		glesLib = dlopen("libGLESv2_CM.so", flags);
+
+		//glesLib = dlopen("libGLESv3.so", flags);
+		if(!glesLib)
+		{
+			glesLib = dlopen("libGLESv2.so", flags);
+		}
+	}
+
+	if(glesLib)
+	{
+		// Common
+		_ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
+		_ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glDisable");
+		_ptrc_glEnable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glEnable");
+		_ptrc_glScissor = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glScissor");
+		_ptrc_glBindTexture = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint texture))loadGlesFunc("glBindTexture");
+		_ptrc_glDrawArrays = (void (CODEGEN_FUNCPTR *)(GLenum mode, GLint first, GLsizei count))loadGlesFunc("glDrawArrays");
+		_ptrc_glGenTextures = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * textures))loadGlesFunc("glGenTextures");
+		_ptrc_glTexImage2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels))loadGlesFunc("glTexImage2D");
+		_ptrc_glTexParameteri = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLint param))loadGlesFunc("glTexParameteri");
 
 
-        _ptrc_glBindBuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint buffer))loadGlesFunc("glBindBuffer");
-        _ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
-        _ptrc_glBlendFunc = (void (CODEGEN_FUNCPTR *)(GLenum sfactor, GLenum dfactor))loadGlesFunc("glBlendFunc");
+		_ptrc_glBindBuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint buffer))loadGlesFunc("glBindBuffer");
+		_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
+		_ptrc_glBlendFunc = (void (CODEGEN_FUNCPTR *)(GLenum sfactor, GLenum dfactor))loadGlesFunc("glBlendFunc");
 
 		_ptrc_glDepthMask = (void (CODEGEN_FUNCPTR *)(GLboolean))loadGlesFunc("glDepthMask");
 		_ptrc_glViewport = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glViewport");
 
 
-       if( version == 1 )
-       {
-            _ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
-            _ptrc_glLoadIdentity = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glLoadIdentity");
-            _ptrc_glScalef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glScalef");
-            _ptrc_glTranslatef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glTranslatef");
-            _ptrc_glPushMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPushMatrix");
-            _ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
-            _ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
-            _ptrc_glPopMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPopMatrix");
-            _ptrc_glLoadMatrixf =  (void (CODEGEN_FUNCPTR *)(const GLfloat * m))loadGlesFunc("glLoadMatrixf");
-            _ptrc_glMatrixMode = (void (CODEGEN_FUNCPTR *)(GLenum mode))loadGlesFunc("glMatrixMode");
-            _ptrc_glGetFloatv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLfloat * data))loadGlesFunc("glGetFloatv");
-            _ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLint * data))loadGlesFunc("glGetIntegerv");
-       }
-       else // GLES 2
-       {
-            _ptrc_glCreateShader = (GLuint (CODEGEN_FUNCPTR *)(GLenum type))loadGlesFunc("glCreateShader");
-            _ptrc_glShaderSource = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei count, const GLchar *const* string, const GLint * length))loadGlesFunc("glShaderSource");
-            _ptrc_glCompileShader = (void (CODEGEN_FUNCPTR *)(GLuint shader))loadGlesFunc("glCompileShader");
-            _ptrc_glGetShaderInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetShaderInfoLog");
-            _ptrc_glCreateProgram = (GLuint (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glCreateProgram");
-            _ptrc_glLinkProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glLinkProgram");
-            _ptrc_glGetAttribLocation = (GLint (CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetAttribLocation");
-            _ptrc_glGetShaderiv = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLenum pname, GLint * params))loadGlesFunc("glGetShaderiv");
-            _ptrc_glAttachShader = (void (CODEGEN_FUNCPTR *)(GLuint program, GLuint shader))loadGlesFunc("glAttachShader");
-            _ptrc_glGetUniformLocation = (GLint (CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetUniformLocation");
-            _ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
-            _ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
-            _ptrc_glUniform4f = (void (CODEGEN_FUNCPTR *)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3))loadGlesFunc("glUniform4f");
-            _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
-            _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
-            _ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
+		if(version == 1)
+		{
+			_ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
+			_ptrc_glLoadIdentity = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glLoadIdentity");
+			_ptrc_glScalef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glScalef");
+			_ptrc_glTranslatef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glTranslatef");
+			_ptrc_glPushMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPushMatrix");
+			_ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
+			_ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
+			_ptrc_glPopMatrix = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glPopMatrix");
+			_ptrc_glLoadMatrixf = (void (CODEGEN_FUNCPTR *)(const GLfloat * m))loadGlesFunc("glLoadMatrixf");
+			_ptrc_glMatrixMode = (void (CODEGEN_FUNCPTR *)(GLenum mode))loadGlesFunc("glMatrixMode");
+			_ptrc_glGetFloatv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLfloat * data))loadGlesFunc("glGetFloatv");
+			_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLint * data))loadGlesFunc("glGetIntegerv");
+		}
+		else // GLES 2
+		{
+			_ptrc_glCreateShader = (GLuint(CODEGEN_FUNCPTR *)(GLenum type))loadGlesFunc("glCreateShader");
+			_ptrc_glShaderSource = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei count, const GLchar * const * string, const GLint * length))loadGlesFunc("glShaderSource");
+			_ptrc_glCompileShader = (void (CODEGEN_FUNCPTR *)(GLuint shader))loadGlesFunc("glCompileShader");
+			_ptrc_glGetShaderInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetShaderInfoLog");
+			_ptrc_glCreateProgram = (GLuint(CODEGEN_FUNCPTR *)(void))loadGlesFunc("glCreateProgram");
+			_ptrc_glLinkProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glLinkProgram");
+			_ptrc_glGetAttribLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetAttribLocation");
+			_ptrc_glGetShaderiv = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLenum pname, GLint * params))loadGlesFunc("glGetShaderiv");
+			_ptrc_glAttachShader = (void (CODEGEN_FUNCPTR *)(GLuint program, GLuint shader))loadGlesFunc("glAttachShader");
+			_ptrc_glGetUniformLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetUniformLocation");
+			_ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
+			_ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
+			_ptrc_glUniform4f = (void (CODEGEN_FUNCPTR *)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3))loadGlesFunc("glUniform4f");
+			_ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
+			_ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
+			_ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
 
-            _ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
-            _ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");;
-            _ptrc_glBindSampler = (void (CODEGEN_FUNCPTR *)(GLuint unit, GLuint sampler))loadGlesFunc("glBindSampler");
+			_ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
+			_ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");;
+			_ptrc_glBindSampler = (void (CODEGEN_FUNCPTR *)(GLuint unit, GLuint sampler))loadGlesFunc("glBindSampler");
 
-            _ptrc_glBindVertexArray = (void (CODEGEN_FUNCPTR *)(GLuint ren_array))loadGlesFunc("glBindVertexArray");;
+			_ptrc_glBindVertexArray = (void (CODEGEN_FUNCPTR *)(GLuint ren_array))loadGlesFunc("glBindVertexArray");;
 
-            _ptrc_glUniformMatrix4fv = (void (CODEGEN_FUNCPTR *)(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value))loadGlesFunc("glUniformMatrix4fv");
+			_ptrc_glUniformMatrix4fv = (void (CODEGEN_FUNCPTR *)(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value))loadGlesFunc("glUniformMatrix4fv");
 
-       }
-    }
-    else
-    {
-        LOGTOUCH("FAILED TO LOAD GLES LIB");
-    }
+		}
+	}
+	else
+	{
+		LOGTOUCH("FAILED TO LOAD GLES LIB");
+	}
 }
 
 namespace touchcontrols
@@ -324,153 +327,155 @@ static bool m_fixAspect = true;
 static int mCurrentProgram = -1;
 
 
-void gl_setGLESVersion( int v )
+void gl_setGLESVersion(int v)
 {
-    glesVersion = v;
-    if( v >= 2 )
-        isGLES2 = true;
-    else
-        isGLES2 = false;
+	glesVersion = v;
+
+	if(v >= 2)
+		isGLES2 = true;
+	else
+		isGLES2 = false;
 }
 
 int  gl_getGLESVersion()
 {
-    return glesVersion;
+	return glesVersion;
 }
 
-void gl_setFixAspect( bool v )
+void gl_setFixAspect(bool v)
 {
-    m_fixAspect = v;
+	m_fixAspect = v;
 }
 
 bool gl_getFixAspect()
 {
-    return m_fixAspect;
+	return m_fixAspect;
 }
 
-float GLESscaleX( float X )
+float GLESscaleX(float X)
 {
-    if( isGLES2 )
-        return X * 2;
-    else
-        return X;
+	if(isGLES2)
+		return X * 2;
+	else
+		return X;
 }
 
-float GLESscaleY( float Y )
+float GLESscaleY(float Y)
 {
-    if( isGLES2 )
-        return Y * 2;
-    else
-        return Y;
+	if(isGLES2)
+		return Y * 2;
+	else
+		return Y;
 }
 
 static float glTranslateX, glTranslateY, glTranslateZ;
 
 static float glColorR, glColorG, glColorB, glColorA;
-void gl_color4f( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+void gl_color4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-    glColorR = r;
-    glColorG = g;
-    glColorB = b;
-    glColorA = a;
+	glColorR = r;
+	glColorG = g;
+	glColorB = b;
+	glColorA = a;
 
-    if( isGLES2 == false )
-    {
-        glColor4f(r, g, b, a);
-    }
+	if(isGLES2 == false)
+	{
+		glColor4f(r, g, b, a);
+	}
 }
 
-void gl_color4f( uint32_t rgb, GLfloat a )
+void gl_color4f(uint32_t rgb, GLfloat a)
 {
-   gl_color4f(((rgb >>16 ) & 0xFF) / 255.f,
-              ((rgb >>8 ) & 0xFF) / 255.f,
-              ((rgb) & 0xFF) / 255.f,
-               a);
+	gl_color4f(((rgb >> 16) & 0xFF) / 255.f,
+	           ((rgb >> 8) & 0xFF) / 255.f,
+	           ((rgb) & 0xFF) / 255.f,
+	           a);
 }
 
-void gl_color3f( uint32_t rgb )
+void gl_color3f(uint32_t rgb)
 {
 	gl_color4f(rgb, glColorA);
 }
 
 void gl_loadIdentity()
 {
-    glTranslateX = glTranslateY = glTranslateZ = 0;
+	glTranslateX = glTranslateY = glTranslateZ = 0;
 
-    if( isGLES2 )
-    {
-        float ident[16] =    {1,0,0,0,
-                              0,1,0,0,
-                              0,0,1,0,
-                              0,0,0,1};
-        memcpy( mModelMatrixGLSL, ident, sizeof(ident));
-    }
-    else
-    {
-        glLoadIdentity();
-    }
+	if(isGLES2)
+	{
+		float ident[16] =    {1, 0, 0, 0,
+		                      0, 1, 0, 0,
+		                      0, 0, 1, 0,
+		                      0, 0, 0, 1
+		                     };
+		memcpy(mModelMatrixGLSL, ident, sizeof(ident));
+	}
+	else
+	{
+		glLoadIdentity();
+	}
 }
 
-void gl_scalef( GLfloat x, GLfloat y, GLfloat z )
+void gl_scalef(GLfloat x, GLfloat y, GLfloat z)
 {
-    if( isGLES2 )
-    {
-        //mModelMatrixGLSL[0] = mModelMatrixGLSL[0] * x;
-        //mModelMatrixGLSL[5] = mModelMatrixGLSL[5] * y;
-        //mModelMatrixGLSL[10] = mModelMatrixGLSL[10] * z;
-    }
-    else
-    {
-        glScalef(x, y, z);
-    }
+	if(isGLES2)
+	{
+		//mModelMatrixGLSL[0] = mModelMatrixGLSL[0] * x;
+		//mModelMatrixGLSL[5] = mModelMatrixGLSL[5] * y;
+		//mModelMatrixGLSL[10] = mModelMatrixGLSL[10] * z;
+	}
+	else
+	{
+		glScalef(x, y, z);
+	}
 }
 
-void gl_translatef( GLfloat x, GLfloat y, GLfloat z )
+void gl_translatef(GLfloat x, GLfloat y, GLfloat z)
 {
 
-    glTranslateX += x;
-    glTranslateY -= y;
-    glTranslateZ += z;
+	glTranslateX += x;
+	glTranslateY -= y;
+	glTranslateZ += z;
 
-    if( isGLES2 == false )
-    {
-        glTranslatef(x, y, z);
-    }
+	if(isGLES2 == false)
+	{
+		glTranslatef(x, y, z);
+	}
 }
 
 
-void gl_disable (GLuint v)
+void gl_disable(GLuint v)
 {
-    glDisable(v);
+	glDisable(v);
 }
 
 void gl_enable(GLuint v)
 {
-    glEnable(v);
+	glEnable(v);
 }
 
-void gl_scissor( GLint x, GLint y, GLint width, GLint height)
+void gl_scissor(GLint x, GLint y, GLint width, GLint height)
 {
-    glScissor(x, y, width, height);
+	glScissor(x, y, width, height);
 }
 
-void gl_clearColor( GLfloat r, GLfloat g, GLfloat b, GLfloat a )
+void gl_clearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-    glClearColor(r, g, b, a);
+	glClearColor(r, g, b, a);
 }
 
 
-static float translateX( float X )
+static float translateX(float X)
 {
-    return -( 1 - X * 2 );
+	return -(1 - X * 2);
 }
-static float translateY( float Y )
+static float translateY(float Y)
 {
-    return ( -Y * 2 + 1 );
+	return (-Y * 2 + 1);
 }
 
 const char vShaderStr [] =
-           "attribute vec4 a_position;                                     \n \
+    "attribute vec4 a_position;                                     \n \
 			attribute vec2 a_texCoord;                                     \n \
 			varying vec2 v_texCoord;                                       \n \
 			uniform vec4 u_translate;                                      \n \
@@ -484,7 +489,7 @@ const char vShaderStr [] =
 			";
 
 const char  fShaderStr [] =
-           "precision mediump float;                            \
+    "precision mediump float;                            \
 			varying vec2 v_texCoord;                            \
 			uniform sampler2D s_texture;                        \
 		    uniform vec4 u_color;    \
@@ -496,7 +501,7 @@ const char  fShaderStr [] =
 			";
 
 const char  fShaderColorStr [] =
-           "precision mediump float;                            \
+    "precision mediump float;                            \
 		    uniform vec4 u_color;    \
 			void main()                                         \
 			{                                                   \
@@ -504,51 +509,54 @@ const char  fShaderColorStr [] =
 			}                                                   \
 			";
 
-int loadShader( int shaderType, const char * source )
+int loadShader(int shaderType, const char * source)
 {
-    int shader = glCreateShader( shaderType );
-    if( shader != 0 )
-    {
-        glShaderSource( shader, 1, &source, NULL );
-        glCompileShader( shader );
+	int shader = glCreateShader(shaderType);
 
-        GLint  length;
+	if(shader != 0)
+	{
+		glShaderSource(shader, 1, &source, NULL);
+		glCompileShader(shader);
 
-        glGetShaderiv( shader , GL_INFO_LOG_LENGTH , &length );
+		GLint  length;
 
-        if( length )
-        {
-            char* buffer  =  new char [ length ];
-            glGetShaderInfoLog( shader , length , NULL , buffer );
-            LOGTOUCH( "shader = %s\n", buffer );
-            delete [] buffer;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
-            GLint success;
-            glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
-            if( success != GL_TRUE )
-            {
-                LOGTOUCH( "ERROR compiling shader\n" );
-            }
-        }
-    }
-    else
-    {
-        LOGTOUCH( "FAILED to create shader");
-    }
-    return shader;
+		if(length)
+		{
+			char* buffer  =  new char [ length ];
+			glGetShaderInfoLog(shader, length, NULL, buffer);
+			LOGTOUCH("shader = %s\n", buffer);
+			delete [] buffer;
+
+			GLint success;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+			if(success != GL_TRUE)
+			{
+				LOGTOUCH("ERROR compiling shader\n");
+			}
+		}
+	}
+	else
+	{
+		LOGTOUCH("FAILED to create shader");
+	}
+
+	return shader;
 }
 
 void gl_useGL4ES()
 {
-    useGL4ES = true;
+	useGL4ES = true;
 }
 
 void gl_resetGL4ES()
 {
-    glUseProgram( 0 );
-    // This is a hack to force GL4ES to draw the remaning draw call
-    glBindTexture( GL_TEXTURE_2D, 0 );
-    //glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+	glUseProgram(0);
+	// This is a hack to force GL4ES to draw the remaning draw call
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 }
 
 
@@ -577,101 +585,106 @@ void gl_startRender()
 #define GL_DRAW_FRAMEBUFFER 0x8CA9
 #define GL_READ_FRAMEBUFFER 0x8CA8
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable (GL_BLEND);
-    glDisable (GL_CULL_FACE);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 
-    if( gl_getGLESVersion() == 1 )
-    {
-        glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
-        glGetFloatv(GL_PROJECTION_MATRIX, projection);
-        glGetFloatv(GL_MODELVIEW_MATRIX, model);
-        glEnable(GL_TEXTURE_2D);
-    }
-    else if( gl_getGLESVersion() == 2 )
-    {
-        glActiveTexture( GL_TEXTURE0 );
-       /*
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-        glBindSampler(0,0);
-        glBindVertexArray(0);
-        */
-    }
-    else if( gl_getGLESVersion() == 3 )
-    {
-        glViewport(0,0,GLScaleWidth,-GLScaleHeight);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-        glBindSampler(0,0);
-        glBindVertexArray(0);
-    }
-    mCurrentProgram = -1;
+	if(gl_getGLESVersion() == 1)
+	{
+		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+		glGetFloatv(GL_PROJECTION_MATRIX, projection);
+		glGetFloatv(GL_MODELVIEW_MATRIX, model);
+		glEnable(GL_TEXTURE_2D);
+	}
+	else if(gl_getGLESVersion() == 2)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		/*
+		 glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		 glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		 glBindSampler(0,0);
+		 glBindVertexArray(0);
+		 */
+	}
+	else if(gl_getGLESVersion() == 3)
+	{
+		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		glBindSampler(0, 0);
+		glBindVertexArray(0);
+	}
 
-    //glEnable (GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glEnable(GL_TEXTURE_2D);
+	mCurrentProgram = -1;
+
+	//glEnable (GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_TEXTURE_2D);
 }
 
 void gl_endRender()
 {
-    if( gl_getGLESVersion() == 1 )
-    {
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(model);
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(projection);
-        glMatrixMode(matrixMode);
-    }
+	if(gl_getGLESVersion() == 1)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(model);
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(projection);
+		glMatrixMode(matrixMode);
+	}
 }
 
-int createProgram( const char * vertexSource, const char *  fragmentSource )
+int createProgram(const char * vertexSource, const char *  fragmentSource)
 {
-    int vertexShader = loadShader( GL_VERTEX_SHADER, vertexSource );
-    int pixelShader = loadShader( GL_FRAGMENT_SHADER, fragmentSource );
+	int vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
+	int pixelShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
 
-    int program = glCreateProgram();
-    if( program != 0 )
-    {
-        glAttachShader( program, vertexShader );
-        // checkGlError("glAttachShader");
-        glAttachShader( program, pixelShader );
-        // checkGlError("glAttachShader");
-        glLinkProgram( program );
+	int program = glCreateProgram();
+
+	if(program != 0)
+	{
+		glAttachShader(program, vertexShader);
+		// checkGlError("glAttachShader");
+		glAttachShader(program, pixelShader);
+		// checkGlError("glAttachShader");
+		glLinkProgram(program);
 #define GL_LINK_STATUS 0x8B82
-        int linkStatus[1];
-        glGetProgramiv(program, GL_LINK_STATUS, linkStatus);
-        if (linkStatus[0] != GL_TRUE) {
-            LOGTOUCH("Could not link program: ");
-            char log[256];
-            GLsizei size;
-            glGetProgramInfoLog(program,256,&size,log);
-            LOGTOUCH("Log: %s",log);
-            //glDeleteProgram(program);
-            program = 0;
-        }
+		int linkStatus[1];
+		glGetProgramiv(program, GL_LINK_STATUS, linkStatus);
 
-    }
-    else
-    {
-        LOGTOUCH("FAILED to create program");
-    }
-    LOGTOUCH("Program linked OK %d", program);
-    return program;
+		if(linkStatus[0] != GL_TRUE)
+		{
+			LOGTOUCH("Could not link program: ");
+			char log[256];
+			GLsizei size;
+			glGetProgramInfoLog(program, 256, &size, log);
+			LOGTOUCH("Log: %s", log);
+			//glDeleteProgram(program);
+			program = 0;
+		}
+
+	}
+	else
+	{
+		LOGTOUCH("FAILED to create program");
+	}
+
+	LOGTOUCH("Program linked OK %d", program);
+	return program;
 }
 
 GLfloat mTexVertices[] =
 {
-    0.0f, 0.0f, // TexCoord 0
-    0.0f, -1.0f, // TexCoord 1
-    1.0f, -1.0f, // TexCoord 2
-    1.0f, 0.0f // TexCoord 3
+	0.0f, 0.0f, // TexCoord 0
+	0.0f, -1.0f, // TexCoord 1
+	1.0f, -1.0f, // TexCoord 2
+	1.0f, 0.0f // TexCoord 3
 };
 /*
 GLfloat mTexVertices[] =
@@ -686,218 +699,219 @@ GLfloat mTexVertices[] =
 
 static void initGLES2()
 {
-    // Load the shaders and get a linked program object
-    mProgramObject = createProgram( vShaderStr, fShaderStr );
-    mProgramObjectColor = createProgram( vShaderStr, fShaderColorStr );
+	// Load the shaders and get a linked program object
+	mProgramObject = createProgram(vShaderStr, fShaderStr);
+	mProgramObjectColor = createProgram(vShaderStr, fShaderColorStr);
 
-    // Get the attribute locations
-    mPositionLoc = glGetAttribLocation( mProgramObject, "a_position" );
-    mTexCoordLoc = glGetAttribLocation( mProgramObject, "a_texCoord" );
+	// Get the attribute locations
+	mPositionLoc = glGetAttribLocation(mProgramObject, "a_position");
+	mTexCoordLoc = glGetAttribLocation(mProgramObject, "a_texCoord");
 
-    // Get the sampler location
-    mSamplerLoc           = glGetUniformLocation( mProgramObject, "s_texture" );
-    mPositionTranslateLoc = glGetUniformLocation( mProgramObject, "u_translate" );
-    mColorLoc             = glGetUniformLocation( mProgramObject, "u_color" );
-    mModelMatrixLoc       =  glGetUniformLocation( mProgramObject, "u_modelMatrix" );
+	// Get the sampler location
+	mSamplerLoc           = glGetUniformLocation(mProgramObject, "s_texture");
+	mPositionTranslateLoc = glGetUniformLocation(mProgramObject, "u_translate");
+	mColorLoc             = glGetUniformLocation(mProgramObject, "u_color");
+	mModelMatrixLoc       =  glGetUniformLocation(mProgramObject, "u_modelMatrix");
 
-    //COLOR
-    mPositionLocColor            = glGetAttribLocation( mProgramObjectColor, "a_position" );
-    mColorLocColor               = glGetUniformLocation( mProgramObjectColor, "u_color" );
-    mPositionTranslateLocColor   = glGetUniformLocation( mProgramObjectColor, "u_translate" );
-    mModelMatrixColorLoc        =  glGetUniformLocation( mProgramObjectColor, "u_modelMatrix" );
+	//COLOR
+	mPositionLocColor            = glGetAttribLocation(mProgramObjectColor, "a_position");
+	mColorLocColor               = glGetUniformLocation(mProgramObjectColor, "u_color");
+	mPositionTranslateLocColor   = glGetUniformLocation(mProgramObjectColor, "u_translate");
+	mModelMatrixColorLoc        =  glGetUniformLocation(mProgramObjectColor, "u_modelMatrix");
 
 }
 
-static void gl_useProgram( int prog )
+static void gl_useProgram(int prog)
 {
-    if( prog != mCurrentProgram )
-    {
-        mCurrentProgram = prog;
-        glUseProgram( mCurrentProgram );
-    }
+	if(prog != mCurrentProgram)
+	{
+		mCurrentProgram = prog;
+		glUseProgram(mCurrentProgram);
+	}
 }
 
-void gl_drawRect( GLuint texture, float x, float y, GLRect &rect )
+void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 {
-    if( texture == -1 )
-    {
-        return;
-    }
+	if(texture == -1)
+	{
+		return;
+	}
 
-    if( isGLES2 )
-    {
+	if(isGLES2)
+	{
 
-        // Bind the texture
-        glBindTexture( GL_TEXTURE_2D, texture );
+		// Bind the texture
+		glBindTexture(GL_TEXTURE_2D, texture);
 
-        gl_useProgram( mProgramObject );
+		gl_useProgram(mProgramObject);
 
-        glVertexAttribPointer( mPositionLoc, 3, GL_FLOAT,
-                               false,
-                               3 * 4, rect.vertices );
+		glVertexAttribPointer(mPositionLoc, 3, GL_FLOAT,
+		                      false,
+		                      3 * 4, rect.vertices);
 
-        // I messed up the corrdinates for GLES so not the game as GLES2
-        GLfloat texVert[] =
-        {
-            rect.texture[2],rect.texture[3], // TexCoord 0
-            rect.texture[0],rect.texture[1], // TexCoord 1
-            rect.texture[4],rect.texture[5], // TexCoord 2
-            rect.texture[6],rect.texture[7] // TexCoord 3
-        };
+		// I messed up the corrdinates for GLES so not the game as GLES2
+		GLfloat texVert[] =
+		{
+			rect.texture[2], rect.texture[3], // TexCoord 0
+			rect.texture[0], rect.texture[1], // TexCoord 1
+			rect.texture[4], rect.texture[5], // TexCoord 2
+			rect.texture[6], rect.texture[7] // TexCoord 3
+		};
 
-        glVertexAttribPointer( mTexCoordLoc, 2, GL_FLOAT,
-                               false,
-                               2 * 4,
-                               //mTexVertices );
-                               texVert);
+		glVertexAttribPointer(mTexCoordLoc, 2, GL_FLOAT,
+		                      false,
+		                      2 * 4,
+		                      //mTexVertices );
+		                      texVert);
 
-        glEnableVertexAttribArray( mPositionLoc );
-        glEnableVertexAttribArray( mTexCoordLoc );
-
-
-        // Set the sampler texture unit to 0
-        glUniform1i( mSamplerLoc, 0 );
-
-        float yAspectFixTranslate = 0;
-        //Such a hack.The model matrix is just used to scale for gles2
-        // Need to fix all of this so GLES1 and GLES2 coordinates behave the same and model matrix is used properly
-        if( m_fixAspect )
-        {
-            float nominal = ( float )ScaleX / ( float )ScaleY;
-            float actual = GLScaleWidth / -GLScaleHeight;
-
-            //printf("%f     %f\n",nominal,actual);
-            float yScale = actual / nominal;
-            yAspectFixTranslate =  -( 1 - yScale ) * rect.height / 2;
-            mModelMatrixGLSL[5] = yScale;
-            //glTranslateY = glTranslateY *
-            gl_translatef(0,yAspectFixTranslate,0);
-        }
-        
-        glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
-        glUniform4f( mPositionTranslateLoc,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-        glUniform4f( mColorLoc, glColorR, glColorG, glColorB, glColorA );
-
-        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-
-        if( m_fixAspect )
-        {
-            mModelMatrixGLSL[5] = 1;
-            gl_translatef(0,-yAspectFixTranslate,0);
-        }
-    }
-    else
-    {
-        glPushMatrix();
-
-        //LOGTOUCH("gl_drawRect %d",texture);
-        glBindTexture( GL_TEXTURE_2D, texture );
-        glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
-        glTexCoordPointer( 2, GL_FLOAT, 0, rect.texture );
-
-        glTranslatef( x, -y, 0 );
-
-        if( m_fixAspect )
-        {
-            float nominal = ( float )ScaleX / ( float )ScaleY;
-            float actual = GLScaleWidth / -GLScaleHeight;
-
-            //printf("%f     %f\n",nominal,actual);
-            float yScale = actual / nominal;
-
-            glScalef( 1, yScale, 1 );
-            glTranslatef( 0, -( 1 - yScale ) * rect.height / 2, 0 );
-        }
+		glEnableVertexAttribArray(mPositionLoc);
+		glEnableVertexAttribArray(mTexCoordLoc);
 
 
-        glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+		// Set the sampler texture unit to 0
+		glUniform1i(mSamplerLoc, 0);
 
-        glPopMatrix();
-    }
+		float yAspectFixTranslate = 0;
+
+		//Such a hack.The model matrix is just used to scale for gles2
+		// Need to fix all of this so GLES1 and GLES2 coordinates behave the same and model matrix is used properly
+		if(m_fixAspect)
+		{
+			float nominal = (float)ScaleX / (float)ScaleY;
+			float actual = GLScaleWidth / -GLScaleHeight;
+
+			//printf("%f     %f\n",nominal,actual);
+			float yScale = actual / nominal;
+			yAspectFixTranslate =  -(1 - yScale) * rect.height / 2;
+			mModelMatrixGLSL[5] = yScale;
+			//glTranslateY = glTranslateY *
+			gl_translatef(0, yAspectFixTranslate, 0);
+		}
+
+		glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
+		glUniform4f(mPositionTranslateLoc,  translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
+		glUniform4f(mColorLoc, glColorR, glColorG, glColorB, glColorA);
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+		if(m_fixAspect)
+		{
+			mModelMatrixGLSL[5] = 1;
+			gl_translatef(0, -yAspectFixTranslate, 0);
+		}
+	}
+	else
+	{
+		glPushMatrix();
+
+		//LOGTOUCH("gl_drawRect %d",texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glVertexPointer(3, GL_FLOAT, 0, rect.vertices);
+		glTexCoordPointer(2, GL_FLOAT, 0, rect.texture);
+
+		glTranslatef(x, -y, 0);
+
+		if(m_fixAspect)
+		{
+			float nominal = (float)ScaleX / (float)ScaleY;
+			float actual = GLScaleWidth / -GLScaleHeight;
+
+			//printf("%f     %f\n",nominal,actual);
+			float yScale = actual / nominal;
+
+			glScalef(1, yScale, 1);
+			glTranslatef(0, -(1 - yScale) * rect.height / 2, 0);
+		}
+
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glPopMatrix();
+	}
 }
 
 
-void gl_drawRect( GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect )
+void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect)
 {
-    if( isGLES2 )
-    {
-        gl_useProgram( mProgramObjectColor );
+	if(isGLES2)
+	{
+		gl_useProgram(mProgramObjectColor);
 
-        gl_color4f( r, g, b, a );
-
-
-        glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
-                               false,
-                               3 * 4, rect.vertices );
+		gl_color4f(r, g, b, a);
 
 
-        glEnableVertexAttribArray( mPositionLocColor );
+		glVertexAttribPointer(mPositionLocColor, 3, GL_FLOAT,
+		                      false,
+		                      3 * 4, rect.vertices);
 
-        // Bind the texture
-        //glDeactiveTexture ( GL_TEXTURE0 );
 
-        glUniformMatrix4fv( mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
-        glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-        glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
+		glEnableVertexAttribArray(mPositionLocColor);
 
-        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+		// Bind the texture
+		//glDeactiveTexture ( GL_TEXTURE0 );
 
-        gl_color4f( 1, 1, 1, 1 );
-    }
-    else
-    {
-        glPushMatrix();
+		glUniformMatrix4fv(mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
+		glUniform4f(mPositionTranslateLocColor,  translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
+		glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA);
 
-        glDisable( GL_TEXTURE_2D );
-        glColor4f( r, g, b, a );
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-        glVertexPointer( 3, GL_FLOAT, 0, rect.vertices );
-        glTranslatef( x, -y, 0 );
-        glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
+		gl_color4f(1, 1, 1, 1);
+	}
+	else
+	{
+		glPushMatrix();
 
-        glColor4f( 1, 1, 1, 1 );
-        glEnable( GL_TEXTURE_2D );
+		glDisable(GL_TEXTURE_2D);
+		glColor4f(r, g, b, a);
 
-        glPopMatrix();
-    }
+		glVertexPointer(3, GL_FLOAT, 0, rect.vertices);
+		glTranslatef(x, -y, 0);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glColor4f(1, 1, 1, 1);
+		glEnable(GL_TEXTURE_2D);
+
+		glPopMatrix();
+	}
 }
 
-void gl_drawLines( float x, float y, GLLines &lines )
+void gl_drawLines(float x, float y, GLLines &lines)
 {
-    if( isGLES2 )
-    {
-        gl_useProgram( mProgramObjectColor );
+	if(isGLES2)
+	{
+		gl_useProgram(mProgramObjectColor);
 
-        glVertexAttribPointer( mPositionLocColor, 3, GL_FLOAT,
-                               false,
-                               3 * 4, lines.vertices );
+		glVertexAttribPointer(mPositionLocColor, 3, GL_FLOAT,
+		                      false,
+		                      3 * 4, lines.vertices);
 
 
 
-        glEnableVertexAttribArray( mPositionLocColor );
+		glEnableVertexAttribArray(mPositionLocColor);
 
-        // Bind the texture
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, 0 );
+		// Bind the texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-        glUniformMatrix4fv( mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
-        glUniform4f( mPositionTranslateLocColor,  translateX( x + glTranslateX ), translateY( y + glTranslateY ), 0, 0 );
-        glUniform4f( mColorLocColor, glColorR, glColorG, glColorB, glColorA );
+		glUniformMatrix4fv(mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
+		glUniform4f(mPositionTranslateLocColor,  translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
+		glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA);
 
-        glDrawArrays( GL_LINES, 0,  lines.len );
-    }
-    else
-    {
-        glDisable( GL_TEXTURE_2D );
+		glDrawArrays(GL_LINES, 0,  lines.len);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
 
-        glVertexPointer( 3, GL_FLOAT, 0, lines.vertices );
+		glVertexPointer(3, GL_FLOAT, 0, lines.vertices);
 
-        glTranslatef( x, -y, 0 );
+		glTranslatef(x, -y, 0);
 
-        glDrawArrays( GL_LINES, 0, lines.len );
+		glDrawArrays(GL_LINES, 0, lines.len);
 
-        glEnable( GL_TEXTURE_2D );
-    }
+		glEnable(GL_TEXTURE_2D);
+	}
 }
 
 
@@ -905,94 +919,96 @@ void gl_drawLines( float x, float y, GLLines &lines )
 #define GET_ALPHA_PIXEL( X, Y ) imageData[ (height - 1 - Y) * (width * 4) + (X * 4) + 0 ]
 
 
-void calcFontSpacing( const unsigned char *imageData, int width, int height, std::vector< FontInfo > *fontInfoVec )
+void calcFontSpacing(const unsigned char *imageData, int width, int height, std::vector< FontInfo > *fontInfoVec)
 {
-    //LOGTOUCH( "fontSpacing w=%d, h=%d", width, height );
+	//LOGTOUCH( "fontSpacing w=%d, h=%d", width, height );
 
-    // We have a 16 x 16 grid of characters
-    int charWidth = width / 16;
+	// We have a 16 x 16 grid of characters
+	int charWidth = width / 16;
 
-    for( int c = 0; c < 256; c++ )
-    {
-        int cx = c % 16;
-        int cy = ( c >> 4 );
+	for(int c = 0; c < 256; c++)
+	{
+		int cx = c % 16;
+		int cy = (c >> 4);
 
-        int leftMost = charWidth;
-        int rightMost = -1;
-        for( int y = 0; y < charWidth; y++ )
-        {
-            unsigned char alpha[charWidth];
+		int leftMost = charWidth;
+		int rightMost = -1;
 
-            bool hit = false;
+		for(int y = 0; y < charWidth; y++)
+		{
+			unsigned char alpha[charWidth];
 
-            for( int x = 0; x < charWidth; x++ )
-            {
-                int px = x + cx * charWidth;
-                int py = y + cy * charWidth;
-                // Note image is upside down
-                int pos = ( height - 1 - py ) * ( width * 4 ) + ( px * 4 ) + 3;
+			bool hit = false;
 
-                if( imageData[ pos ] == 0 )
-                {
-                    alpha[x] = 0;
-                }
-                else
-                {
-                    alpha[x] = 1;
+			for(int x = 0; x < charWidth; x++)
+			{
+				int px = x + cx * charWidth;
+				int py = y + cy * charWidth;
+				// Note image is upside down
+				int pos = (height - 1 - py) * (width * 4) + (px * 4) + 3;
 
-                    if( x < leftMost )
-                    {
-                        leftMost = x;
-                    }
+				if(imageData[ pos ] == 0)
+				{
+					alpha[x] = 0;
+				}
+				else
+				{
+					alpha[x] = 1;
 
-                    if( x > rightMost)
-                    {
-                        rightMost = x;
-                    }
-                }
-            }
+					if(x < leftMost)
+					{
+						leftMost = x;
+					}
 
-            //If still 64 there is no character there
-            if( leftMost == charWidth )
-            {
-                FontInfo fontInfo;
-                fontInfo.leftGap = 0;
-                fontInfo.rightGap = 0;
-                (*fontInfoVec).at(c) = fontInfo;
-            }
-            else
-            {
-                // Calculate the padding as a proportion of the total width
-                FontInfo fontInfo;
-                fontInfo.leftGap = (leftMost / (float)charWidth);
-                fontInfo.rightGap = (charWidth - 1 - rightMost) / (float)charWidth;
-                (*fontInfoVec).at(c) = fontInfo;
-            }
+					if(x > rightMost)
+					{
+						rightMost = x;
+					}
+				}
+			}
 
-            /*
-                    LOGTOUCH("%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d",
-                            alpha[0+0],alpha[0+1],alpha[0+2],alpha[0+3],alpha[0+4],alpha[0+5],alpha[0+6],alpha[0+7],alpha[0+8],alpha[0+9],alpha[0+10],alpha[0+11],alpha[0+12],alpha[0+13],alpha[0+14],alpha[0+15],
-                            alpha[16+0],alpha[16+1],alpha[16+2],alpha[16+3],alpha[16+4],alpha[16+5],alpha[16+6],alpha[16+7],alpha[16+8],alpha[16+9],alpha[16+10],alpha[16+11],alpha[16+12],alpha[16+13],alpha[16+14],alpha[16+15],
-                            alpha[32+0],alpha[32+1],alpha[32+2],alpha[32+3],alpha[32+4],alpha[32+5],alpha[32+6],alpha[32+7],alpha[32+8],alpha[32+9],alpha[32+10],alpha[32+11],alpha[32+12],alpha[32+13],alpha[32+14],alpha[32+15],
-                            alpha[48+0],alpha[48+1],alpha[48+2],alpha[48+3],alpha[48+4],alpha[48+5],alpha[48+6],alpha[48+7],alpha[48+8],alpha[48+9],alpha[48+10],alpha[48+11],alpha[48+12],alpha[48+13],alpha[48+14],alpha[48+15]);
-                            */
-        }
-       // LOGTOUCH( "%c l=%d, r =%d", c, leftMost, rightMost );
-    }
+			//If still 64 there is no character there
+			if(leftMost == charWidth)
+			{
+				FontInfo fontInfo;
+				fontInfo.leftGap = 0;
+				fontInfo.rightGap = 0;
+				(*fontInfoVec).at(c) = fontInfo;
+			}
+			else
+			{
+				// Calculate the padding as a proportion of the total width
+				FontInfo fontInfo;
+				fontInfo.leftGap = (leftMost / (float)charWidth);
+				fontInfo.rightGap = (charWidth - 1 - rightMost) / (float)charWidth;
+				(*fontInfoVec).at(c) = fontInfo;
+			}
+
+			/*
+			        LOGTOUCH("%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d",
+			                alpha[0+0],alpha[0+1],alpha[0+2],alpha[0+3],alpha[0+4],alpha[0+5],alpha[0+6],alpha[0+7],alpha[0+8],alpha[0+9],alpha[0+10],alpha[0+11],alpha[0+12],alpha[0+13],alpha[0+14],alpha[0+15],
+			                alpha[16+0],alpha[16+1],alpha[16+2],alpha[16+3],alpha[16+4],alpha[16+5],alpha[16+6],alpha[16+7],alpha[16+8],alpha[16+9],alpha[16+10],alpha[16+11],alpha[16+12],alpha[16+13],alpha[16+14],alpha[16+15],
+			                alpha[32+0],alpha[32+1],alpha[32+2],alpha[32+3],alpha[32+4],alpha[32+5],alpha[32+6],alpha[32+7],alpha[32+8],alpha[32+9],alpha[32+10],alpha[32+11],alpha[32+12],alpha[32+13],alpha[32+14],alpha[32+15],
+			                alpha[48+0],alpha[48+1],alpha[48+2],alpha[48+3],alpha[48+4],alpha[48+5],alpha[48+6],alpha[48+7],alpha[48+8],alpha[48+9],alpha[48+10],alpha[48+11],alpha[48+12],alpha[48+13],alpha[48+14],alpha[48+15]);
+			                */
+		}
+
+		// LOGTOUCH( "%c l=%d, r =%d", c, leftMost, rightMost );
+	}
 }
 
 static FILE* file;
 
-void png_read( png_structp png_ptr, png_bytep data, png_size_t length )
+void png_read(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-    fread( data, 1, length, file );
+	fread(data, 1, length, file);
 }
 
 //This needs to be set to the location of the PNG files
 std::string graphicsBasePath;
-void gl_setGraphicsBasePath( std::string path )
+void gl_setGraphicsBasePath(std::string path)
 {
-    graphicsBasePath = path;
+	graphicsBasePath = path;
 }
 
 
@@ -1002,234 +1018,247 @@ static std::map <std::string, std::vector< FontInfo > > fontInfoCache;
 
 void clearGlTexCache()
 {
-    glTextureCache.clear();
-    fontInfoCache.clear();
+	glTextureCache.clear();
+	fontInfoCache.clear();
 }
 
 static int glTexNumber = 0;
 
-void setTextureNumberStart( int start )
+void setTextureNumberStart(int start)
 {
 	glTexNumber = start;
 }
 
-GLuint loadTextureFromPNG( std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec )
+GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec)
 {
 
-    if( filename == "" )
-    {
-        LOGTOUCH( "Blank texture name\n" );
-        return -1;
-    }
+	if(filename == "")
+	{
+		LOGTOUCH("Blank texture name\n");
+		return -1;
+	}
 
-    //LOGTOUCH( "Loading png: %s\n", filename.c_str() );
+	//LOGTOUCH( "Loading png: %s\n", filename.c_str() );
 
-    static bool initGlesDone = false;
+	static bool initGlesDone = false;
 
-    if( !initGlesDone )
-    {
+	if(!initGlesDone)
+	{
 
-        loadGles( isGLES2 ? 2 : 1 );
+		loadGles(isGLES2 ? 2 : 1);
 
-        if( isGLES2 )
-        {
-            initGLES2();
-        }
-        initGlesDone = true;
-    }
-    //Check if already loaded
-    std::map<std::string, GLuint>::iterator it = glTextureCache.find( filename );
-    if( it != glTextureCache.end() )
-    {
-        if( fontInfoVec != NULL )
-        {
-            (*fontInfoVec).insert((*fontInfoVec).begin(), fontInfoCache[filename].begin(), fontInfoCache[filename].end());
-        }
-        //element found;
-        //LOGTOUCH( "PNG %s is already loaded\n", filename.c_str() );
-        return it->second;
-    }
+		if(isGLES2)
+		{
+			initGLES2();
+		}
 
-    std::string filename_stripped;
+		initGlesDone = true;
+	}
 
-    if( filename.find('?') != std::string::npos )
-    {
-        filename_stripped =filename.substr( 0, filename.find('?') );
-    }
-    else //No extra info in the filename
-    {
-        filename_stripped = filename;
-    }
+	//Check if already loaded
+	std::map<std::string, GLuint>::iterator it = glTextureCache.find(filename);
 
-    std::string full_file = graphicsBasePath + filename_stripped + ".png";
-    file = fopen( full_file.c_str(), "r" );
-    if( !file )
-    {
-        LOGTOUCH_E( "Error opening %s from APK\n", full_file.c_str() );
-        return TEXTURE_LOAD_ERROR;
-    }
+	if(it != glTextureCache.end())
+	{
+		if(fontInfoVec != NULL)
+		{
+			(*fontInfoVec).insert((*fontInfoVec).begin(), fontInfoCache[filename].begin(), fontInfoCache[filename].end());
+		}
 
-    //header for testing if it is a png
-    png_byte header[8];
+		//element found;
+		//LOGTOUCH( "PNG %s is already loaded\n", filename.c_str() );
+		return it->second;
+	}
 
-    //read the header
-    fread( header, 1, 8, file );
+	std::string filename_stripped;
 
-    //test if png
-    int is_png = !png_sig_cmp( header, 0, 8 );
-    if( !is_png )
-    {
-        fclose( file );
-        LOGTOUCH_E( "Not a png file : %s", full_file.c_str() );
-        return TEXTURE_LOAD_ERROR;
-    }
+	if(filename.find('?') != std::string::npos)
+	{
+		filename_stripped = filename.substr(0, filename.find('?'));
+	}
+	else //No extra info in the filename
+	{
+		filename_stripped = filename;
+	}
 
-    //create png struct
-    png_structp png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL,
-                          NULL, NULL );
-    if( !png_ptr )
-    {
-        fclose( file );
-        LOGTOUCH_E( "Unable to create png struct : %s\n", full_file.c_str() );
-        return ( TEXTURE_LOAD_ERROR );
-    }
+	std::string full_file = graphicsBasePath + filename_stripped + ".png";
+	file = fopen(full_file.c_str(), "r");
 
-    //create png info struct
-    png_infop info_ptr = png_create_info_struct( png_ptr );
-    if( !info_ptr )
-    {
-        png_destroy_read_struct( &png_ptr, ( png_infopp ) NULL, ( png_infopp ) NULL );
-        LOGTOUCH_E( "Unable to create png info : %s\n", full_file.c_str() );
-        fclose( file );
-        return ( TEXTURE_LOAD_ERROR );
-    }
+	if(!file)
+	{
+		LOGTOUCH_E("Error opening %s from APK\n", full_file.c_str());
+		return TEXTURE_LOAD_ERROR;
+	}
 
-    //create png info struct
-    png_infop end_info = png_create_info_struct( png_ptr );
-    if( !end_info )
-    {
-        png_destroy_read_struct( &png_ptr, &info_ptr, ( png_infopp ) NULL );
-        LOGTOUCH_E( "Unable to create png end info : %s\n", full_file.c_str() );
-        fclose( file );
-        return ( TEXTURE_LOAD_ERROR );
-    }
+	//header for testing if it is a png
+	png_byte header[8];
 
-    //png error stuff, not sure libpng man suggests this.
-    if( setjmp( png_jmpbuf( png_ptr ) ) )
-    {
-        fclose( file );
-        LOGTOUCH_E( "Error during setjmp : %s\n", full_file.c_str() );
-        png_destroy_read_struct( &png_ptr, &info_ptr, &end_info );
-        return ( TEXTURE_LOAD_ERROR );
-    }
+	//read the header
+	fread(header, 1, 8, file);
 
-    //init png reading
-    //png_init_io(png_ptr, fp);
-    png_set_read_fn( png_ptr, NULL, png_read );
+	//test if png
+	int is_png = !png_sig_cmp(header, 0, 8);
 
-    //let libpng know you already read the first 8 bytes
-    png_set_sig_bytes( png_ptr, 8 );
+	if(!is_png)
+	{
+		fclose(file);
+		LOGTOUCH_E("Not a png file : %s", full_file.c_str());
+		return TEXTURE_LOAD_ERROR;
+	}
 
-    // read all the info up to the image data
-    png_read_info( png_ptr, info_ptr );
+	//create png struct
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
+	                      NULL, NULL);
 
-    //variables to pass to get info
-    int bit_depth, color_type;
-    png_uint_32 twidth, theight;
+	if(!png_ptr)
+	{
+		fclose(file);
+		LOGTOUCH_E("Unable to create png struct : %s\n", full_file.c_str());
+		return (TEXTURE_LOAD_ERROR);
+	}
 
-    // get info about png
-    png_get_IHDR( png_ptr, info_ptr, &twidth, &theight, &bit_depth, &color_type,
-                  NULL, NULL, NULL );
+	//create png info struct
+	png_infop info_ptr = png_create_info_struct(png_ptr);
 
-    //update width and height based on png info
-    width = twidth;
-    height = theight;
+	if(!info_ptr)
+	{
+		png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
+		LOGTOUCH_E("Unable to create png info : %s\n", full_file.c_str());
+		fclose(file);
+		return (TEXTURE_LOAD_ERROR);
+	}
 
-    // Update the png info struct.
-    png_read_update_info( png_ptr, info_ptr );
+	//create png info struct
+	png_infop end_info = png_create_info_struct(png_ptr);
 
-    // Row size in bytes.
-    int rowbytes = png_get_rowbytes( png_ptr, info_ptr );
+	if(!end_info)
+	{
+		png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+		LOGTOUCH_E("Unable to create png end info : %s\n", full_file.c_str());
+		fclose(file);
+		return (TEXTURE_LOAD_ERROR);
+	}
 
-    // Allocate the image_data as a big block, to be given to opengl
-    png_byte *image_data = new png_byte[rowbytes * height];
-    if( !image_data )
-    {
-        //clean up memory and close stuff
-        png_destroy_read_struct( &png_ptr, &info_ptr, &end_info );
-        LOGTOUCH_E( "Unable to allocate image_data while loading %s\n", full_file.c_str() );
-        fclose( file );
-        return TEXTURE_LOAD_ERROR;
-    }
+	//png error stuff, not sure libpng man suggests this.
+	if(setjmp(png_jmpbuf(png_ptr)))
+	{
+		fclose(file);
+		LOGTOUCH_E("Error during setjmp : %s\n", full_file.c_str());
+		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+		return (TEXTURE_LOAD_ERROR);
+	}
 
-    //row_pointers is for pointing to image_data for reading the png with libpng
-    //This is because opengl needs the image data upside-down to normal
-    png_bytep *row_pointers = new png_bytep[height];
-    if( !row_pointers )
-    {
-        //clean up memory and close stuff
-        png_destroy_read_struct( &png_ptr, &info_ptr, &end_info );
-        delete[] image_data;
-        LOGTOUCH_E( "Unable to allocate row_pointer while loading %s\n ", full_file.c_str() );
-        fclose( file );
-        return TEXTURE_LOAD_ERROR;
-    }
-    // set the individual row_pointers to point at the correct offsets of image_data
-    for( int i = 0; i < height; ++i )
-    {
-        row_pointers[height - 1 - i] = image_data + i * rowbytes;
-    }
+	//init png reading
+	//png_init_io(png_ptr, fp);
+	png_set_read_fn(png_ptr, NULL, png_read);
 
-    //read the png into image_data through row_pointers
-    png_read_image( png_ptr, row_pointers );
+	//let libpng know you already read the first 8 bytes
+	png_set_sig_bytes(png_ptr, 8);
 
-    //Now generate the OpenGL texture object
-    //GLuint texture = texNumber++;
-    GLuint texture;
+	// read all the info up to the image data
+	png_read_info(png_ptr, info_ptr);
 
-    if( glTexNumber )
-    {
-        texture = glTexNumber;
-        glTexNumber++;
-    }
-    else
-        glGenTextures(1,&texture);
+	//variables to pass to get info
+	int bit_depth, color_type;
+	png_uint_32 twidth, theight;
 
-    //LOGTOUCH( "Texture ID: %d\n", texture );
+	// get info about png
+	png_get_IHDR(png_ptr, info_ptr, &twidth, &theight, &bit_depth, &color_type,
+	             NULL, NULL, NULL);
 
-    glBindTexture( GL_TEXTURE_2D, texture );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                  GL_UNSIGNED_BYTE, ( GLvoid* ) image_data );
+	//update width and height based on png info
+	width = twidth;
+	height = theight;
 
-    if( filename.find("F=N") != std::string::npos )// Only option so far
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
-    else
-    {
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    }
-    //Add to cache
-    glTextureCache[filename] = texture;
+	// Update the png info struct.
+	png_read_update_info(png_ptr, info_ptr);
 
-    if( fontInfoVec != NULL )
-    {
-        calcFontSpacing( image_data, width, height, fontInfoVec );
-        //Add to cache
-       //fontInfoCache[filename].resize(256);
-       fontInfoCache[filename].insert(fontInfoCache[filename].begin(), (*fontInfoVec).begin(), (*fontInfoVec).end());
-    }
+	// Row size in bytes.
+	int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
-    //clean up memory and close stuff
-    png_destroy_read_struct( &png_ptr, &info_ptr, &end_info );
-    delete[] image_data;
-    delete[] row_pointers;
-    fclose( file );
+	// Allocate the image_data as a big block, to be given to opengl
+	png_byte *image_data = new png_byte[rowbytes * height];
+
+	if(!image_data)
+	{
+		//clean up memory and close stuff
+		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+		LOGTOUCH_E("Unable to allocate image_data while loading %s\n", full_file.c_str());
+		fclose(file);
+		return TEXTURE_LOAD_ERROR;
+	}
+
+	//row_pointers is for pointing to image_data for reading the png with libpng
+	//This is because opengl needs the image data upside-down to normal
+	png_bytep *row_pointers = new png_bytep[height];
+
+	if(!row_pointers)
+	{
+		//clean up memory and close stuff
+		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+		delete[] image_data;
+		LOGTOUCH_E("Unable to allocate row_pointer while loading %s\n ", full_file.c_str());
+		fclose(file);
+		return TEXTURE_LOAD_ERROR;
+	}
+
+	// set the individual row_pointers to point at the correct offsets of image_data
+	for(int i = 0; i < height; ++i)
+	{
+		row_pointers[height - 1 - i] = image_data + i * rowbytes;
+	}
+
+	//read the png into image_data through row_pointers
+	png_read_image(png_ptr, row_pointers);
+
+	//Now generate the OpenGL texture object
+	//GLuint texture = texNumber++;
+	GLuint texture;
+
+	if(glTexNumber)
+	{
+		texture = glTexNumber;
+		glTexNumber++;
+	}
+	else
+		glGenTextures(1, &texture);
+
+	//LOGTOUCH( "Texture ID: %d\n", texture );
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+	             GL_UNSIGNED_BYTE, (GLvoid*) image_data);
+
+	if(filename.find("F=N") != std::string::npos)  // Only option so far
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
+	//Add to cache
+	glTextureCache[filename] = texture;
+
+	if(fontInfoVec != NULL)
+	{
+		calcFontSpacing(image_data, width, height, fontInfoVec);
+		//Add to cache
+		//fontInfoCache[filename].resize(256);
+		fontInfoCache[filename].insert(fontInfoCache[filename].begin(), (*fontInfoVec).begin(), (*fontInfoVec).end());
+	}
+
+	//clean up memory and close stuff
+	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+	delete[] image_data;
+	delete[] row_pointers;
+	fclose(file);
 
 
-    return texture;
+	return texture;
 
 }
 

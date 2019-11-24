@@ -46,16 +46,16 @@ class Mouse : public ControlSuper
 	int tapState; //0 = waiting for first press, 1 = waiting for first lift,
 	int tapCounter;
 
-	void emit( int, float, float, float, float );
+	void emit(int, float, float, float, float);
 
 public:
-	sigc::signal<void,int, float,float,float,float> signal_action;
+	sigc::signal<void, int, float, float, float, float> signal_action;
 
-	Mouse(std::string tag,RectF pos,std::string image_filename);
+	Mouse(std::string tag, RectF pos, std::string image_filename);
 
 	void setHideGraphics(bool v);
 
-   	void resetOutput();
+	void resetOutput();
 
 	bool processPointer(int action, int pid, float x, float y);
 

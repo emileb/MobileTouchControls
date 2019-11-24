@@ -1,4 +1,4 @@
- #include "GLheader_TC.h"
+#include "GLheader_TC.h"
 
 #include "TouchControls.h"
 #include <math.h>
@@ -11,13 +11,13 @@ using namespace touchcontrols;
 static std::string xlmAppend = "";
 namespace touchcontrols
 {
-    void setGlobalXmlAppend( const char * append )
-    {
-        xlmAppend = append;
-    }
+void setGlobalXmlAppend(const char * append)
+{
+	xlmAppend = append;
+}
 }
 
-TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group,bool showExtraSettings)
+TouchControls::TouchControls(std::string t, bool en, bool editable, int edit_group, bool showExtraSettings)
 {
 	tag = t;
 	enabled = en;
@@ -31,39 +31,41 @@ TouchControls::TouchControls(std::string t,bool en,bool editable, int edit_group
 	editGroup = edit_group;
 	passThroughTouch = ALWAYS;
 
-	int lines = ScaleX+1 + ScaleY+1;
+	int lines = ScaleX + 1 + ScaleY + 1;
 
 
 	settingsButton  = 0;
 
-	if (editable)
+	if(editable)
 	{
 		grid = new GLLines(lines);
 
-		int l=0;
-		for (int n=0;n<ScaleX;n++)
-		{
-			grid->vertices[l+0] = GLESscaleX((float)n/(float)ScaleX);
-			grid->vertices[l+1] = GLESscaleX(0);
-			grid->vertices[l+3] = GLESscaleX((float)n/(float)ScaleX);
-			grid->vertices[l+4] = GLESscaleX(-1);
+		int l = 0;
 
-			l +=6;
-		}
-		for (int n=1;n<ScaleY+1;n++)
+		for(int n = 0; n < ScaleX; n++)
 		{
-			grid->vertices[l+0] = GLESscaleY(0);
-			grid->vertices[l+1] = GLESscaleY((float)-n/(float)ScaleY);
-			grid->vertices[l+3] = GLESscaleY(1);
-			grid->vertices[l+4] = GLESscaleY((float)-n/(float)ScaleY);
+			grid->vertices[l + 0] = GLESscaleX((float)n / (float)ScaleX);
+			grid->vertices[l + 1] = GLESscaleX(0);
+			grid->vertices[l + 3] = GLESscaleX((float)n / (float)ScaleX);
+			grid->vertices[l + 4] = GLESscaleX(-1);
 
-			l +=6;
+			l += 6;
 		}
 
-		if (showExtraSettings)
+		for(int n = 1; n < ScaleY + 1; n++)
 		{
-			settingsButton = new touchcontrols::ButtonExt("settings_control",touchcontrols::RectF(12,2,14,4),"settings_bars",0);
-			settingsButton->signal_button.connect(  sigc::mem_fun(this,&TouchControls::settingsButtonPress) );
+			grid->vertices[l + 0] = GLESscaleY(0);
+			grid->vertices[l + 1] = GLESscaleY((float) - n / (float)ScaleY);
+			grid->vertices[l + 3] = GLESscaleY(1);
+			grid->vertices[l + 4] = GLESscaleY((float) - n / (float)ScaleY);
+
+			l += 6;
+		}
+
+		if(showExtraSettings)
+		{
+			settingsButton = new touchcontrols::ButtonExt("settings_control", touchcontrols::RectF(12, 2, 14, 4), "settings_bars", 0);
+			settingsButton->signal_button.connect(sigc::mem_fun(this, &TouchControls::settingsButtonPress));
 		}
 	}
 }
@@ -76,17 +78,18 @@ void TouchControls::setPassThroughTouch(PassThrough v)
 
 void  TouchControls::resetDefault()
 {
-	if (xmlFilename.length() > 0)
+	if(xmlFilename.length() > 0)
 		loadXML(xmlFilename + ".default");
 
 }
 
 void TouchControls::setAllButtonsEnable(bool value)
 {
-	for (int n=0;n<controls.size();n++)
+	for(int n = 0; n < controls.size(); n++)
 	{
 		ControlSuper *c = controls.at(n);
-		if (c->type == TC_TYPE_BUTTON)
+
+		if(c->type == TC_TYPE_BUTTON)
 		{
 			c->setEnabled(value);
 		}
@@ -96,12 +99,14 @@ void TouchControls::setAllButtonsEnable(bool value)
 void TouchControls::animateIn(int steps)
 {
 	float top = 1;
-	for (int n=0;n<controls.size();n++)// Find lowest number (nearest top of screen) edge
+
+	for(int n = 0; n < controls.size(); n++) // Find lowest number (nearest top of screen) edge
 	{
 		ControlSuper *c = controls.at(n);
-		if (c->isEnabled())
+
+		if(c->isEnabled())
 		{
-			if (c->controlPos.top < top)
+			if(c->controlPos.top < top)
 				top = c->controlPos.top;
 		}
 	}
@@ -109,19 +114,21 @@ void TouchControls::animateIn(int steps)
 	animating = true;
 	slideDir = 0;
 	slidePos = 1 - top; //So we want it to slide in from the bottom
-	animateStep = slidePos/(float)steps;
+	animateStep = slidePos / (float)steps;
 	setEnabled(true);
 }
 
 void TouchControls::animateOut(int steps)
 {
 	float top = 1;
-	for (int n=0;n<controls.size();n++)// Find lowest number (nearest top of screen) edge
+
+	for(int n = 0; n < controls.size(); n++) // Find lowest number (nearest top of screen) edge
 	{
 		ControlSuper *c = controls.at(n);
-		if (c->isEnabled())
+
+		if(c->isEnabled())
 		{
-			if (c->controlPos.top < top)
+			if(c->controlPos.top < top)
 				top = c->controlPos.top;
 		}
 	}
@@ -129,17 +136,17 @@ void TouchControls::animateOut(int steps)
 	animating = true;
 	slideDir = 1;
 	slidePos = 0;
-	slideMax = (1-top);
-	animateStep = slideMax/(float)steps;
+	slideMax = (1 - top);
+	animateStep = slideMax / (float)steps;
 	//setEnabled(false);
 }
 
-void TouchControls::fade(fadedir_t dir,int steps)
+void TouchControls::fade(fadedir_t dir, int steps)
 {
-	if( steps )
+	if(steps)
 	{
 		//LOGTOUCH("fade %d  %d",in,steps);
-		if (dir == FADE_IN) //Fade in
+		if(dir == FADE_IN)  //Fade in
 		{
 			fadePos = 0;
 		}
@@ -147,16 +154,17 @@ void TouchControls::fade(fadedir_t dir,int steps)
 		{
 			fadePos = 1;
 		}
+
 		fadeDir = dir;
-		fadeStep = (float)1/(float)steps;
+		fadeStep = (float)1 / (float)steps;
 		fading = true;
 	}
 	else // No fading, jsut do it
 	{
-		if (dir == FADE_OUT )
-	 	{
-	 		setEnabled(false);
-	 	}
+		if(dir == FADE_OUT)
+		{
+			setEnabled(false);
+		}
 	}
 }
 
@@ -188,20 +196,20 @@ void TouchControls::setEnabled(bool v)
 
 void TouchControls::setFixAspect(bool v)
 {
-    fixAspect = v;
+	fixAspect = v;
 }
 
 
 bool TouchControls::isFixAspect()
 {
-    return fixAspect;
+	return fixAspect;
 }
 
 void TouchControls::resetOutput()
 {
 	int size = controls.size();
 
-	for (int n=0;n<size;n++)
+	for(int n = 0; n < size; n++)
 	{
 		ControlSuper *cs = controls.at(n);
 		// LOGTOUCH("setEnabled reset to %s",cs->tag.c_str());
@@ -227,21 +235,21 @@ bool TouchControls::isEnabled()
 
 void TouchControls::addControl(Button *cntrl)
 {
-	cntrl->signal_buttonDown.connect(  sigc::mem_fun(this,&TouchControls::buttonDown) );
-	cntrl->signal_buttonUp.connect(  sigc::mem_fun(this,&TouchControls::buttonUp) );
-	cntrl->signal_button.connect(  sigc::mem_fun(this,&TouchControls::button) );
+	cntrl->signal_buttonDown.connect(sigc::mem_fun(this, &TouchControls::buttonDown));
+	cntrl->signal_buttonUp.connect(sigc::mem_fun(this, &TouchControls::buttonUp));
+	cntrl->signal_button.connect(sigc::mem_fun(this, &TouchControls::button));
 	controls.push_back((cntrl));
 }
 
 void TouchControls::addControl(ButtonExt *cntrl)
 {
-	cntrl->signal_button.connect(  sigc::mem_fun(this,&TouchControls::button) );
+	cntrl->signal_button.connect(sigc::mem_fun(this, &TouchControls::button));
 	controls.push_back((cntrl));
 }
 
 void TouchControls::addControl(ButtonGrid *cntrl)
 {
-	cntrl->signal_button.connect(  sigc::mem_fun(this,&TouchControls::button) );
+	cntrl->signal_button.connect(sigc::mem_fun(this, &TouchControls::button));
 	controls.push_back((cntrl));
 }
 
@@ -252,87 +260,95 @@ void TouchControls::addControl(ControlSuper *cntrl)
 
 bool TouchControls::gamepadInput(bool down, GamePadKey key)
 {
-    bool controlUsed = false;
+	bool controlUsed = false;
 
-    int size = controls.size();
-    for (int n=0;n<size;n++)
-    {
-        ControlSuper *cs = controls.at(n);
-        if (cs->isEnabled())
-            if (cs->gamepadInput(down, key))
-            {
-                // Gamepad actions only ever go to one control
-                controlUsed = true;
-                break;
-            }
-    }
+	int size = controls.size();
 
-    return controlUsed;
+	for(int n = 0; n < size; n++)
+	{
+		ControlSuper *cs = controls.at(n);
+
+		if(cs->isEnabled())
+			if(cs->gamepadInput(down, key))
+			{
+				// Gamepad actions only ever go to one control
+				controlUsed = true;
+				break;
+			}
+	}
+
+	return controlUsed;
 }
 
 
 bool TouchControls::processPointer(int action, int pid, float x, float y)
 {
 #ifdef __ANDROID__
-	if (android_app_is_shutting_down)
+
+	if(android_app_is_shutting_down)
 		return 0;
+
 #endif
 
-	if (!editing)
+	if(!editing)
 	{
 		int size = controls.size();
-        bool controlUsed = false;
+		bool controlUsed = false;
 
-		for (int n=0;n<size;n++)
+		for(int n = 0; n < size; n++)
 		{
 			ControlSuper *cs = controls.at(n);
-			if (cs->isEnabled())
+
+			if(cs->isEnabled())
 			{
-				if (cs->processPointer(action,pid, x, y))
+				if(cs->processPointer(action, pid, x, y))
 				{
-				    controlUsed = true;
+					controlUsed = true;
+
 					//If it is a touch pad or mouse, break out so nothing under it gets data
 					// REMOVED so SWAPFIX works
 					//if (( cs->type == TC_TYPE_TOUCHJOY ) || ( cs->type == TC_TYPE_MOUSE ))
 					//	break;
-					if( cs->type == TC_TYPE_QUADSLIDE ) // Quad slide we should never pass data through
-					    return true;
+					if(cs->type == TC_TYPE_QUADSLIDE)   // Quad slide we should never pass data through
+						return true;
 
 				}
 
-                // Check if point is in control at all
-				if( !cs->isAllowPassThrough()  && cs->controlPos.contains(x,y))
+				// Check if point is in control at all
+				if(!cs->isAllowPassThrough()  && cs->controlPos.contains(x, y))
 				{
-				    return true;
+					return true;
 				}
-            }
+			}
 		}
 
-        if( passThroughTouch == ALWAYS )
-            return false;
-		else if ( passThroughTouch  == NO_CONTROL )
+		if(passThroughTouch == ALWAYS)
+			return false;
+		else if(passThroughTouch  == NO_CONTROL)
 			return controlUsed;
-	    else
-		    return true;
+		else
+			return true;
 	}
 	else
 	{
-		if (settingsButton)
-			settingsButton->processPointer(action,pid, x, y);
+		if(settingsButton)
+			settingsButton->processPointer(action, pid, x, y);
 
-		if (action == P_DOWN)
+		if(action == P_DOWN)
 		{
-			if (pid < 2)
+			if(pid < 2)
 			{
-				if ((!finger1.enabled) && (!finger1.enabled) && (pid == 0))
+				if((!finger1.enabled) && (!finger1.enabled) && (pid == 0))
 				{
 					//selectedCtrl = 0;
 					tapDeselect = true;
-					for (int n=0;n<controls.size();n++)
+
+					for(int n = 0; n < controls.size(); n++)
 					{
 						ControlSuper *cs = controls.at(n);
-						if (cs->isEnabled() && !cs->isHidden() && cs->isEditable())//&&  (cs->type != TC_TYPE_MOUSE))
-							if (cs->controlPos.contains(x, y))
+
+						if(cs->isEnabled() && !cs->isHidden() && cs->isEditable()) //&&  (cs->type != TC_TYPE_MOUSE))
+							if(cs->controlPos.contains(x, y))
 							{
 								selectedCtrl = cs;
 								tapDeselect = false;
@@ -346,7 +362,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					finger1.x = x;
 					finger1.y = y;
 				}
-				else if ((finger1.enabled) && (pid == 1))
+				else if((finger1.enabled) && (pid == 1))
 				{
 					longPressTime = -1; //Disable long press count
 					finger2.enabled = true;
@@ -357,25 +373,25 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 				}
 			}
 		}
-		else if (action == P_UP)
+		else if(action == P_UP)
 		{
-			if (pid < 2)
+			if(pid < 2)
 			{
 				//This is to deselect all controls if you tap in a clear space
-				if ( tapDeselect )
+				if(tapDeselect)
 				{
-					if ((pid == 0) && (totalFingerMove <  0.03))
+					if((pid == 0) && (totalFingerMove <  0.03))
 					{
-					//	selectedCtrl = 0;
+						//	selectedCtrl = 0;
 					}
 				}
 
-				if (selectedCtrl != 0)
+				if(selectedCtrl != 0)
 					snapControl(selectedCtrl);
 
-				if (pid == 0)
+				if(pid == 0)
 					finger1.enabled = false;
-				else if (pid == 1)
+				else if(pid == 1)
 					finger2.enabled = false;
 
 				longPressTime = -1; //Disable long press count
@@ -383,11 +399,11 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		}
 		else if(action == P_MOVE)
 		{
-			if ((finger1.enabled) && (!finger2.enabled)) //drag
+			if((finger1.enabled) && (!finger2.enabled))  //drag
 			{
 				totalFingerMove += fabs(x - finger1.x) + fabs(y - finger1.y);
 
-				if (selectedCtrl != 0)
+				if(selectedCtrl != 0)
 				{
 					selectedCtrl->controlPos.offset(x - finger1.x, y - finger1.y);
 					windowControl(selectedCtrl);
@@ -397,37 +413,39 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 				}
 			}
-			else if ((finger1.enabled) && (finger2.enabled)) //zoom
+			else if((finger1.enabled) && (finger2.enabled))  //zoom
 			{
-				if (selectedCtrl != 0)
+				if(selectedCtrl != 0)
 				{
 					float newDistX = fabs(finger1.x - finger2.x);
-					if (fabs(newDistX - oldDist.x)>((float)1/(float)ScaleX/2))
+
+					if(fabs(newDistX - oldDist.x) > ((float)1 / (float)ScaleX / 2))
 					{
 						selectedCtrl->controlPos.right += (newDistX - oldDist.x);
 						oldDist.x = newDistX;
 
-						if (selectedCtrl->controlPos.width()<(1/(float)ScaleX/2))
+						if(selectedCtrl->controlPos.width() < (1 / (float)ScaleX / 2))
 						{
-							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + (1/(float)ScaleX/2);
+							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + (1 / (float)ScaleX / 2);
 						}
-						else if  (selectedCtrl->controlPos.width()>0.5)
+						else if(selectedCtrl->controlPos.width() > 0.5)
 						{
 							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + 0.5;
 						}
 					}
 
 					float newDistY = fabs(finger1.y - finger2.y);
-					if (fabs(newDistY - oldDist.y)>((float)1/(float)ScaleY/2))
+
+					if(fabs(newDistY - oldDist.y) > ((float)1 / (float)ScaleY / 2))
 					{
 						selectedCtrl->controlPos.bottom += (newDistY - oldDist.y);
 						oldDist.y = newDistY;
 
-						if (selectedCtrl->controlPos.height()<(1/(float)ScaleY/2))
+						if(selectedCtrl->controlPos.height() < (1 / (float)ScaleY / 2))
 						{
-							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + (1/(float)ScaleY/2);
+							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + (1 / (float)ScaleY / 2);
 						}
-						else if  (selectedCtrl->controlPos.width()>0.5)
+						else if(selectedCtrl->controlPos.width() > 0.5)
 						{
 							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + 0.5;
 						}
@@ -438,12 +456,12 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					windowControl(selectedCtrl);
 				}
 
-				if (pid == 0)
+				if(pid == 0)
 				{
 					finger1.x = x;
 					finger1.y = y;
 				}
-				else if (pid == 1)
+				else if(pid == 1)
 				{
 					finger2.x = x;
 					finger2.y = y;
@@ -452,70 +470,74 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		}
 	}
 
-    return false;
+	return false;
 }
 
 
-void TouchControls::settingsButtonPress(int state,int code)
+void TouchControls::settingsButtonPress(int state, int code)
 {
-    LOGTOUCH("settingsButtonPress %d %d", state, code );
-    if( state == BUTTONEXT_TAP ) //Only want to activate this if we do a real tap
-    {
-	    signal_settingsButton.emit(1);
+	LOGTOUCH("settingsButtonPress %d %d", state, code);
+
+	if(state == BUTTONEXT_TAP)   //Only want to activate this if we do a real tap
+	{
+		signal_settingsButton.emit(1);
 	}
 }
 
 void TouchControls::windowControl(ControlSuper *ctrl)
 {
-	if (ctrl->controlPos.left<0)
+	if(ctrl->controlPos.left < 0)
 		ctrl->controlPos.offsetTo(0, ctrl->controlPos.top);
-	else if (ctrl->controlPos.right>1)
-		ctrl->controlPos.offsetTo(1-(ctrl->controlPos.right-ctrl->controlPos.left),
-				ctrl->controlPos.top);
+	else if(ctrl->controlPos.right > 1)
+		ctrl->controlPos.offsetTo(1 - (ctrl->controlPos.right - ctrl->controlPos.left),
+		                          ctrl->controlPos.top);
 
-	if (ctrl->controlPos.top<0)
-		ctrl->controlPos.offsetTo( ctrl->controlPos.left,0);
-	else if (ctrl->controlPos.bottom>1)
-		ctrl->controlPos.offsetTo( ctrl->controlPos.left,
-				1-(ctrl->controlPos.bottom-ctrl->controlPos.top));
+	if(ctrl->controlPos.top < 0)
+		ctrl->controlPos.offsetTo(ctrl->controlPos.left, 0);
+	else if(ctrl->controlPos.bottom > 1)
+		ctrl->controlPos.offsetTo(ctrl->controlPos.left,
+		                          1 - (ctrl->controlPos.bottom - ctrl->controlPos.top));
+
 	ctrl->updateSize();
 
 }
 
 void  TouchControls::snapControl(ControlSuper *ctrl)
 {
-    uint32_t snapX = ScaleX * 2;
-    uint32_t snapY = ScaleY * 2;
+	uint32_t snapX = ScaleX * 2;
+	uint32_t snapY = ScaleY * 2;
 	int t = floor((ctrl->controlPos.left * (float)snapX) + 0.5);
-	ctrl->controlPos.left = (float)t/(float)snapX;
+	ctrl->controlPos.left = (float)t / (float)snapX;
 	t = floor((ctrl->controlPos.right * (float)snapX) + 0.5);
-	ctrl->controlPos.right = (float)t/(float)snapX;
+	ctrl->controlPos.right = (float)t / (float)snapX;
 	t = floor((ctrl->controlPos.top * (float)snapY) + 0.5);
-	ctrl->controlPos.top = (float)t/(float)snapY;
+	ctrl->controlPos.top = (float)t / (float)snapY;
 	t = floor((ctrl->controlPos.bottom * (float)snapY) + 0.5);
-	ctrl->controlPos.bottom = (float)t/(float)snapY;
+	ctrl->controlPos.bottom = (float)t / (float)snapY;
 	ctrl->updateSize();
 }
 
 
-int TouchControls::draw ()
+int TouchControls::draw()
 {
-    bool fixAspectOrig = gl_getFixAspect();
-    gl_setFixAspect( fixAspect );
+	bool fixAspectOrig = gl_getFixAspect();
+	gl_setFixAspect(fixAspect);
 
-	if (fading)
+	if(fading)
 	{
-		if (fadeDir == FADE_IN) //Fading in
+		if(fadeDir == FADE_IN)  //Fading in
 		{
 			fadePos += fadeStep;
-			if (fadePos >= 1)
+
+			if(fadePos >= 1)
 				fading = false;
 
 		}
 		else //Fading out
 		{
 			fadePos -= fadeStep;
-			if (fadePos <= 0)
+
+			if(fadePos <= 0)
 			{
 				fading = false;
 				setEnabled(false); //now also disable the control
@@ -528,40 +550,44 @@ int TouchControls::draw ()
 	}
 
 	int size = controls.size();
-	for (int n=0;n<size;n++) //draw
+
+	for(int n = 0; n < size; n++) //draw
 	{
-		ControlSuper *c = controls.at(size-1-n);
-		if (c->isEnabled())
+		ControlSuper *c = controls.at(size - 1 - n);
+
+		if(c->isEnabled())
 		{
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-            
-			if (animating)
+
+			if(animating)
 				gl_translatef(0, -slidePos, 0);
 
-            // check if control has defualt color or not
-            if( c->color == COLOUR_NONE )
-                gl_color4f(defaultColor, alpha * fadePos);
-            else
-                gl_color4f(c->color, alpha * fadePos);
+			// check if control has defualt color or not
+			if(c->color == COLOUR_NONE)
+				gl_color4f(defaultColor, alpha * fadePos);
+			else
+				gl_color4f(c->color, alpha * fadePos);
 
 			c->drawGL();
 		}
 	}
 
-	if (animating)
+	if(animating)
 	{
-		if (slideDir == 0)
+		if(slideDir == 0)
 		{
 			slidePos -= animateStep;
-			if (slidePos <= 0)
+
+			if(slidePos <= 0)
 				animating = false;
 
 		}
 		else //Animate out
 		{
 			slidePos += animateStep;
-			if (slidePos >= slideMax)
+
+			if(slidePos >= slideMax)
 			{
 				animating = false;
 				setEnabled(false);
@@ -569,15 +595,15 @@ int TouchControls::draw ()
 		}
 	}
 
-    gl_setFixAspect( fixAspectOrig );
+	gl_setFixAspect(fixAspectOrig);
 
-	if (editing)
+	if(editing)
 		return 1;
 	else
 		return 0;
 }
 
-int  TouchControls::drawEditor ()
+int  TouchControls::drawEditor()
 {
 
 	gl_clearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -585,13 +611,15 @@ int  TouchControls::drawEditor ()
 
 	gl_loadIdentity();
 	gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-	gl_drawLines(0,0,*grid);
+	gl_drawLines(0, 0, *grid);
 
 	int size = controls.size();
-	for (int n=0;n<size;n++) //draw
+
+	for(int n = 0; n < size; n++) //draw
 	{
-		ControlSuper *c = controls.at(size-1-n);
-		if (c->isEnabled() )//&&  (c->type != TC_TYPE_MOUSE))
+		ControlSuper *c = controls.at(size - 1 - n);
+
+		if(c->isEnabled())  //&&  (c->type != TC_TYPE_MOUSE))
 		{
 
 			GLRect rect;
@@ -599,16 +627,16 @@ int  TouchControls::drawEditor ()
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
-			if (!c->isHidden()) //Not hidden control
-				gl_drawRect((GLfloat)1,(GLfloat)0.5,(GLfloat)0,(GLfloat)0.2,c->controlPos.left,c->controlPos.top,rect);
+			if(!c->isHidden())  //Not hidden control
+				gl_drawRect((GLfloat)1, (GLfloat)0.5, (GLfloat)0, (GLfloat)0.2, c->controlPos.left, c->controlPos.top, rect);
 
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
-            if( c->color == COLOUR_NONE )
-                gl_color4f(defaultColor, 1);
-            else
-                gl_color4f(c->color, 1);
+			if(c->color == COLOUR_NONE)
+				gl_color4f(defaultColor, 1);
+			else
+				gl_color4f(c->color, 1);
 
 			c->drawGL(true);
 
@@ -623,21 +651,21 @@ int  TouchControls::drawEditor ()
 
 	ControlSuper * sel = selectedCtrl; //Save pointer because drawn of different thread
 
-	if (sel != 0)
+	if(sel != 0)
 	{
 		GLRect rect;
 		rect.resize(sel->controlPos.right - sel->controlPos.left, sel->controlPos.bottom - sel->controlPos.top);
 		gl_loadIdentity();
 		gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-		gl_drawRect((GLfloat)0.5,(GLfloat)0.3,(GLfloat)0.8,(GLfloat)0.5,sel->controlPos.left,sel->controlPos.top,rect);
+		gl_drawRect((GLfloat)0.5, (GLfloat)0.3, (GLfloat)0.8, (GLfloat)0.5, sel->controlPos.left, sel->controlPos.top, rect);
 	}
 
 
 
 
-	if (editing)
+	if(editing)
 	{
-		if (settingsButton)
+		if(settingsButton)
 		{
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
@@ -657,7 +685,7 @@ int  TouchControls::drawEditor ()
 				if (totalFingerMove < 0.03) //Finger must stay still for a long press
 				{
 					LOGTOUCH("Long press active");
-                    if ((selectedCtrl != 0) && (selectedCtrl->type == TC_TYPE_BUTTON)) //Only can hide buttons
+	                if ((selectedCtrl != 0) && (selectedCtrl->type == TC_TYPE_BUTTON)) //Only can hide buttons
 					{
 						selectedCtrl->setHidden(!(selectedCtrl->isHidden())); //toggle hidden state
 					}
@@ -668,23 +696,24 @@ int  TouchControls::drawEditor ()
 		}
 	}
 	 */
-	if (editing)
+	if(editing)
 		return 1;
 	else
 		return 0;
 }
 
-void  TouchControls::initGL ()
+void  TouchControls::initGL()
 {
 	int size = controls.size();
-	for (int n=0;n<size;n++) //draw
+
+	for(int n = 0; n < size; n++) //draw
 	{
-		ControlSuper *c = controls.at(size-1-n);
+		ControlSuper *c = controls.at(size - 1 - n);
 		c->initGL();
 	}
 
 
-	if (settingsButton)
+	if(settingsButton)
 		settingsButton->initGL();
 }
 
@@ -697,14 +726,14 @@ void TouchControls::setXMLFile(std::string file)
 
 void TouchControls::saveXML(std::string filename)
 {
-	if (filename.length() == 0)
+	if(filename.length() == 0)
 		return;
 
 	TiXmlDocument doc;
-	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );
-	doc.LinkEndChild( decl );
+	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
+	doc.LinkEndChild(decl);
 
-	for (int n=0;n< controls.size();n++) //draw
+	for(int n = 0; n < controls.size(); n++) //draw
 	{
 		ControlSuper *c = controls.at(n);
 		c->saveXML(doc);
@@ -716,21 +745,21 @@ void TouchControls::saveXML(std::string filename)
 void TouchControls::loadXML(std::string filename)
 {
 
-    //The hell..crashes on destructor when on stack..
+	//The hell..crashes on destructor when on stack..
 	//TiXmlDocument doc(filename.c_str());
-    TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
-    
+	TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
 
-	if (!doc->LoadFile()) return;
 
-	for (int n=0; n < controls.size();n++) //draw
+	if(!doc->LoadFile()) return;
+
+	for(int n = 0; n < controls.size(); n++) //draw
 	{
 		ControlSuper *c = controls.at(n);
 		c->loadXML(*doc);
 		c->updateSize();
 	}
-    
-    delete doc;
+
+	delete doc;
 }
 
 std::vector<ControlSuper *> * TouchControls::getControls()
@@ -741,10 +770,11 @@ std::vector<ControlSuper *> * TouchControls::getControls()
 
 void *TouchControls::getControl(std::string name)
 {
-	for (int n=0;n< controls.size();n++) //draw
+	for(int n = 0; n < controls.size(); n++) //draw
 	{
 		ControlSuper *c = controls.at(n);
-		if (c->tag == name)
+
+		if(c->tag == name)
 			return c;
 	}
 

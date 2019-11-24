@@ -21,41 +21,41 @@ namespace touchcontrols
 class UI_Controls
 {
 public:
-    UI_Controls( std::string t );
+	UI_Controls(std::string t);
 
-    sigc::signal< void, bool > signalEnable; // This signal gets called when the control is enabled or disabled
-
-
-    bool processPointer(int action, int pid, float x, float y);
-	int draw ();
-
-    void addControl( ControlSuper *cntrl );
-    void deleteControls();
-
-    void setEnabled(bool v);
-    bool getEnabled();
+	sigc::signal< void, bool > signalEnable; // This signal gets called when the control is enabled or disabled
 
 
-	void initGL ();
+	bool processPointer(int action, int pid, float x, float y);
+	int draw();
+
+	void addControl(ControlSuper *cntrl);
+	void deleteControls();
+
+	void setEnabled(bool v);
+	bool getEnabled();
+
+
+	void initGL();
 	void setAlpha(float a);
-    void fade(fadedir_t dir,int steps);
+	void fade(fadedir_t dir, int steps);
 
-   void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
+	void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
 private:
-    std::string tag;
-    std::vector<ControlSuper *> controls;
+	std::string tag;
+	std::vector<ControlSuper *> controls;
 	bool enabled;
 
 	ControlSuper *controlActive; // If a control wants to show something over the screen use this
 
-    float fadePos; //current fade
+	float fadePos; //current fade
 	fadedir_t fadeDir;
 	float fadeStep;
 	bool fading;
 
 	float yOffset; // Used to scroll up/down
-    PointF finger1;
-    bool scrolling;
+	PointF finger1;
+	bool scrolling;
 };
 
 }

@@ -19,27 +19,27 @@ class QuadSlide : public ControlSuper
 	GLuint glArrowTex;
 	GLRect glRect;
 
-    int32_t valueUp,valueDown,valueLeft,valueRight;
-    int32_t valueCurrent;
+	int32_t valueUp, valueDown, valueLeft, valueRight;
+	int32_t valueCurrent;
 
 
-    std::string arrowImage;
+	std::string arrowImage;
 
-    float arrowSlidePos;
-    uint64_t arrowSlideTime;
+	float arrowSlidePos;
+	uint64_t arrowSlideTime;
 
-    uint32_t showDemoArrowsTime;
+	uint32_t showDemoArrowsTime;
 
-    PointF anchorPoint;
-    uint32_t slideState;
+	PointF anchorPoint;
+	uint32_t slideState;
 
-    void valueOutput( bool down, int32_t value );
+	void valueOutput(bool down, int32_t value);
 public:
-    std::string bgImage; // Public so button list can access
+	std::string bgImage; // Public so button list can access
 
 	sigc::signal<void, int32_t, int32_t> signal;
 
-	QuadSlide(std::string tag,RectF pos,std::string bgImage,std::string arrowImage, int32_t valueUp, int32_t valueRight, int32_t valueDown, int32_t valueLeft, bool hidden=false,std::string description = "");
+	QuadSlide(std::string tag, RectF pos, std::string bgImage, std::string arrowImage, int32_t valueUp, int32_t valueRight, int32_t valueDown, int32_t valueLeft, bool hidden = false, std::string description = "");
 
 	void resetOutput();
 
