@@ -349,16 +349,16 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		rootControls->addControl(colorPicker);
 		colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
 
+		UI_Button *buttonEdit =   new UI_Button("edit_buttons",  touchcontrols::RectF(13, y, windowRight, y + 2), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg");
+		buttonEdit->signal.connect(sigc::ptr_fun(&buttonPress));
+		rootControls->addControl(buttonEdit);
+
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize));
 		UI_Switch *swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
-
-		UI_Button *buttonEdit =   new UI_Button("edit_buttons",  touchcontrols::RectF(13, y, windowRight, y + 2), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg");
-		buttonEdit->signal.connect(sigc::ptr_fun(&buttonPress));
-		rootControls->addControl(buttonEdit);
 
 		y += 2;
 

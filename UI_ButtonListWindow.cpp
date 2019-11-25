@@ -29,6 +29,17 @@ static void switchChange(uint32_t uid, bool value)
 	}
 }
 
+
+static bool colorChange(uint32_t uid, uint32_t color)
+{
+	if(uid < editableButtons.size())
+	{
+		editableButtons.at(uid)->color = color;
+	}
+
+	return false;
+}
+
 void showButtonListWindow(TouchControlsContainer *con)
 {
 	container = con;
@@ -45,8 +56,8 @@ void showButtonListWindow(TouchControlsContainer *con)
 	editableButtons.clear();
 
 	float textSize = 0.07f;
-	uint32_t windownLeft = 5;
-	uint32_t windowRight = 22;
+	uint32_t windownLeft = 2;
+	uint32_t windowRight = 23;
 
 #define ROW_HEIGHT 2
 
@@ -90,8 +101,14 @@ void showButtonListWindow(TouchControlsContainer *con)
 					rootControls->addControl(image);
 
 					// Add the text desciption
-					rootControls->addControl(new UI_TextBox("text",  touchcontrols::RectF(windownLeft + ROW_HEIGHT, yPos, windowRight - 4, yPos + ROW_HEIGHT),
+					rootControls->addControl(new UI_TextBox("text",  touchcontrols::RectF(windownLeft + ROW_HEIGHT, yPos, windowRight - 7, yPos + ROW_HEIGHT),
 					                                        "font_dual", 0, UI_TEXT_CENTRE, control->description, 0.08));
+
+					// Add the color picker
+					UI_ColorPicker *colorPicker = new UI_ColorPicker("color_picker",  touchcontrols::RectF(windowRight - 7, yPos, windowRight - 4, yPos + ROW_HEIGHT), editableButtons.size(), 0);
+					colorPicker->setColor(control->color);
+					rootControls->addControl(colorPicker);
+					colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
 
 					// Add the switch
 					UI_Switch *swtch = new UI_Switch("switch", touchcontrols::RectF(windowRight - 4, yPos, windowRight, yPos + ROW_HEIGHT), editableButtons.size(), "ui_switch2_on", "ui_switch2_off");

@@ -52,8 +52,22 @@ protected:
 	bool editable; // If can edit position, default true
 
 	bool allowPassThrough; // allow controls under to get pointer data. Default true.
+
+
 public:
+
+	int type;
+
+	std::string description;
+
+	std::string tag;
+
 	RectF controlPos;
+
+	uint32_t color; // 0 = use default
+
+	ControlSuper(int type, std::string t, RectF pos);
+	virtual ~ControlSuper();
 
 	void setEnabled(bool v);
 	void setHidden(bool v);
@@ -66,16 +80,7 @@ public:
 
 	bool isAllowPassThrough();
 
-	std::string description;
 
-	std::string tag;
-
-	int type;
-
-	uint32_t color; // 0 = use default
-
-	ControlSuper(int type, std::string t, RectF pos);
-	virtual ~ControlSuper();
 
 	virtual void resetOutput() = 0; //This outputs a reset
 
