@@ -67,18 +67,7 @@ bool UI_ColorPicker::processPointer(int action, int pid, float x, float y)
 		}
 		else
 		{
-
-			// Check left/right bounds of control
-			int32_t selectedX = (x - colorGridLeft) / CUBE_SIZE;
-			int32_t selectedY = (y - colorGridTop) / CUBE_SIZE;
-
-			if(selectedX >= 0 && selectedX < COLORS_NBR_X && selectedY >= 0 && selectedY < COLORS_NBR_Y)
-			{
-				// function returns true to keep it open
-				isOpen = signal.emit(uid, colors[selectedY][selectedX]);
-			}
-
-			return true;
+			touchId = pid;
 		}
 
 		return false;
@@ -96,8 +85,25 @@ bool UI_ColorPicker::processPointer(int action, int pid, float x, float y)
 					isOpen = true;
 				}
 			}
+			else
+			{
+				// Check left/right bounds of control
+				int32_t selectedX = (x - colorGridLeft) / CUBE_SIZE;
+				int32_t selectedY = (y - colorGridTop) / CUBE_SIZE;
 
-			//signal.emit(1 , uid );
+				if(selectedX >= 0 && selectedX < COLORS_NBR_X && selectedY >= 0 && selectedY < COLORS_NBR_Y)
+				{
+					// function returns true to keep it open
+					isOpen = signal.emit(uid, colors[selectedY][selectedX]);
+
+					// Update own color if selected
+					if(!isOpen)
+					{
+						currentColor = colors[selectedY][selectedX];
+					}
+				}
+			}
+
 			touchId = -1;
 			return true;
 		}
@@ -124,7 +130,7 @@ bool UI_ColorPicker::initGL()
 	int x, y;
 	glTex = loadTextureFromPNG(bg_image, x, y);
 	glColorCube = loadTextureFromPNG("color_cube", x, y);
-	glRedCross = loadTextureFromPNG("red_cross_color", x, y);
+	glRedCross = loadTextureFromPNG("red_strike", x, y);
 	return false;
 }
 
@@ -134,8 +140,17 @@ bool UI_ColorPicker::drawGL(bool active)
 
 	if(!active)  // Active is true when color pallet is open
 	{
-		gl_color4f(currentColor, 1);
-		gl_drawRect(glColorCube, controlPos.left, controlPos.top, glRect);
+
+		if(currentColor == COLOUR_NONE)
+		{
+			gl_color4f(COLOUR_WHITE, 1);
+			gl_drawRect(glRedCross, controlPos.left, controlPos.top, glRect);
+		}
+		else
+		{
+			gl_color4f(currentColor, 1);
+			gl_drawRect(glColorCube, controlPos.left, controlPos.top, glRect);
+		}
 	}
 	else
 	{
