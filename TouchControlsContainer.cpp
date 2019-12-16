@@ -11,7 +11,7 @@ using namespace touchcontrols;
 
 TouchControlsContainer::TouchControlsContainer()
 {
-
+	alpha = 0.5;
 }
 
 void TouchControlsContainer::resetDefaults()
@@ -36,9 +36,14 @@ void TouchControlsContainer::editControls(TouchControls * ctrl)
 	editingControls->edit();
 }
 
-void  TouchControlsContainer::setColour(uint32_t defaultColor)
+void TouchControlsContainer::setColour(uint32_t defaultColor)
 {
 	this->defaultColor = defaultColor;
+}
+
+void TouchControlsContainer::setAlpha(float alpha)
+{
+	this->alpha = alpha;
 }
 
 bool TouchControlsContainer::isEditing()
@@ -191,7 +196,7 @@ int TouchControlsContainer::draw()
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 
-			gl_color4f(defaultColor, 0.5);   // TODO, this is alpha value of the settings button
+			gl_color4f(defaultColor, alpha);
 			editorButton->drawGL();
 		}
 

@@ -21,7 +21,6 @@ namespace touchcontrols
 
 class TouchControlsContainer: public TouchControlsInterface
 {
-
 	std::vector<TouchControls *> controls;
 
 	TouchControls * editingControls = NULL;
@@ -38,6 +37,8 @@ class TouchControlsContainer: public TouchControlsInterface
 	uint32_t      uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
 
 	uint32_t defaultColor = COLOUR_WHITE; // Default white
+	float alpha;
+
 public:
 
 	sigc::signal<void, int> signal_settings;
@@ -52,6 +53,7 @@ public:
 	void editControls(TouchControls * ctrl);
 
 	void setColour(uint32_t defaultColor);
+	void setAlpha(float alpha);
 
 	int draw();
 
