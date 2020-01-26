@@ -24,6 +24,7 @@ namespace touchcontrols
 #define SWITCH_WEAP_WHEEL    26
 #define SWITCH_FIXED_MOVE    27
 #define SWITCH_PRECISION_SHOOT    28
+#define SWITCH_SHOW_CUSTOM        29
 
 #define DROPDOWN_DBL_TAP_LEFT 30
 #define DROPDOWN_DBL_TAP_RIGHT 31
@@ -54,6 +55,7 @@ static void saveSettings(std::string filename)
 	root->SetAttribute("weapon_wheel_enabled", settings.weaponWheelEnabled);
 	root->SetAttribute("fixed_move_stick", settings.fixedMoveStick);
 	root->SetAttribute("precision_shoot", settings.precisionShoot);
+	root->SetAttribute("show_custom", settings.alwaysShowCust);
 
 	root->SetDoubleAttribute("alpha", settings.alpha);
 	root->SetDoubleAttribute("look_sens", settings.lookSensitivity);
@@ -93,6 +95,7 @@ static void loadSettings(std::string filename)
 	root->QueryBoolAttribute("weapon_wheel_enabled", &settings.weaponWheelEnabled);
 	root->QueryBoolAttribute("fixed_move_stick", &settings.fixedMoveStick);
 	root->QueryBoolAttribute("precision_shoot", &settings.precisionShoot);
+	root->QueryBoolAttribute("show_custom", &settings.alwaysShowCust);
 
 	root->QueryFloatAttribute("alpha",  &settings.alpha);
 	root->QueryFloatAttribute("look_sens",  &settings.lookSensitivity);
@@ -123,6 +126,7 @@ static void resetDefaults()
 	settings.fixedMoveStick = false;
 	settings.precisionShoot = false;
 	settings.precisionSenitivity = 0.3;
+	settings.alwaysShowCust = false;
 
 	settings.dblTapLeft = 0;
 	settings.dblTapRight = 0;
@@ -149,6 +153,7 @@ static void applyControlValues()
 		((UI_Switch *)rootControls->getControl("auto_hide_number"))->setValue(settings.autoHideNumbers);
 		((UI_Switch *)rootControls->getControl("weapon_wheel_enabled"))->setValue(settings.weaponWheelEnabled);
 		((UI_Switch *)rootControls->getControl("show_joy_sticks"))->setValue(settings.showJoysticks);
+		((UI_Switch *)rootControls->getControl("show_custom"))->setValue(settings.alwaysShowCust);
 
 		((UI_Switch *)rootControls->getControl("precision_shoot"))->setValue(settings.precisionShoot);
 		((UI_Slider *)rootControls->getControl("slider_precision"))->setValue((settings.precisionSenitivity - 0.2f) / 0.5f);
@@ -240,6 +245,10 @@ static void switchChange(uint32_t uid, bool value)
 	{
 		settings.precisionShoot = value;
 	}
+	else if(uid == SWITCH_SHOW_CUSTOM)
+    {
+        settings.alwaysShowCust = value;
+    }
 }
 
 static void dropDownChange(uint32_t uid, uint32_t value)
@@ -360,6 +369,11 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
+		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look:", textSize));
+		swtch =      new UI_Switch("joystick_look_switch",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off");
+		swtch->signal.connect(sigc::ptr_fun(&switchChange));
+		rootControls->addControl(swtch);
+
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Fixed Move:", textSize));
@@ -367,8 +381,8 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look:", textSize));
-		swtch =      new UI_Switch("joystick_look_switch",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off");
+		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Show Custom:", textSize));
+		swtch =      new UI_Switch("show_custom",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_SHOW_CUSTOM, "ui_switch2_on", "ui_switch2_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 

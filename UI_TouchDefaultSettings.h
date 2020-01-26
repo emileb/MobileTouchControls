@@ -18,7 +18,7 @@ typedef struct
 
 	float precisionSenitivity;
 
-	bool  invertLook;
+	bool invertLook;
 	bool showJoysticks;
 	bool joystickLookMode;
 	bool autoHideInventory;
@@ -26,6 +26,8 @@ typedef struct
 	bool weaponWheelEnabled;
 	bool fixedMoveStick;
 	bool precisionShoot;
+
+	bool alwaysShowCust;
 
 	uint32_t dblTapLeft;
 	uint32_t dblTapRight;
