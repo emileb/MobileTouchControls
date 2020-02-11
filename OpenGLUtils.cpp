@@ -590,6 +590,7 @@ void gl_startRender()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
+    glDisable(GL_ALPHA_TEST);
 
 	if(gl_getGLESVersion() == 1)
 	{
@@ -601,6 +602,7 @@ void gl_startRender()
 	else if(gl_getGLESVersion() == 2)
 	{
 		glActiveTexture(GL_TEXTURE0);
+
 		/*
 		 glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
