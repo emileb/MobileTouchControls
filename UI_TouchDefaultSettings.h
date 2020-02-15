@@ -14,7 +14,8 @@ typedef struct
 	float alpha;
 	float lookSensitivity;
 	float turnSensitivity;
-	float moveSensitivity;
+	float fwdSensitivity;
+	float strafeSensitivity;
 
 	float precisionSenitivity;
 
