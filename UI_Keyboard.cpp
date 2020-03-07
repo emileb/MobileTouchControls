@@ -8,7 +8,32 @@
 #include <iostream>
 #include <cstring>
 
-#include "SDL_keycode.h"
+#ifndef TOUCH_CONTROLS_NO_SDL
+    #include "SDL_keycode.h"
+#else
+
+    #define SDLK_F1       0x1001
+    #define SDLK_F2       0x1002
+    #define SDLK_F3       0x1003
+    #define SDLK_F4       0x1004
+    #define SDLK_F5       0x1005
+    #define SDLK_F6       0x1006
+    #define SDLK_F7       0x1007
+    #define SDLK_F8       0x1008
+    #define SDLK_F9       0x1009
+    #define SDLK_F10      0x100A
+    #define SDLK_F11      0x100B
+    #define SDLK_F12      0x100C
+
+    #define SDLK_UP        0x1010
+    #define SDLK_DOWN      0x1011
+    #define SDLK_LEFT      0x1012
+    #define SDLK_RIGHT     0x1013
+    #define SDLK_PAGEUP    0x1014
+    #define SDLK_PAGEDOWN  0x1015
+    #define SDLK_HOME      0x1016
+    #define SDLK_END       0x1017
+#endif
 
 using namespace touchcontrols;
 
