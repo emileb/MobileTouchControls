@@ -24,11 +24,4 @@ LOCAL_SRC_FILES = \
 	arm/arm_init.c  \
 	arm/filter_neon_intrinsics.c
 
-
-
-
-LOCAL_LDLIBS := -lz
-LOCAL_EXPORT_LDLIBS := -lz 
-LOCAL_STATIC_LIBRARIES :=  
-#include $(BUILD_SHARED_LIBRARY)
 include $(BUILD_STATIC_LIBRARY)
