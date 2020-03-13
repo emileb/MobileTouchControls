@@ -329,7 +329,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		else
 			return true;
 	}
-	else
+	else // EDITOR
 	{
 		if(settingsButton)
 			settingsButton->processPointer(action, pid, x, y);
