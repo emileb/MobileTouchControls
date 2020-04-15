@@ -475,9 +475,7 @@ static float translateY(float Y)
 }
 
 const char vShaderStr [] =
-			" \
-		   #version 100; \n \
-			attribute vec4 a_position;                                     \n \
+    "attribute vec4 a_position;                                     \n \
 			attribute vec2 a_texCoord;                                     \n \
 			varying vec2 v_texCoord;                                       \n \
 			uniform vec4 u_translate;                                      \n \
@@ -491,9 +489,7 @@ const char vShaderStr [] =
 			";
 
 const char  fShaderStr [] =
-           " \
-		   #version 100; \n \
-		   precision mediump float;                            \
+    "precision mediump float;                            \
 			varying vec2 v_texCoord;                            \
 			uniform sampler2D s_texture;                        \
 		    uniform vec4 u_color;    \
@@ -505,9 +501,7 @@ const char  fShaderStr [] =
 			";
 
 const char  fShaderColorStr [] =
-			" \
-			#version 100;                              \n \
-            precision mediump float;                            \
+    "precision mediump float;                            \
 		    uniform vec4 u_color;    \
 			void main()                                         \
 			{                                                   \
