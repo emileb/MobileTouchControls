@@ -590,7 +590,6 @@ void gl_startRender()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
-    glDisable(GL_ALPHA_TEST);
 
 	if(gl_getGLESVersion() == 1)
 	{
@@ -598,6 +597,7 @@ void gl_startRender()
 		glGetFloatv(GL_PROJECTION_MATRIX, projection);
 		glGetFloatv(GL_MODELVIEW_MATRIX, model);
 		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_ALPHA_TEST);
 	}
 	else if(gl_getGLESVersion() == 2)
 	{
