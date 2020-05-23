@@ -41,6 +41,11 @@ typedef struct
 UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile);
 sigc::signal<void, tTouchSettings> *getSettingsSignal();
 
+bool touchSettings_save();
+bool touchSettings_save(std::string filename);
+bool touchSettings_load(std::string filename);
+
+
 }
 
 #endif

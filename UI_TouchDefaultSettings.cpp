@@ -39,7 +39,9 @@ static tTouchSettings settings;
 
 static  sigc::signal<void, tTouchSettings> signal_settingChange;
 
-static void saveSettings(std::string filename)
+static void applyControlValues();
+
+bool touchSettings_save(std::string filename)
 {
 	TiXmlDocument doc;
 	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
@@ -72,48 +74,64 @@ static void saveSettings(std::string filename)
 	root->SetAttribute("default_color", settings.defaultColor);
 
 	LOGTOUCH("Saving settings to %s\n", filename.c_str());
-	doc.SaveFile(filename);
+	return doc.SaveFile(filename);
 }
 
-static void loadSettings(std::string filename)
+bool touchSettings_load(std::string filename)
 {
 	LOGTOUCH("Loading settings from %s\n", filename.c_str());
+
+	bool ok = false;
 
 	TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
 
 	if(!doc->LoadFile())
 	{
 		LOGTOUCH("Failed to open settings file\n");
-		return;
+	}
+	else
+	{
+
+		TiXmlHandle hDoc(doc);
+		TiXmlElement* root = hDoc.FirstChild("settings").Element();
+
+		root->QueryBoolAttribute("invert_look", &settings.invertLook);
+		root->QueryBoolAttribute("show_sticks", &settings.showJoysticks);
+		root->QueryBoolAttribute("joystick_mode", &settings.joystickLookMode);
+		root->QueryBoolAttribute("auto_hide_inventory", &settings.autoHideInventory);
+		root->QueryBoolAttribute("auto_hide_numbers", &settings.autoHideNumbers);
+		root->QueryBoolAttribute("weapon_wheel_enabled", &settings.weaponWheelEnabled);
+		root->QueryBoolAttribute("fixed_move_stick", &settings.fixedMoveStick);
+		root->QueryBoolAttribute("precision_shoot", &settings.precisionShoot);
+		root->QueryBoolAttribute("show_custom", &settings.alwaysShowCust);
+
+		root->QueryFloatAttribute("alpha",  &settings.alpha);
+		root->QueryFloatAttribute("look_sens",  &settings.lookSensitivity);
+		root->QueryFloatAttribute("turn_sens",  &settings.turnSensitivity);
+		root->QueryFloatAttribute("fwd_sens",  &settings.fwdSensitivity);
+		root->QueryFloatAttribute("strafe_sens",  &settings.strafeSensitivity);
+
+		root->QueryFloatAttribute("precision_sens",  &settings.precisionSenitivity);
+
+		root->QueryUnsignedAttribute("dbl_tap_left",  &settings.dblTapLeft);
+		root->QueryUnsignedAttribute("dbl_tap_right",  &settings.dblTapRight);
+
+		root->QueryUnsignedAttribute("default_color",  &settings.defaultColor);
+		ok = true;
 	}
 
-	TiXmlHandle hDoc(doc);
-	TiXmlElement* root = hDoc.FirstChild("settings").Element();
+	signal_settingChange.emit(settings);
 
-	root->QueryBoolAttribute("invert_look", &settings.invertLook);
-	root->QueryBoolAttribute("show_sticks", &settings.showJoysticks);
-	root->QueryBoolAttribute("joystick_mode", &settings.joystickLookMode);
-	root->QueryBoolAttribute("auto_hide_inventory", &settings.autoHideInventory);
-	root->QueryBoolAttribute("auto_hide_numbers", &settings.autoHideNumbers);
-	root->QueryBoolAttribute("weapon_wheel_enabled", &settings.weaponWheelEnabled);
-	root->QueryBoolAttribute("fixed_move_stick", &settings.fixedMoveStick);
-	root->QueryBoolAttribute("precision_shoot", &settings.precisionShoot);
-	root->QueryBoolAttribute("show_custom", &settings.alwaysShowCust);
-
-	root->QueryFloatAttribute("alpha",  &settings.alpha);
-	root->QueryFloatAttribute("look_sens",  &settings.lookSensitivity);
-	root->QueryFloatAttribute("turn_sens",  &settings.turnSensitivity);
-	root->QueryFloatAttribute("fwd_sens",  &settings.fwdSensitivity);
-	root->QueryFloatAttribute("strafe_sens",  &settings.strafeSensitivity);
-
-	root->QueryFloatAttribute("precision_sens",  &settings.precisionSenitivity);
-
-	root->QueryUnsignedAttribute("dbl_tap_left",  &settings.dblTapLeft);
-	root->QueryUnsignedAttribute("dbl_tap_right",  &settings.dblTapRight);
-
-	root->QueryUnsignedAttribute("default_color",  &settings.defaultColor);
+	applyControlValues();
 
 	delete doc;
+
+	return ok;
+}
+
+bool touchSettings_save()
+{
+	return touchSettings_save(settingsFilename);
 }
 
 static void resetDefaults()
@@ -139,6 +157,8 @@ static void resetDefaults()
 	settings.dblTapRight = 0;
 
 	settings.defaultColor = COLOUR_WHITE;
+
+	signal_settingChange.emit(settings);
 }
 
 static void applyControlValues()
@@ -292,7 +312,7 @@ static void controlsEnabled(bool enabled)
 {
 	if(!enabled)
 	{
-		saveSettings(settingsFilename);
+		touchSettings_save(settingsFilename);
 		signal_settingChange.emit(settings);
 	}
 }
@@ -315,9 +335,8 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		resetDefaults();
 
 		// Then try and load file
-		loadSettings(settingsFilename);
+		touchSettings_load(settingsFilename);
 
-		signal_settingChange.emit(settings);
 
 		rootControls = new UI_Controls("ui_settings");
 

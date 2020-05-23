@@ -80,7 +80,6 @@ void  TouchControls::resetDefault()
 {
 	if(xmlFilename.length() > 0)
 		loadXML(xmlFilename + ".default");
-
 }
 
 void TouchControls::setAllButtonsEnable(bool value)
@@ -180,7 +179,7 @@ void TouchControls::edit()
 
 void TouchControls::stopEdit()
 {
-	saveXML(xmlFilename);
+	save();
 	editing = false;
 }
 
@@ -611,6 +610,7 @@ int  TouchControls::drawEditor()
 
 	gl_loadIdentity();
 	gl_scalef(GLScaleWidth, GLScaleHeight, 1);
+	gl_color4f(COLOUR_WHITE, 1);
 	gl_drawLines(0, 0, *grid);
 
 	int size = controls.size();
@@ -712,7 +712,6 @@ void  TouchControls::initGL()
 		c->initGL();
 	}
 
-
 	if(settingsButton)
 		settingsButton->initGL();
 }
@@ -722,6 +721,11 @@ void TouchControls::setXMLFile(std::string file)
 	xmlFilename = file + xlmAppend;
 	saveXML(xmlFilename + ".default"); //Save incase we want to reset positions
 	loadXML(xmlFilename);
+}
+
+void TouchControls::save()
+{
+	saveXML(xmlFilename);
 }
 
 void TouchControls::saveXML(std::string filename)
@@ -744,11 +748,9 @@ void TouchControls::saveXML(std::string filename)
 
 void TouchControls::loadXML(std::string filename)
 {
-
 	//The hell..crashes on destructor when on stack..
 	//TiXmlDocument doc(filename.c_str());
 	TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
-
 
 	if(!doc->LoadFile()) return;
 
@@ -765,7 +767,6 @@ void TouchControls::loadXML(std::string filename)
 std::vector<ControlSuper *> * TouchControls::getControls()
 {
 	return &controls;
-
 }
 
 void *TouchControls::getControl(std::string name)

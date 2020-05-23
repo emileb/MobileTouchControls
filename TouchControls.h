@@ -185,6 +185,8 @@ public:
 
 	void loadXML(std::string filename);
 
+	void save();
+
 	void setXMLFile(std::string file);
 
 	void resetDefault(); //Reset control positions to init XML
