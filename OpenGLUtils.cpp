@@ -591,6 +591,10 @@ void gl_startRender()
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
+	// Need this otherwise GLES2 mode for GZDoom v1.9.1 controls are blank
+	if(useGL4ES)
+		glDisable(GL_ALPHA_TEST);
+
 	if(gl_getGLESVersion() == 1)
 	{
 		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
