@@ -217,10 +217,14 @@ static void loadGles(int version)
 
 	if(useGL4ES)
 	{
+		LOGTOUCH("Loading GL4ES");
+
 		glesLib = dlopen("libGL4ES.so", flags);
 	}
 	else if(version == 1)
 	{
+		LOGTOUCH("Loading GLES 1");
+
 		glesLib = dlopen("libGLESv1_CM.so", flags);
 
 		if(!glesLib)
@@ -230,6 +234,8 @@ static void loadGles(int version)
 	}
 	else
 	{
+		LOGTOUCH("Loading GLES 2");
+
 		glesLib = dlopen("libGLESv2_CM.so", flags);
 
 		//glesLib = dlopen("libGLESv3.so", flags);
