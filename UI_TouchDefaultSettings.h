@@ -33,6 +33,9 @@ typedef struct
 	uint32_t dblTapLeft;
 	uint32_t dblTapRight;
 
+	uint32_t volumeUp;
+	uint32_t volumeDown;
+
 	uint32_t defaultColor;
 
 } tTouchSettings;

@@ -32,6 +32,10 @@ namespace touchcontrols
 
 #define DEFAULT_COLOR 32
 
+#define DROPDOWN_VOLUME_UP 33
+#define DROPDOWN_VOLUME_DOWN 34
+
+
 static TouchControlsContainer *container = NULL;
 static UI_Controls *rootControls = NULL;
 static std::string settingsFilename;
@@ -70,6 +74,9 @@ bool touchSettings_save(std::string filename)
 
 	root->SetAttribute("dbl_tap_left", settings.dblTapLeft);
 	root->SetAttribute("dbl_tap_right", settings.dblTapRight);
+
+	root->SetAttribute("volume_up", settings.volumeUp);
+	root->SetAttribute("volume_down", settings.volumeDown);
 
 	root->SetAttribute("default_color", settings.defaultColor);
 
@@ -116,6 +123,9 @@ bool touchSettings_load(std::string filename)
 		root->QueryUnsignedAttribute("dbl_tap_left",  &settings.dblTapLeft);
 		root->QueryUnsignedAttribute("dbl_tap_right",  &settings.dblTapRight);
 
+		root->QueryUnsignedAttribute("volume_up",  &settings.volumeUp);
+		root->QueryUnsignedAttribute("volume_down",  &settings.volumeDown);
+
 		root->QueryUnsignedAttribute("default_color",  &settings.defaultColor);
 		ok = true;
 	}
@@ -155,6 +165,8 @@ static void resetDefaults()
 
 	settings.dblTapLeft = 0;
 	settings.dblTapRight = 0;
+	settings.volumeUp = 0;
+	settings.volumeDown = 0;
 
 	settings.defaultColor = COLOUR_WHITE;
 
@@ -188,6 +200,9 @@ static void applyControlValues()
 
 		((UI_DropDown *)rootControls->getControl("dbl_tap_left"))->setSelected(settings.dblTapLeft);
 		((UI_DropDown *)rootControls->getControl("dbl_tap_right"))->setSelected(settings.dblTapRight);
+
+		((UI_DropDown *)rootControls->getControl("volume_up"))->setSelected(settings.volumeUp);
+		((UI_DropDown *)rootControls->getControl("volume_down"))->setSelected(settings.volumeDown);
 	}
 }
 
@@ -292,6 +307,14 @@ static void dropDownChange(uint32_t uid, uint32_t value)
 	else if(uid == DROPDOWN_DBL_TAP_RIGHT)
 	{
 		settings.dblTapRight = value;
+	}
+	else if(uid == DROPDOWN_VOLUME_UP)
+	{
+		settings.volumeUp = value;
+	}
+	else if(uid == DROPDOWN_VOLUME_DOWN)
+	{
+		settings.volumeDown = value;
 	}
 }
 
@@ -444,6 +467,15 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		rootControls->addControl(dblTapRight);
 		dblTapRight->signal.connect(sigc::ptr_fun(&dropDownChange));
 
+		y += 2;
+
+		UI_DropDown *volumeUp = new UI_DropDown("volume_up",  touchcontrols::RectF(windownLeft, y, 13, y + 2), DROPDOWN_VOLUME_UP,  "font_dual", 0, "Volume btn up  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		rootControls->addControl(volumeUp);
+		volumeUp->signal.connect(sigc::ptr_fun(&dropDownChange));
+
+		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(13, y, windowRight, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Volume btn down  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		rootControls->addControl(volumeDown);
+		volumeDown->signal.connect(sigc::ptr_fun(&dropDownChange));
 
 		y += 2;
 
