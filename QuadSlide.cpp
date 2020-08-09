@@ -120,22 +120,22 @@ bool QuadSlide::processPointer(int action, int pid, float x, float y)
 		{
 			float triggerDist = controlPos.width(); //
 
-			if(x < anchorPoint.x - triggerDist)
+			if(valueLeft && (x < anchorPoint.x - triggerDist))
 			{
 				slideState = STATE_DOWN_LEFT;
 				valueOutput(true, valueLeft);
 			}
-			else if(x > anchorPoint.x + triggerDist)
+			else if(valueRight && (x > anchorPoint.x + triggerDist))
 			{
 				slideState = STATE_DOWN_RIGHT;
 				valueOutput(true, valueRight);
 			}
-			else if(y < anchorPoint.y - triggerDist)
+			else if(valueUp && (y < anchorPoint.y - triggerDist))
 			{
 				slideState = STATE_DOWN_UP;
 				valueOutput(true, valueUp);
 			}
-			else if(y > anchorPoint.y + triggerDist)
+			else if(valueDown && (y > anchorPoint.y + triggerDist))
 			{
 				slideState = STATE_DOWN_DOWN;
 				valueOutput(true, valueDown);
@@ -191,7 +191,11 @@ bool QuadSlide::drawGL(bool forEditor)
 				if(showDemoArrowsTime)
 				{
 					showDemoArrowsTime--;
-					drawArrows = STATE_DOWN_UP | STATE_DOWN_DOWN | STATE_DOWN_LEFT | STATE_DOWN_RIGHT;
+					drawArrows =
+						(valueUp ? STATE_DOWN_UP : 0) |
+					 	(valueDown ? STATE_DOWN_DOWN : 0) |
+					 	(valueLeft ? STATE_DOWN_LEFT :0) |
+					  	(valueRight ? STATE_DOWN_RIGHT: 0);
 				}
 			}
 			else if(slideState == STATE_DOWN)
