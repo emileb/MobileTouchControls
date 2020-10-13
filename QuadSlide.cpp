@@ -192,10 +192,10 @@ bool QuadSlide::drawGL(bool forEditor)
 				{
 					showDemoArrowsTime--;
 					drawArrows =
-						(valueUp ? STATE_DOWN_UP : 0) |
-					 	(valueDown ? STATE_DOWN_DOWN : 0) |
-					 	(valueLeft ? STATE_DOWN_LEFT :0) |
-					  	(valueRight ? STATE_DOWN_RIGHT: 0);
+					    (valueUp ? STATE_DOWN_UP : 0) |
+					    (valueDown ? STATE_DOWN_DOWN : 0) |
+					    (valueLeft ? STATE_DOWN_LEFT : 0) |
+					    (valueRight ? STATE_DOWN_RIGHT : 0);
 				}
 			}
 			else if(slideState == STATE_DOWN)

@@ -248,9 +248,9 @@ static void sliderChange(uint32_t uid, float value)
 		settings.fwdSensitivity = value * 2;
 	}
 	else if(uid == SLIDER_STRAFE)
-    {
-        settings.strafeSensitivity = value * 2;
-    }
+	{
+		settings.strafeSensitivity = value * 2;
+	}
 	else if(uid == SLIDER_PRECISION)
 	{
 		settings.precisionSenitivity =  0.2 + (value * 0.5);
@@ -293,9 +293,9 @@ static void switchChange(uint32_t uid, bool value)
 		settings.precisionShoot = value;
 	}
 	else if(uid == SWITCH_SHOW_CUSTOM)
-    {
-        settings.alwaysShowCust = value;
-    }
+	{
+		settings.alwaysShowCust = value;
+	}
 }
 
 static void dropDownChange(uint32_t uid, uint32_t value)

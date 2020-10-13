@@ -612,7 +612,7 @@ void gl_startRender()
 	else if(gl_getGLESVersion() == 2)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glDisable( GL_DEPTH_TEST );
+		glDisable(GL_DEPTH_TEST);
 		/*
 		 glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
