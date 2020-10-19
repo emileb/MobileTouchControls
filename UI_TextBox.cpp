@@ -23,7 +23,8 @@ UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, in
 void UI_TextBox::updateSize()
 {
 	float height = textSize;
-	float width = height * (-GLScaleHeight / GLScaleWidth);
+	//float width = height * (-GLScaleHeight / GLScaleWidth);
+	float width = height * 0.625; //(-GLScaleHeight / GLScaleWidth);
 
 	glRect.resize(width, height);
 

@@ -25,7 +25,7 @@ void TextDraw::initGL(std::string font_filename)
 #define CHAR_TO_GLYPH( C, F ) (((unsigned char)C - 32) + 128 * F)
 float TextDraw::getCharWidth(unsigned char c, int fontSet, float height)
 {
-	float width = height * (-GLScaleHeight / GLScaleWidth);
+	float width = height * 0.625;// * (-GLScaleHeight / GLScaleWidth);
 
 	if(c == ' ')
 	{
