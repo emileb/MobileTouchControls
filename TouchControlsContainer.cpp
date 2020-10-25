@@ -12,6 +12,18 @@ using namespace touchcontrols;
 TouchControlsContainer::TouchControlsContainer()
 {
 	alpha = 0.5;
+	mouseShow = false;
+}
+
+void TouchControlsContainer::showMouse(bool show)
+{
+	mouseShow = show;
+}
+
+void TouchControlsContainer::mousePos(float x, float y)
+{
+	mouseX = x;
+	mouseY = y;
 }
 
 void TouchControlsContainer::resetDefaults()
@@ -266,6 +278,17 @@ int TouchControlsContainer::draw()
 		}
 	}
 
+	if(mouseShow)
+	{
+		GLRect rect;
+		rect.resize(0.05, 0.08);
+
+		gl_loadIdentity();
+		gl_color4f(COLOUR_WHITE, 1);
+		gl_scalef(GLScaleWidth, GLScaleHeight, 1);
+		gl_drawRect(mouseCursorGL,mouseX, mouseY, rect);
+	}
+
 	openGL_end.emit();
 
 	return 0;
@@ -280,6 +303,8 @@ void TouchControlsContainer::initGL(const char * root_path)
 		editorButton->signal_button.connect(sigc::mem_fun(this, &TouchControlsContainer::editorButtonPress));
 	}
 
+	int x,y;
+	mouseCursorGL = loadTextureFromPNG("mouse_cursor",x,y);
 	//editorButton->updateSize();
 
 	int size = controls.size();

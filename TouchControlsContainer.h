@@ -39,6 +39,11 @@ class TouchControlsContainer: public TouchControlsInterface
 	uint32_t defaultColor = COLOUR_WHITE; // Default white
 	float alpha;
 
+	bool mouseShow = false;
+	float mouseX;
+	float mouseY;
+	int mouseCursorGL = 0;
+
 public:
 
 	sigc::signal<void, int> signal_settings;
@@ -73,6 +78,8 @@ public:
 	void showUIWindow(UI_Controls * uiControls);
 	void hideUIWindow(bool andDelete = false);
 
+	void showMouse(bool show);
+	void mousePos(float x, float y);
 	//Needs to be here for IOS, breaks otherwise. Memory or compiler bug
 #ifdef USE_LIBROCKET
 	TouchGui *touchGui;
