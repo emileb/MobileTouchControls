@@ -7,6 +7,7 @@ extern int android_app_is_shutting_down;
 
 using namespace touchcontrols;
 
+#define TAP_TIME 300
 
 static std::string xlmAppend = "";
 namespace touchcontrols
@@ -172,7 +173,6 @@ void TouchControls::edit()
 {
 	editing = true;
 	selectedCtrl = 0;
-	longPressTime = -1;
 	finger1.enabled = false;
 	finger2.enabled = false;
 }
@@ -337,25 +337,9 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			if(pid < 2)
 			{
-				if((!finger1.enabled) && (!finger1.enabled) && (pid == 0))
+				if((!finger1.enabled) && (!finger2.enabled) && (pid == 0))
 				{
-					//selectedCtrl = 0;
-					tapDeselect = true;
-
-					for(int n = 0; n < controls.size(); n++)
-					{
-						ControlSuper *cs = controls.at(n);
-
-						if(cs->isEnabled() && !cs->isHidden() && cs->isEditable()) //&&  (cs->type != TC_TYPE_MOUSE))
-							if(cs->controlPos.contains(x, y))
-							{
-								selectedCtrl = cs;
-								tapDeselect = false;
-								break;
-							}
-					}
-
-					longPressTime = 0;
+					tapTime = getMS();
 					totalFingerMove = 0;
 					finger1.enabled = true;
 					finger1.x = x;
@@ -363,7 +347,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 				}
 				else if((finger1.enabled) && (pid == 1))
 				{
-					longPressTime = -1; //Disable long press count
 					finger2.enabled = true;
 					finger2.x = x;
 					finger2.y = y;
@@ -376,12 +359,21 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			if(pid < 2)
 			{
-				//This is to deselect all controls if you tap in a clear space
-				if(tapDeselect)
+				// Select a new control if did a quick tap
+				if((getMS() - tapTime < TAP_TIME) && (totalFingerMove <  0.03) && (pid == 0))
 				{
-					if((pid == 0) && (totalFingerMove <  0.03))
+					selectedCtrl = 0;
+
+					for(int n = 0; n < controls.size(); n++)
 					{
-						//	selectedCtrl = 0;
+						ControlSuper *cs = controls.at(n);
+
+						if(cs->isEnabled() && !cs->isHidden() && cs->isEditable()) //&&  (cs->type != TC_TYPE_MOUSE))
+							if(cs->controlPos.contains(x, y))
+							{
+								selectedCtrl = cs;
+								break;
+							}
 					}
 				}
 
@@ -392,8 +384,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					finger1.enabled = false;
 				else if(pid == 1)
 					finger2.enabled = false;
-
-				longPressTime = -1; //Disable long press count
 			}
 		}
 		else if(action == P_MOVE)
@@ -409,7 +399,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 					finger1.x = x;
 					finger1.y = y;
-
 				}
 			}
 			else if((finger1.enabled) && (finger2.enabled))  //zoom
@@ -674,28 +663,6 @@ int  TouchControls::drawEditor()
 		}
 	}
 
-	/* Don't do this any more, use the list to hide/show!
-	if (editing)
-	{
-		if (longPressTime>=0)
-		{
-			longPressTime++;
-			if (longPressTime > 60) //About 1 second @ 60fpd
-			{
-				if (totalFingerMove < 0.03) //Finger must stay still for a long press
-				{
-					LOGTOUCH("Long press active");
-	                if ((selectedCtrl != 0) && (selectedCtrl->type == TC_TYPE_BUTTON)) //Only can hide buttons
-					{
-						selectedCtrl->setHidden(!(selectedCtrl->isHidden())); //toggle hidden state
-					}
-				}
-
-				longPressTime = -1; //cancel longpress
-			}
-		}
-	}
-	 */
 	if(editing)
 		return 1;
 	else

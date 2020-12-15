@@ -93,8 +93,7 @@ private:
 	PointF finger1, finger2;
 	PointF oldDist;
 
-	//Vars to detect a long press
-	int longPressTime;
+	long tapTime;
 	float totalFingerMove;
 
 	void windowControl(ControlSuper *ctrl);
@@ -116,8 +115,6 @@ private:
 	fadedir_t fadeDir;
 	float fadeStep;
 	bool fading;
-
-	bool tapDeselect; //true if first press down in empty space
 
 	bool fixAspect; // Make circles circle, default on.
 public:
