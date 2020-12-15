@@ -286,7 +286,7 @@ int TouchControlsContainer::draw()
 		gl_loadIdentity();
 		gl_color4f(COLOUR_WHITE, 1);
 		gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-		gl_drawRect(mouseCursorGL,mouseX, mouseY, rect);
+		gl_drawRect(mouseCursorGL, mouseX, mouseY, rect);
 	}
 
 	openGL_end.emit();
@@ -296,6 +296,9 @@ int TouchControlsContainer::draw()
 
 void TouchControlsContainer::initGL(const char * root_path)
 {
+
+	gl_Init();
+
 	if(!editorButton)
 	{
 		//Just for if we have an edit group
@@ -303,8 +306,8 @@ void TouchControlsContainer::initGL(const char * root_path)
 		editorButton->signal_button.connect(sigc::mem_fun(this, &TouchControlsContainer::editorButtonPress));
 	}
 
-	int x,y;
-	mouseCursorGL = loadTextureFromPNG("mouse_cursor",x,y);
+	int x, y;
+	mouseCursorGL = loadTextureFromPNG("mouse_cursor", x, y);
 	//editorButton->updateSize();
 
 	int size = controls.size();

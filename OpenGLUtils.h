@@ -28,6 +28,8 @@ extern float GLScaleHeight ;
 void gl_setGLESVersion(int v);
 int  gl_getGLESVersion();
 
+void gl_Init();
+
 void gl_setGraphicsBasePath(std::string path);
 
 void gl_useGL4ES();

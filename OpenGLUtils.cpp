@@ -8,11 +8,11 @@
 //#include <GLES/gl.h>
 #endif
 
+static bool initGlesDone = false;
+
 // Handle to a program object
 static int mProgramObject;
 static int mProgramObjectColor;
-
-
 
 // Attribute locations
 static int mPositionLoc;
@@ -320,6 +320,10 @@ static void loadGles(int version)
 namespace touchcontrols
 {
 
+void gl_Init()
+{
+	initGlesDone = false;
+}
 
 float GLScaleWidth = 400;
 float GLScaleHeight = -300;
@@ -1043,7 +1047,6 @@ void setTextureNumberStart(int start)
 
 GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec)
 {
-
 	if(filename == "")
 	{
 		LOGTOUCH("Blank texture name\n");
@@ -1052,11 +1055,8 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 
 	//LOGTOUCH( "Loading png: %s\n", filename.c_str() );
 
-	static bool initGlesDone = false;
-
 	if(!initGlesDone)
 	{
-
 		loadGles(isGLES2 ? 2 : 1);
 
 		if(isGLES2)
