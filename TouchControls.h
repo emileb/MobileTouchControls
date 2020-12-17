@@ -93,7 +93,7 @@ private:
 	PointF finger1, finger2;
 	PointF oldDist;
 
-	long tapTime;
+	uint64_t tapTime;
 	float totalFingerMove;
 
 	void windowControl(ControlSuper *ctrl);
