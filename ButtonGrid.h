@@ -47,6 +47,8 @@ public:
 
 	void addCell(uint32_t x, uint32_t y, std::string image, int32_t value);
 
+	std::string getPrimaryImage();
+
 	void resetOutput();
 
 	bool processPointer(int action, int pid, float x, float y);

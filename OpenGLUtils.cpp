@@ -1271,7 +1271,6 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 
 
 	return texture;
-
 }
 
 }

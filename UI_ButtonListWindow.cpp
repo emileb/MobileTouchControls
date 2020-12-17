@@ -79,7 +79,8 @@ void showButtonListWindow(TouchControlsContainer *con)
 		for(int n = 0; n < numberControls; n++)
 		{
 			if((editing->getControls()->at(n)->type == TC_TYPE_BUTTON) ||
-			        (editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE))
+			        (editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE)||
+					(editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID))
 			{
 				// This is the button in the touch controls
 				ControlSuper *control = (editing->getControls()->at(n));
@@ -94,6 +95,9 @@ void showButtonListWindow(TouchControlsContainer *con)
 
 					if(editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE)
 						imagePng = ((QuadSlide*)control)->bgImage.c_str();
+
+					if(editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID)
+						imagePng = ((ButtonGrid*)control)->getPrimaryImage().c_str();
 
 					//This is a button for the UI controls, just used for the image
 					Button *image = new Button("", touchcontrols::RectF(windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), imagePng, -1);

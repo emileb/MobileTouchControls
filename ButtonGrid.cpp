@@ -41,6 +41,20 @@ void ButtonGrid::resetOutput()
 	cellUp();
 }
 
+std::string ButtonGrid::getPrimaryImage()
+{
+	std::string ret = "";
+
+	for(int cy = 0; cy < yNbr; cy++)
+		for(int cx = 0; cx < xNbr; cx ++)
+			if(cellImages[cx][cy] != "")
+				ret = cellImages[cx][cy];
+
+	LOGTOUCH("getPrimaryImage = %s", ret.c_str());
+
+	return ret;
+}
+
 void ButtonGrid::cellDown(uint32_t x, uint32_t y)
 {
 	valuePressed = cellValues[x][y];
@@ -175,6 +189,9 @@ bool ButtonGrid::initGL()
 
 bool ButtonGrid::drawGL(bool forEditor)
 {
+	if(hidden)
+   		return false;
+
 	GLRect glRect;
 	float cellWidth = controlPos.width() / xNbr;
 	float cellHeight = controlPos.height() / yNbr;
