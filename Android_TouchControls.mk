@@ -15,6 +15,7 @@ endif
 LOCAL_C_INCLUDES := $(LOCAL_PATH)  $(SDL_INCLUDE_PATHS)
 
 LOCAL_SRC_FILES:= \
+    Framebuffer.cpp \
  	TouchControls.cpp \
  	ControlSuper.cpp \
  	RectF.cpp \
@@ -52,30 +53,8 @@ LOCAL_SRC_FILES:= \
 
 
  	
-LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog  -landroid
+LOCAL_LDLIBS := -ldl -llog  -landroid
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
 
 include $(BUILD_SHARED_LIBRARY)
 
-
-ifeq ($(BUILD_GLES2_TC),1)
-
-TC_LOCAL_SRC_FILES := $(LOCAL_SRC_FILES)
-#Now also build gles2 version
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := touchcontrols_gles2
-
-LOCAL_CFLAGS := -Werror -DANDROID_NDK -DUSE_GLES2
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH)  $(SDL_INCLUDE_PATHS)
-
-LOCAL_SRC_FILES:= $(TC_LOCAL_SRC_FILES)
-
-LOCAL_LDLIBS := -lGLESv2 -ldl -llog -landroid
-LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
-
-#include $(BUILD_SHARED_LIBRARY) //DONT BUILD
-
-endif

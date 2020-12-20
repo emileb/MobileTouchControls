@@ -1,6 +1,7 @@
 #include "OpenGLUtils.h"
 #include <map>
 #include <dlfcn.h>
+#include "Framebuffer.h"
 
 #ifdef USE_GLES2
 //#include <GLES2/gl2.h>
@@ -36,11 +37,6 @@ static float mModelMatrixGLSL[16] = {1, 0, 0, 0,
                                     };
 #define CODEGEN_FUNCPTR
 
-#define GL_TRUE 1
-#define GL_INFO_LOG_LENGTH 0x8B84
-#define GL_COMPILE_STATUS 0x8B81
-#define GL_VERTEX_SHADER 0x8B31
-#define GL_FRAGMENT_SHADER 0x8B30
 
 
 // COMMON -------------------------------------------------
@@ -576,25 +572,6 @@ static GLfloat   model[16];
 
 void gl_startRender()
 {
-#define GL_ARRAY_BUFFER                   0x8892
-#define GL_ELEMENT_ARRAY_BUFFER           0x8893
-#define GL_UNIFORM_BUFFER                 0x8A11
-#define GL_FRAMEBUFFER                    0x8D40
-#define GL_RENDERBUFFER                   0x8D41
-#define GL_SRC_ALPHA                      0x0302
-#define GL_ONE_MINUS_SRC_ALPHA                           0x0303
-#define GL_MATRIX_MODE				0x0BA0
-#define GL_MODELVIEW				0x1700
-#define GL_PROJECTION				0x1701
-#define GL_MODELVIEW_MATRIX               0x0BA6
-#define GL_PROJECTION_MATRIX              0x0BA7
-#define GL_ALPHA_TEST                     0x0BC0
-#define GL_DEPTH_TEST                     0x0B71
-#define GL_CULL_FACE                      0x0B44
-
-#define GL_DRAW_FRAMEBUFFER 0x8CA9
-#define GL_READ_FRAMEBUFFER 0x8CA8
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -625,6 +602,15 @@ void gl_startRender()
 		 glBindSampler(0,0);
 		 glBindVertexArray(0);
 		 */
+
+		R_FrameBufferEnd();
+
+		// Framebuffer changes state
+		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_BLEND);
+        glEnable(GL_BLEND);
+
 	}
 	else if(gl_getGLESVersion() == 3)
 	{
@@ -653,6 +639,10 @@ void gl_endRender()
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(projection);
 		glMatrixMode(matrixMode);
+	}
+	else if(gl_getGLESVersion() == 2)
+	{
+		R_FrameBufferStart();
 	}
 }
 
@@ -735,6 +725,7 @@ static void initGLES2()
 	mPositionTranslateLocColor   = glGetUniformLocation(mProgramObjectColor, "u_translate");
 	mModelMatrixColorLoc        =  glGetUniformLocation(mProgramObjectColor, "u_modelMatrix");
 
+	R_FrameBufferInit();
 }
 
 static void gl_useProgram(int prog)

@@ -42,9 +42,6 @@ void gl_endRender();
 float GLESscaleX(float X);
 float GLESscaleY(float Y);
 
-typedef float GLfloat;
-typedef unsigned int GLuint;
-
 void gl_drawRect(GLuint texture, float x, float y, GLRect &rect);
 void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
 void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
