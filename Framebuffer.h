@@ -22,7 +22,7 @@ typedef struct
 
 
 void R_FrameBufferConfig(fbConfig config);
-void R_FrameBufferInit();
+void R_FrameBufferInit(bool useGL4ES);
 void R_FrameBufferStart();
 void R_FrameBufferEnd();
 

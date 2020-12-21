@@ -606,10 +606,11 @@ void gl_startRender()
 		R_FrameBufferEnd();
 
 		// Framebuffer changes state
-		glUseProgram(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glDisable(GL_BLEND);
-        glEnable(GL_BLEND);
+		//glUseProgram(0);
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//glDisable(GL_BLEND);
+        //glEnable(GL_BLEND);
+
 
 	}
 	else if(gl_getGLESVersion() == 3)
@@ -725,7 +726,7 @@ static void initGLES2()
 	mPositionTranslateLocColor   = glGetUniformLocation(mProgramObjectColor, "u_translate");
 	mModelMatrixColorLoc        =  glGetUniformLocation(mProgramObjectColor, "u_modelMatrix");
 
-	R_FrameBufferInit();
+	R_FrameBufferInit(useGL4ES);
 }
 
 static void gl_useProgram(int prog)

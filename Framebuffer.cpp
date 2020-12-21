@@ -120,6 +120,9 @@ static void (CODEGEN_FUNCPTR *_ptrc_glVertexAttribPointer)(GLuint index, GLint s
 static void (CODEGEN_FUNCPTR *_ptrc_glEnableVertexAttribArray)(GLuint index);
 #define glEnableVertexAttribArray _ptrc_glEnableVertexAttribArray
 
+static void (CODEGEN_FUNCPTR *_ptrc_glDisableVertexAttribArray)(GLuint index);
+#define glDisableVertexAttribArray _ptrc_glDisableVertexAttribArray
+
 static void (CODEGEN_FUNCPTR *_ptrc_glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
 #define glViewport _ptrc_glViewport
 
@@ -154,17 +157,22 @@ static void* loadGlesFunc(const char * name)
 	return ret;
 }
 
-static void loadGles()
+static void loadGles(bool useGL4ES)
 {
 	int flags = RTLD_LOCAL | RTLD_NOW;
 
-	glesLib = dlopen("libGLESv2_CM.so", flags);
-
-	if(!glesLib)
+	if(useGL4ES)
 	{
-		glesLib = dlopen("libGLESv2.so", flags);
+		glesLib = dlopen("libGL4ES.so", flags);
 	}
-
+	else
+	{
+		glesLib = dlopen("libGLESv2_CM.so", flags);
+		if(!glesLib)
+		{
+			glesLib = dlopen("libGLESv2.so", flags);
+		}
+	}
 	_ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glDisable");
 	_ptrc_glEnable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glEnable");
 	_ptrc_glBindTexture = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint texture))loadGlesFunc("glBindTexture");
@@ -188,6 +196,7 @@ static void loadGles()
 	_ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
 	_ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
 	_ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
+	_ptrc_glDisableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glDisableVertexAttribArray");
 	_ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
 	_ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");
 	_ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
@@ -354,7 +363,7 @@ void R_FrameBufferConfig(fbConfig config)
 	m_fb_config = config;
 }
 
-void R_FrameBufferInit()
+void R_FrameBufferInit(bool useGL4ES)
 {
 	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight);
 
@@ -371,7 +380,7 @@ void R_FrameBufferInit()
 	}
 
 
-	loadGles();
+	loadGles(useGL4ES);
 
 	m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot");
 	m_fb_config.depthStencilAvailable = checkExtension("GL_OES_packed_depth_stencil");
@@ -525,6 +534,8 @@ void R_FrameBufferEnd()
 	glDisable(GL_DEPTH_TEST);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glEnable(GL_BLEND);
 }
 
 
