@@ -136,23 +136,36 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 	if(editingControls == 0)
 	{
 		int size = controls.size();
-		bool under = false;
 
+		// We need to capture all the enabled controls, this is because it's possible the enabled controls can change while
+		// in the loop to processes pointer data
+		static TouchControls *enabled[64];
+
+		int numEnabled = 0;
 		for(int n = 0; n < size; n++)
 		{
-			TouchControls *cs = controls.at(n);
-
-			if(cs->enabled)
+			TouchControls *c = controls.at(n);
+			if(c->isEnabled())
 			{
-				if(cs->processPointer(action, pid, x, y) == true)
-				{
-					// Don't pass touch if returns true
-					break;
-				}
+				enabled[numEnabled++] = c;
 			}
 		}
 
-		//if (!under) downInSpace = true;
+		// null terminator
+		enabled[numEnabled] = NULL;
+
+		int n = 0;
+		TouchControls *cs = enabled[n++];
+		while(cs != NULL)
+		{
+			if(cs->processPointer(action, pid, x, y) == true)
+			{
+				// Don't pass touch if returns true
+				break;
+			}
+			cs = enabled[n++];
+		}
+
 		return false;
 	}
 	else
