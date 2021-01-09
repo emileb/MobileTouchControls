@@ -142,9 +142,11 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 		static TouchControls *enabled[64];
 
 		int numEnabled = 0;
+
 		for(int n = 0; n < size; n++)
 		{
 			TouchControls *c = controls.at(n);
+
 			if(c->isEnabled())
 			{
 				enabled[numEnabled++] = c;
@@ -156,6 +158,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 
 		int n = 0;
 		TouchControls *cs = enabled[n++];
+
 		while(cs != NULL)
 		{
 			if(cs->processPointer(action, pid, x, y) == true)
@@ -163,6 +166,7 @@ bool TouchControlsContainer::processPointer(int action, int pid, float x, float 
 				// Don't pass touch if returns true
 				break;
 			}
+
 			cs = enabled[n++];
 		}
 

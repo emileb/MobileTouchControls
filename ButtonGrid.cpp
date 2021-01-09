@@ -190,7 +190,7 @@ bool ButtonGrid::initGL()
 bool ButtonGrid::drawGL(bool forEditor)
 {
 	if(hidden)
-   		return false;
+		return false;
 
 	GLRect glRect;
 	float cellWidth = controlPos.width() / xNbr;

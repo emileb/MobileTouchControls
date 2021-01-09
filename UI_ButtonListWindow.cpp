@@ -79,8 +79,8 @@ void showButtonListWindow(TouchControlsContainer *con)
 		for(int n = 0; n < numberControls; n++)
 		{
 			if((editing->getControls()->at(n)->type == TC_TYPE_BUTTON) ||
-			        (editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE)||
-					(editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID))
+			        (editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE) ||
+			        (editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID))
 			{
 				// This is the button in the touch controls
 				ControlSuper *control = (editing->getControls()->at(n));

@@ -96,7 +96,7 @@ static void (CODEGEN_FUNCPTR *_ptrc_glGenTextures)(GLsizei n, GLuint * textures)
 static void (CODEGEN_FUNCPTR *_ptrc_glBindTexture)(GLenum target, GLuint texture);
 #define glBindTexture _ptrc_glBindTexture
 
-static GLenum (CODEGEN_FUNCPTR *_ptrc_glCheckFramebufferStatus)(GLenum target);
+static GLenum(CODEGEN_FUNCPTR *_ptrc_glCheckFramebufferStatus)(GLenum target);
 #define glCheckFramebufferStatus _ptrc_glCheckFramebufferStatus
 
 static void (CODEGEN_FUNCPTR *_ptrc_glBindRenderbuffer)(GLenum target, GLuint renderbuffer);
@@ -168,11 +168,13 @@ static void loadGles(bool useGL4ES)
 	else
 	{
 		glesLib = dlopen("libGLESv2_CM.so", flags);
+
 		if(!glesLib)
 		{
 			glesLib = dlopen("libGLESv2.so", flags);
 		}
 	}
+
 	_ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glDisable");
 	_ptrc_glEnable = (void (CODEGEN_FUNCPTR *)(GLenum cap))loadGlesFunc("glEnable");
 	_ptrc_glBindTexture = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint texture))loadGlesFunc("glBindTexture");
@@ -201,8 +203,8 @@ static void loadGles(bool useGL4ES)
 	_ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");
 	_ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
 	_ptrc_glGenFramebuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * framebuffers))loadGlesFunc("glGenFramebuffers");
-    _ptrc_glGenRenderbuffers =  (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * renderbuffers))loadGlesFunc("glGenRenderbuffers");
-	_ptrc_glCheckFramebufferStatus =  (GLenum (CODEGEN_FUNCPTR *)(GLenum target))loadGlesFunc("glCheckFramebufferStatus");
+	_ptrc_glGenRenderbuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * renderbuffers))loadGlesFunc("glGenRenderbuffers");
+	_ptrc_glCheckFramebufferStatus = (GLenum(CODEGEN_FUNCPTR *)(GLenum target))loadGlesFunc("glCheckFramebufferStatus");
 	_ptrc_glBindRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint renderbuffer))loadGlesFunc("glBindRenderbuffer");
 	_ptrc_glRenderbufferStorage = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height))loadGlesFunc("glRenderbufferStorage");
 	_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
@@ -215,8 +217,10 @@ static void loadGles(bool useGL4ES)
 static int fixNpot(int v)
 {
 	int ret = 1;
+
 	while(ret < v)
 		ret <<= 1;
+
 	return ret;
 }
 
@@ -296,10 +300,10 @@ static int createProgram(const char * vertexSource, const char *  fragmentSource
 	return program;
 }
 
-static void createShaders (void)
+static void createShaders(void)
 {
 	const GLchar *vertSource = \
-           "attribute vec4 a_position;                                     \n \
+	                           "attribute vec4 a_position;                                     \n \
 			attribute vec2 a_texCoord;                                     \n \
 			varying vec2 v_texCoord;                                       \n \
 			void main()                                                    \n \
@@ -310,7 +314,7 @@ static void createShaders (void)
 			";
 
 	const GLchar *fragSource = \
-			"precision mediump float;                                \n  \
+	                           "precision mediump float;                                \n  \
 			varying vec2 v_texCoord;                                 \n  \
 			uniform sampler2D s_texture;                             \n  \
 			void main()                                              \n  \
@@ -325,7 +329,7 @@ static void createShaders (void)
 
 	glUseProgram(r_program);
 
-   // get attrib locations
+	// get attrib locations
 	m_positionLoc = glGetAttribLocation(r_program, "a_position");
 	m_texCoordLoc = glGetAttribLocation(r_program, "a_texCoord");
 	m_samplerLoc  = glGetUniformLocation(r_program, "s_texture");
@@ -346,7 +350,7 @@ static bool checkExtension(const char *name)
 {
 	const char *exts = (const char *)glGetString(GL_EXTENSIONS);
 
-	if ( !strstr( exts, name ) )
+	if(!strstr(exts, name))
 	{
 		LOG("%s FALSE", name);
 		return false;
@@ -389,7 +393,7 @@ void R_FrameBufferInit(bool useGL4ES)
 	m_framebuffer_width = m_fb_config.vidWidth;
 	m_framebuffer_height = m_fb_config.vidHeight;
 
-	if (!m_fb_config.npotAvailable)
+	if(!m_fb_config.npotAvailable)
 	{
 		m_framebuffer_width = fixNpot(m_framebuffer_width);
 		m_framebuffer_height = fixNpot(m_framebuffer_height);
@@ -400,8 +404,9 @@ void R_FrameBufferInit(bool useGL4ES)
 	// Create texture
 	glGenTextures(1, &m_framebuffer_texture);
 	glBindTexture(GL_TEXTURE_2D, m_framebuffer_texture);
-	
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_framebuffer_width, m_framebuffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
 	if(m_fb_config.filter == false)
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -432,7 +437,7 @@ void R_FrameBufferInit(bool useGL4ES)
 		// Need separate Stencil buffer
 		glGenRenderbuffers(1, &m_stencilbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_stencilbuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_framebuffer_width, m_framebuffer_height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_framebuffer_width, m_framebuffer_height);
 	}
 
 	createShaders();
@@ -444,16 +449,16 @@ void R_FrameBufferStart()
 		return;
 
 	// Render to framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_framebuffer_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_framebuffer_texture, 0);
 
-    // Attach combined depth+stencil
-    if(m_fb_config.depthStencilAvailable)
-    {
-    	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
-    	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
+	// Attach combined depth+stencil
+	if(m_fb_config.depthStencilAvailable)
+	{
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
 	}
 	else
 	{
@@ -461,14 +466,15 @@ void R_FrameBufferStart()
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilbuffer);
 	}
 
-    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
 	if(result != GL_FRAMEBUFFER_COMPLETE)
 	{
-	    LOG( "ERROR binding Framebuffer: %d\n", result );
+		LOG("ERROR binding Framebuffer: %d\n", result);
 	}
 
 	// Reset viewport to the framebuffer size
-	glViewport (0, 0, m_fb_config.vidWidth, m_fb_config.vidHeight );
+	glViewport(0, 0, m_fb_config.vidWidth, m_fb_config.vidHeight);
 }
 
 
@@ -488,18 +494,18 @@ void R_FrameBufferEnd()
 	GLfloat vert[] =
 	{
 		-1.f, -1.f,  0.0f,  // 0. left-bottom
-		-1.f,  1.f,  0.0f,  // 1. left-top
-		1.f, 1.f,  0.0f,    // 2. right-top
-		1.f, -1.f,  0.0f,   // 3. right-bottom
-	};
+		    -1.f,  1.f,  0.0f,  // 1. left-top
+		    1.f, 1.f,  0.0f,    // 2. right-top
+		    1.f, -1.f,  0.0f,   // 3. right-bottom
+	    };
 
 	GLfloat smax = 1;
 	GLfloat tmax = 1;
 
-	if (!m_fb_config.npotAvailable)
+	if(!m_fb_config.npotAvailable)
 	{
-		smax =  (float)m_fb_config.vidWidth / (float)m_framebuffer_width;
-		tmax =   (float)m_fb_config.vidHeight / (float)m_framebuffer_height;
+		smax = (float)m_fb_config.vidWidth / (float)m_framebuffer_width;
+		tmax = (float)m_fb_config.vidHeight / (float)m_framebuffer_height;
 	}
 
 	GLfloat texVert[] =
@@ -511,14 +517,14 @@ void R_FrameBufferEnd()
 	};
 
 	glVertexAttribPointer(m_positionLoc, 3, GL_FLOAT,
-				  false,
-				  3 * 4,
-				  vert);
+	                      false,
+	                      3 * 4,
+	                      vert);
 
 	glVertexAttribPointer(m_texCoordLoc, 2, GL_FLOAT,
-						  false,
-						  2 * 4,
-						  texVert);
+	                      false,
+	                      2 * 4,
+	                      texVert);
 
 	glEnableVertexAttribArray(m_positionLoc);
 	glEnableVertexAttribArray(m_texCoordLoc);
@@ -527,7 +533,7 @@ void R_FrameBufferEnd()
 	// Set the sampler texture unit to 0
 	glUniform1i(m_samplerLoc, 0);
 
-	glViewport (0, 0, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal );
+	glViewport(0, 0, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal);
 
 	glDisable(GL_BLEND);
 	glDisable(GL_SCISSOR_TEST);
