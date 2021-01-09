@@ -38,6 +38,7 @@ void gl_resetGL4ES();
 
 void gl_startRender();
 void gl_endRender();
+void gl_setupForSDLSW();
 
 float GLESscaleX(float X);
 float GLESscaleY(float Y);

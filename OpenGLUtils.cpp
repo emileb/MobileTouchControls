@@ -98,7 +98,17 @@ void (CODEGEN_FUNCPTR *_ptrc_glTexCoordPointer)(GLint size, GLenum type, GLsizei
 void (CODEGEN_FUNCPTR *_ptrc_glPopMatrix)(void);
 #define glPopMatrix _ptrc_glPopMatrix
 
+void (CODEGEN_FUNCPTR *_ptrc_glOrthof)(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar);
+#define glOrthof _ptrc_glOrthof
 
+void (CODEGEN_FUNCPTR *_ptrc_glDisableClientState)(GLenum ren_array);
+#define glDisableClientState _ptrc_glDisableClientState
+
+void (CODEGEN_FUNCPTR *_ptrc_glEnableClientState)(GLenum ren_array);
+#define glEnableClientState _ptrc_glEnableClientState
+
+void (CODEGEN_FUNCPTR *_ptrc_glTexEnvf)(GLenum target, GLenum pname, GLfloat param);
+#define glTexEnvf _ptrc_glTexEnvf
 
 // GLES2 -------------------------------------------------
 GLuint(CODEGEN_FUNCPTR *_ptrc_glCreateShader)(GLenum type);
@@ -277,6 +287,10 @@ static void loadGles(int version)
 			_ptrc_glMatrixMode = (void (CODEGEN_FUNCPTR *)(GLenum mode))loadGlesFunc("glMatrixMode");
 			_ptrc_glGetFloatv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLfloat * data))loadGlesFunc("glGetFloatv");
 			_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLint * data))loadGlesFunc("glGetIntegerv");
+			_ptrc_glOrthof = (void (CODEGEN_FUNCPTR *)(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar))loadGlesFunc("glOrthof");
+			_ptrc_glDisableClientState = (void (CODEGEN_FUNCPTR *)(GLenum ren_array))loadGlesFunc("glDisableClientState");
+			_ptrc_glEnableClientState = (void (CODEGEN_FUNCPTR *)(GLenum ren_array))loadGlesFunc("glEnableClientState");
+			_ptrc_glTexEnvf = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLfloat param))loadGlesFunc("glTexEnvf");
 		}
 		else // GLES 2
 		{
@@ -587,6 +601,24 @@ void gl_startRender()
 		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
 		glGetFloatv(GL_PROJECTION_MATRIX, projection);
 		glGetFloatv(GL_MODELVIEW_MATRIX, model);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glViewport(0, 0, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight);
+		glOrthof(0.0f, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight, 0.0f, -1.0f, 1.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		//-----------------
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_ALPHA_TEST);
 	}
@@ -609,7 +641,7 @@ void gl_startRender()
 		//glUseProgram(0);
 		//glBindTexture(GL_TEXTURE_2D, 0);
 		//glDisable(GL_BLEND);
-        //glEnable(GL_BLEND);
+		//glEnable(GL_BLEND);
 
 
 	}
@@ -645,6 +677,15 @@ void gl_endRender()
 	{
 		R_FrameBufferStart();
 	}
+}
+
+void gl_setupForSDLSW()
+{
+	glDisable(GL_BLEND);
+	glColor4f(1, 1, 1, 1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 int createProgram(const char * vertexSource, const char *  fragmentSource)

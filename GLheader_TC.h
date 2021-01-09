@@ -69,4 +69,14 @@ typedef unsigned char GLubyte;
 #define GL_FRAMEBUFFER_COMPLETE           0x8CD5
 #define GL_EXTENSIONS                     0x1F03
 
+
+#define GL_VERTEX_ARRAY 0x8074
+#define GL_NORMAL_ARRAY 0x8075
+#define GL_COLOR_ARRAY 0x8076
+#define GL_TEXTURE_COORD_ARRAY 0x8078
+#define GL_TEXTURE_ENV_MODE 0x2200
+#define GL_TEXTURE_ENV_COLOR 0x2201
+#define GL_TEXTURE_ENV 0x2300
+#define GL_MODULATE 0x2100
+#define GL_REPLACE 0x1E01
 #endif
