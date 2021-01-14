@@ -4,16 +4,17 @@
 
 using namespace touchcontrols;
 
-UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize):
-	ControlSuper(TC_TYPE_UI_TEXTBOX, tag, pos)
+UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize, uint32_t color):
+	ControlSuper(TC_TYPE_UI_TEXTBOX, tag, pos),
+		textSize(textSize),
+    	text(text),
+    	fontSet(fontSet),
+    	params(params),
+    	color(color)
 {
 	image = font_filename;
-	this->textSize = textSize;
-	this->text = text;
 
 	glTex = 0;
-	this->fontSet = fontSet;
-	this->params = params;
 
 	fontInfoVec.resize(256);
 
@@ -103,6 +104,8 @@ bool UI_TextBox::drawGL(bool forEditor)
 
 	float y =  controlPos.top + (controlPos.height() - glRect.height) / 2;
 
+	gl_color3f(color);
+
 	while(textC[pos])
 	{
 		unsigned char c = textC[pos];
@@ -137,6 +140,8 @@ bool UI_TextBox::drawGL(bool forEditor)
 
 		pos++;
 	}
+
+	gl_color3f(COLOUR_WHITE);
 
 	return false;
 }

@@ -264,7 +264,6 @@ void TouchJoy::calcNewValue()
 		dy = 0;
 	}
 
-
 	valueTouch.x = dx;
 	valueTouch.y = dy;
 

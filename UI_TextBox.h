@@ -30,6 +30,8 @@ class UI_TextBox : public ControlSuper
 	int fontSet; //0 or 1
 	uint32_t params;
 
+	uint32_t color;
+
 	std::vector< FontInfo > fontInfoVec;
 
 	float getCharWidth(unsigned char c);
@@ -38,7 +40,7 @@ class UI_TextBox : public ControlSuper
 
 public:
 
-	UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize);
+	UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize, uint32_t color = COLOUR_WHITE);
 
 	bool processPointer(int action, int pid, float x, float y);
 

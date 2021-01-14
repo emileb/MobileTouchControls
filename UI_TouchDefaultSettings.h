@@ -16,6 +16,7 @@ typedef struct
 	float turnSensitivity;
 	float fwdSensitivity;
 	float strafeSensitivity;
+	float deadzoneSensitivity;
 
 	float precisionSenitivity;
 

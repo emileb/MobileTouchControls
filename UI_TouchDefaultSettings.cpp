@@ -16,6 +16,7 @@ namespace touchcontrols
 #define SLIDER_STRAFE  14
 
 #define SLIDER_PRECISION  15
+#define SLIDER_DEADZONE   16
 
 #define SWITCH_INVERT_LOOK   20
 #define SWITCH_JOYSTICKS     22
@@ -69,6 +70,7 @@ bool touchSettings_save(std::string filename)
 	root->SetDoubleAttribute("turn_sens", settings.turnSensitivity);
 	root->SetDoubleAttribute("fwd_sens", settings.fwdSensitivity);
 	root->SetDoubleAttribute("strafe_sens", settings.strafeSensitivity);
+	root->SetDoubleAttribute("deadzone_sens", settings.deadzoneSensitivity);
 
 	root->SetDoubleAttribute("precision_sens", settings.precisionSenitivity);
 
@@ -117,6 +119,7 @@ bool touchSettings_load(std::string filename)
 		root->QueryFloatAttribute("turn_sens",  &settings.turnSensitivity);
 		root->QueryFloatAttribute("fwd_sens",  &settings.fwdSensitivity);
 		root->QueryFloatAttribute("strafe_sens",  &settings.strafeSensitivity);
+		root->QueryFloatAttribute("deadzone_sens",  &settings.deadzoneSensitivity);
 
 		root->QueryFloatAttribute("precision_sens",  &settings.precisionSenitivity);
 
@@ -152,6 +155,7 @@ static void resetDefaults()
 	settings.turnSensitivity = 1;
 	settings.fwdSensitivity = 1;
 	settings.strafeSensitivity = 1;
+	settings.deadzoneSensitivity = 0.1;
 
 	settings.showJoysticks = true;
 	settings.joystickLookMode = false;
@@ -182,6 +186,7 @@ static void applyControlValues()
 		((UI_Slider *)rootControls->getControl("slider_turn"))->setValue(settings.turnSensitivity / 2);
 		((UI_Slider *)rootControls->getControl("slider_fwd"))->setValue(settings.fwdSensitivity / 2);
 		((UI_Slider *)rootControls->getControl("slider_strafe"))->setValue(settings.strafeSensitivity / 2);
+		((UI_Slider *)rootControls->getControl("slider_deadzone"))->setValue(settings.deadzoneSensitivity);
 
 		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor(settings.defaultColor);
 
@@ -250,6 +255,10 @@ static void sliderChange(uint32_t uid, float value)
 	else if(uid == SLIDER_STRAFE)
 	{
 		settings.strafeSensitivity = value * 2;
+	}
+	else if(uid == SLIDER_DEADZONE)
+	{
+		settings.deadzoneSensitivity = value;
 	}
 	else if(uid == SLIDER_PRECISION)
 	{
@@ -378,36 +387,43 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += 2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize, COLOUR_ORANGE));
 		UI_Slider *slider =   new UI_Slider("slider_alpha",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Up/Down sensitivity:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down sens:", textSize));
 		slider =              new UI_Slider("slider_look",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_LOOK, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Turn sensitivity:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right sens:", textSize));
 		slider =              new UI_Slider("slider_turn",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_TURN, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Fwd/Back sensitivity:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back sens:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_fwd",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_FWD, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Strafe sensitivity:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe sens:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_strafe",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_STRAFE, "ui_slider_bg1", "ui_slider_handle");
+		slider->signal.connect(sigc::ptr_fun(&sliderChange));
+		rootControls->addControl(slider);
+
+		y += 1.5;
+
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move dead-zone:", textSize, COLOUR_GREEN3));
+		slider =              new UI_Slider("slider_deadzone",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_DEADZONE, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
