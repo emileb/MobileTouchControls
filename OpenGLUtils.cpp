@@ -452,7 +452,6 @@ void gl_scalef(GLfloat x, GLfloat y, GLfloat z)
 
 void gl_translatef(GLfloat x, GLfloat y, GLfloat z)
 {
-
 	glTranslateX += x;
 	glTranslateY -= y;
 	glTranslateZ += z;
@@ -788,7 +787,6 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 	if(isGLES2)
 	{
-
 		// Bind the texture
 		glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -815,7 +813,6 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 		glEnableVertexAttribArray(mPositionLoc);
 		glEnableVertexAttribArray(mTexCoordLoc);
-
 
 		// Set the sampler texture unit to 0
 		glUniform1i(mSamplerLoc, 0);
