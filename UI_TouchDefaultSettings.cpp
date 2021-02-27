@@ -18,6 +18,7 @@ namespace touchcontrols
 #define SLIDER_PRECISION  15
 #define SLIDER_DEADZONE   16
 
+#define SWITCH_DIGITAL_MOVE   19
 #define SWITCH_INVERT_LOOK   20
 #define SWITCH_JOYSTICKS     22
 #define SWITCH_JOYSTICK_MODE 23
@@ -55,6 +56,7 @@ bool touchSettings_save(std::string filename)
 	TiXmlElement * root = new TiXmlElement("settings");
 	doc.LinkEndChild(root);
 
+	root->SetAttribute("digital_move", settings.digitalMove);
 	root->SetAttribute("invert_look", settings.invertLook);
 	root->SetAttribute("show_sticks", settings.showJoysticks);
 	root->SetAttribute("joystick_mode", settings.joystickLookMode);
@@ -104,6 +106,7 @@ bool touchSettings_load(std::string filename)
 		TiXmlHandle hDoc(doc);
 		TiXmlElement* root = hDoc.FirstChild("settings").Element();
 
+		root->QueryBoolAttribute("digital_move", &settings.digitalMove);
 		root->QueryBoolAttribute("invert_look", &settings.invertLook);
 		root->QueryBoolAttribute("show_sticks", &settings.showJoysticks);
 		root->QueryBoolAttribute("joystick_mode", &settings.joystickLookMode);
@@ -157,6 +160,7 @@ static void resetDefaults()
 	settings.strafeSensitivity = 1;
 	settings.deadzoneSensitivity = 0.1;
 
+	settings.digitalMove = false;
 	settings.showJoysticks = true;
 	settings.joystickLookMode = false;
 	settings.autoHideInventory = true;
@@ -190,6 +194,7 @@ static void applyControlValues()
 
 		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor(settings.defaultColor);
 
+		((UI_Switch *)rootControls->getControl("digital_move"))->setValue(settings.digitalMove);
 		((UI_Switch *)rootControls->getControl("invert_switch"))->setValue(settings.invertLook);
 		((UI_Switch *)rootControls->getControl("fixed_move_stick"))->setValue(settings.fixedMoveStick);
 		((UI_Switch *)rootControls->getControl("joystick_look_switch"))->setValue(settings.joystickLookMode);
@@ -304,6 +309,10 @@ static void switchChange(uint32_t uid, bool value)
 	else if(uid == SWITCH_SHOW_CUSTOM)
 	{
 		settings.alwaysShowCust = value;
+	}
+	else if(uid == SWITCH_DIGITAL_MOVE)
+	{
+		settings.digitalMove = value;
 	}
 }
 
@@ -427,6 +436,13 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
+		y += 1.5;
+
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Digital move (WASD):", textSize, COLOUR_GREEN3));
+		UI_Switch *swtch =      new UI_Switch("digital_move", touchcontrols::RectF(13, y + 0.2, 16, y + 1.8), SWITCH_DIGITAL_MOVE, "ui_switch2_on", "ui_switch2_off");
+		swtch->signal.connect(sigc::ptr_fun(&switchChange));
+		rootControls->addControl(swtch);
+
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Default color:", textSize));
@@ -441,7 +457,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize));
-		UI_Switch *swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 

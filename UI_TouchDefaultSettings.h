@@ -28,7 +28,7 @@ typedef struct
 	bool weaponWheelEnabled;
 	bool fixedMoveStick;
 	bool precisionShoot;
-
+	bool digitalMove;
 	bool alwaysShowCust;
 
 	uint32_t dblTapLeft;
