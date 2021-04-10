@@ -818,8 +818,9 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 		glUniform1i(mSamplerLoc, 0);
 
 		float yAspectFixTranslate = 0;
+		float xAspectFixTranslate = 0;
 
-		//Such a hack.The model matrix is just used to scale for gles2
+		// Such a hack.The model matrix is just used to scale for gles2
 		// Need to fix all of this so GLES1 and GLES2 coordinates behave the same and model matrix is used properly
 		if(m_fixAspect)
 		{
@@ -828,10 +829,20 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 			//printf("%f     %f\n",nominal,actual);
 			float yScale = actual / nominal;
-			yAspectFixTranslate =  -(1 - yScale) * rect.height / 2;
-			mModelMatrixGLSL[5] = yScale;
-			//glTranslateY = glTranslateY *
-			gl_translatef(0, yAspectFixTranslate, 0);
+			float xScale = nominal / actual;
+
+			if(yScale <= 1)
+			{
+				yAspectFixTranslate =  -(1 - yScale) * rect.height / 2;
+				mModelMatrixGLSL[5] = yScale;
+				gl_translatef(0, yAspectFixTranslate, 0);
+			}
+			else
+			{
+				xAspectFixTranslate =  (1 - xScale) * rect.width / 2;
+				mModelMatrixGLSL[0] = xScale;
+				gl_translatef(xAspectFixTranslate, 0, 0);
+			}
 		}
 
 		glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
@@ -843,7 +854,8 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 		if(m_fixAspect)
 		{
 			mModelMatrixGLSL[5] = 1;
-			gl_translatef(0, -yAspectFixTranslate, 0);
+			mModelMatrixGLSL[0] = 1;
+			gl_translatef(-xAspectFixTranslate, -yAspectFixTranslate, 0);
 		}
 	}
 	else
@@ -865,8 +877,18 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 			//printf("%f     %f\n",nominal,actual);
 			float yScale = actual / nominal;
 
-			glScalef(1, yScale, 1);
-			glTranslatef(0, -(1 - yScale) * rect.height / 2, 0);
+			// Choose correct sides to make smaller so it does not go out of the area
+			if(yScale <= 1)
+			{
+				glScalef(1, yScale, 1);
+				glTranslatef(0, -(1 - yScale) * rect.height / 2, 0);
+			}
+			else
+			{
+				float xScale = nominal / actual;
+				glScalef(xScale, 1, 1);
+            	glTranslatef( (1 - xScale) * rect.width / 2,0, 0);
+			}
 		}
 
 
