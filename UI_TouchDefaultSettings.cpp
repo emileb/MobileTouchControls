@@ -387,10 +387,10 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		//rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
 		// rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
-		float y = 1;;
+		float y = 0.2;
 
 		// Draws backwards so need background last
-		UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windownLeft, y, windowRight, 14), "Touch settings", "ui_background");
+		UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windownLeft, y, windowRight, 15), "Touch settings", "ui_background");
 		rootControls->addControl(window);
 		window->signal.connect(sigc::ptr_fun(&buttonPress));
 
@@ -439,7 +439,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 1.5;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Digital move (WASD):", textSize, COLOUR_GREEN3));
-		UI_Switch *swtch =      new UI_Switch("digital_move", touchcontrols::RectF(13, y + 0.2, 16, y + 1.8), SWITCH_DIGITAL_MOVE, "ui_switch2_on", "ui_switch2_off");
+		UI_Switch *swtch =      new UI_Switch("digital_move", touchcontrols::RectF(13, y + 0.2, 16, y + 1.8), SWITCH_DIGITAL_MOVE, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
@@ -457,31 +457,31 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize));
-		swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look:", textSize));
-		swtch =      new UI_Switch("joystick_look_switch",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICK_MODE, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("joystick_look_switch",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICK_MODE, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Fixed Move:", textSize));
-		swtch =      new UI_Switch("fixed_move_stick",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_FIXED_MOVE, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("fixed_move_stick",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_FIXED_MOVE, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Show Custom:", textSize));
-		swtch =      new UI_Switch("show_custom",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_SHOW_CUSTOM, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("show_custom",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_SHOW_CUSTOM, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Precision shoot:", textSize));
-		swtch =      new UI_Switch("precision_shoot",  touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_PRECISION_SHOOT, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("precision_shoot",  touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_PRECISION_SHOOT, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
@@ -512,24 +512,24 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide inven:", textSize));
-		swtch =      new UI_Switch("auto_hide_inventory",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_HIDE_INV, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("auto_hide_inventory",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_HIDE_INV, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide numbers", textSize));
-		swtch =      new UI_Switch("auto_hide_number",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_HIDE_NBRS, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("auto_hide_number",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_HIDE_NBRS, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Weapon wheel:", textSize));
-		swtch =      new UI_Switch("weapon_wheel_enabled",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_WEAP_WHEEL, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("weapon_wheel_enabled",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_WEAP_WHEEL, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 
 		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize));
-		swtch =      new UI_Switch("show_joy_sticks",       touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICKS, "ui_switch2_on", "ui_switch2_off");
+		swtch =      new UI_Switch("show_joy_sticks",       touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICKS, "ui_switch4_on", "ui_switch4_off");
 		swtch->signal.connect(sigc::ptr_fun(&switchChange));
 		rootControls->addControl(swtch);
 

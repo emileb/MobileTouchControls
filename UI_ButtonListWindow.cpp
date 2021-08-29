@@ -115,7 +115,7 @@ void showButtonListWindow(TouchControlsContainer *con)
 					colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
 
 					// Add the switch
-					UI_Switch *swtch = new UI_Switch("switch", touchcontrols::RectF(windowRight - 4, yPos, windowRight, yPos + ROW_HEIGHT), editableButtons.size(), "ui_switch2_on", "ui_switch2_off");
+					UI_Switch *swtch = new UI_Switch("switch", touchcontrols::RectF(windowRight - 4, yPos, windowRight, yPos + ROW_HEIGHT), editableButtons.size(), "ui_switch4_on", "ui_switch4_off");
 					swtch->setValue(!control->isHidden());
 					swtch->signal.connect(sigc::ptr_fun(&switchChange));
 					rootControls->addControl(swtch);
