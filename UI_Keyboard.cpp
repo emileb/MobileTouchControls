@@ -41,7 +41,12 @@ using namespace touchcontrols;
 #define ROW_HEIGHT   0.1
 #define ROW_GAP      0.001
 
-#define EVEN_SPACE ( 1.f / MAX_ROW_KEYS )
+//#define EVEN_SPACE_11 ( 1.f / MAX_ROW_KEYS )
+
+#define EVEN_SPACE_11 ( 1.f / 11 )
+#define EVEN_SPACE_13 ( 1.f / 13 )
+
+
 
 UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize):
 	ControlSuper(TC_TYPE_UI_KEYBOARD, tag, pos),
@@ -49,52 +54,57 @@ UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, 
 	fontSet(fontSet)
 {
 	std::memset(&layout, 0, sizeof(layout));
+
+	float numberKeySize = EVEN_SPACE_13 + ((EVEN_SPACE_13 - 0.05) / 12);
+
 	setKey(0, 0, UI_KEYBOARD_MOVE,  0, 0.05f, 0, "key_move");
-	setKey(0, 1, '1', SDLK_F1, EVEN_SPACE, 0);
-	setKey(0, 2, '2', SDLK_F2, EVEN_SPACE, 0);
-	setKey(0, 3, '3', SDLK_F3, EVEN_SPACE, 0);
-	setKey(0, 4, '4', SDLK_F4, EVEN_SPACE, 0);
-	setKey(0, 5, '5', SDLK_F5, EVEN_SPACE, 0);
-	setKey(0, 6, '6', SDLK_F6, EVEN_SPACE, 0);
-	setKey(0, 7, '7', SDLK_F7, EVEN_SPACE, 0);
-	setKey(0, 8, '8', SDLK_F8, EVEN_SPACE, 0);
-	setKey(0, 9, '9', SDLK_F9, EVEN_SPACE, 0);
-	setKey(0, 10, '0', SDLK_F10, EVEN_SPACE, 0);
+	setKey(0, 1, '1', SDLK_F1, numberKeySize, 0);
+	setKey(0, 2, '2', SDLK_F2, numberKeySize, 0);
+	setKey(0, 3, '3', SDLK_F3, numberKeySize, 0);
+	setKey(0, 4, '4', SDLK_F4, numberKeySize, 0);
+	setKey(0, 5, '5', SDLK_F5, numberKeySize, 0);
+	setKey(0, 6, '6', SDLK_F6, numberKeySize, 0);
+	setKey(0, 7, '7', SDLK_F7, numberKeySize, 0);
+	setKey(0, 8, '8', SDLK_F8, numberKeySize, 0);
+	setKey(0, 9, '9', SDLK_F9, numberKeySize, 0);
+	setKey(0, 10, '0', SDLK_F10, numberKeySize, 0);
+	setKey(0, 11, '-', SDLK_F11, numberKeySize, 0);
+	setKey(0, 12, '=', SDLK_F12, numberKeySize, 0);
 
 
-	setKey(1, 0, 'Q', '`', EVEN_SPACE, 0);
-	setKey(1, 1, 'W', '!', EVEN_SPACE, 0);
-	setKey(1, 2, 'E', '\\', EVEN_SPACE, 0);
-	setKey(1, 3, 'R', '%', EVEN_SPACE, 0);
-	setKey(1, 4, 'T', '^', EVEN_SPACE, 0);
-	setKey(1, 5, 'Y', '?', EVEN_SPACE, 0);
-	setKey(1, 6, 'U', '<', EVEN_SPACE, 0);
-	setKey(1, 7, 'I', '>', EVEN_SPACE, 0);
-	setKey(1, 8, 'O', '[', EVEN_SPACE, 0);
-	setKey(1, 9, 'P', ']', EVEN_SPACE, 0);
-	setKey(1, 10, 8,    0, EVEN_SPACE, 0, "key_backspace");    //Backspace
+	setKey(1, 0, 'Q', '`', EVEN_SPACE_11, 0);
+	setKey(1, 1, 'W', '!', EVEN_SPACE_11, 0);
+	setKey(1, 2, 'E', '\\', EVEN_SPACE_11, 0);
+	setKey(1, 3, 'R', '%', EVEN_SPACE_11, 0);
+	setKey(1, 4, 'T', '^', EVEN_SPACE_11, 0);
+	setKey(1, 5, 'Y', '?', EVEN_SPACE_11, 0);
+	setKey(1, 6, 'U', '<', EVEN_SPACE_11, 0);
+	setKey(1, 7, 'I', '>', EVEN_SPACE_11, 0);
+	setKey(1, 8, 'O', '[', EVEN_SPACE_11, 0);
+	setKey(1, 9, 'P', ']', EVEN_SPACE_11, 0);
+	setKey(1, 10, 8,    0, EVEN_SPACE_11, 0, "key_backspace");    //Backspace
 
 	setKey(2, 0, '\t', 0,     0.05f, 0, "key_tab");   //blank
-	setKey(2, 1, 'A', '@', EVEN_SPACE, 0);
-	setKey(2, 2, 'S', '#', EVEN_SPACE, 0);
-	setKey(2, 3, 'D', '&', EVEN_SPACE, 0);
-	setKey(2, 4, 'F', '*', EVEN_SPACE, 0);
-	setKey(2, 5, 'G', '-', EVEN_SPACE, 0);
-	setKey(2, 6, 'H', '+', EVEN_SPACE, 0);
-	setKey(2, 7, 'J', '=', EVEN_SPACE, 0);
-	setKey(2, 8, 'K', '(', EVEN_SPACE, 0);
-	setKey(2, 9, 'L', ')', EVEN_SPACE, 0);
+	setKey(2, 1, 'A', '@', EVEN_SPACE_11, 0);
+	setKey(2, 2, 'S', '#', EVEN_SPACE_11, 0);
+	setKey(2, 3, 'D', '&', EVEN_SPACE_11, 0);
+	setKey(2, 4, 'F', '*', EVEN_SPACE_11, 0);
+	setKey(2, 5, 'G', '-', EVEN_SPACE_11, 0);
+	setKey(2, 6, 'H', '+', EVEN_SPACE_11, 0);
+	setKey(2, 7, 'J', '=', EVEN_SPACE_11, 0);
+	setKey(2, 8, 'K', '(', EVEN_SPACE_11, 0);
+	setKey(2, 9, 'L', ')', EVEN_SPACE_11, 0);
 	setKey(2, 10, 13,   0,   0.145f, 0, "enter_key");   //Enter
 
-	setKey(3, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE, 0, "key_shift");    //Shift key
-	setKey(3, 1, 'Z', '_', EVEN_SPACE, 0);
-	setKey(3, 2, 'X', '$', EVEN_SPACE, 0);
-	setKey(3, 3, 'C', '"', EVEN_SPACE, 0);
-	setKey(3, 4, 'V', '\'', EVEN_SPACE, 0);
-	setKey(3, 5, 'B', ':', EVEN_SPACE, 0);
-	setKey(3, 6, 'N', ';', EVEN_SPACE, 0);
-	setKey(3, 7, 'M', '/', EVEN_SPACE, 0);
-	setKey(3, 8, '_',  0, EVEN_SPACE, 0);
+	setKey(3, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE_11, 0, "key_shift");    //Shift key
+	setKey(3, 1, 'Z', '_', EVEN_SPACE_11, 0);
+	setKey(3, 2, 'X', '$', EVEN_SPACE_11, 0);
+	setKey(3, 3, 'C', '"', EVEN_SPACE_11, 0);
+	setKey(3, 4, 'V', '\'', EVEN_SPACE_11, 0);
+	setKey(3, 5, 'B', ':', EVEN_SPACE_11, 0);
+	setKey(3, 6, 'N', ';', EVEN_SPACE_11, 0);
+	setKey(3, 7, 'M', '/', EVEN_SPACE_11, 0);
+	setKey(3, 8, '_',  0, EVEN_SPACE_11, 0);
 	setKey(3, 9, SDLK_UP, SDLK_PAGEUP, 0.07f, 0.020f, "key_arrow_up");
 	setKey(3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.020f, "key_symbol_shift");
 
