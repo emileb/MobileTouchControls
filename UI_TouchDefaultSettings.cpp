@@ -1,5 +1,6 @@
 #include "UI_TouchDefaultSettings.h"
 #include "UI_ButtonListWindow.h"
+#include "vector"
 
 namespace touchcontrols
 {
@@ -37,6 +38,8 @@ namespace touchcontrols
 #define DROPDOWN_VOLUME_UP 33
 #define DROPDOWN_VOLUME_DOWN 34
 
+static uint32_t windowLeft = 3;
+static uint32_t windowRight = 24;
 
 static TouchControlsContainer *container = NULL;
 static UI_Controls *rootControls = NULL;
@@ -47,6 +50,28 @@ static  sigc::signal<void, tTouchSettings> signal_settingChange;
 
 static void applyControlValues();
 
+
+class SwitchOption
+{
+public:
+	std::string title;
+	std::string description;
+	std::string xmlTag;
+	bool defaultValue;
+
+	bool *settingPtr;
+
+	SwitchOption(std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingPtr):
+		title(title),description(description),xmlTag(xmlTag), defaultValue(defaultValue),settingPtr(settingPtr)
+	{
+
+	}
+};
+
+static std::vector<SwitchOption> switchOptions;
+
+
+
 bool touchSettings_save(std::string filename)
 {
 	TiXmlDocument doc;
@@ -55,17 +80,6 @@ bool touchSettings_save(std::string filename)
 
 	TiXmlElement * root = new TiXmlElement("settings");
 	doc.LinkEndChild(root);
-
-	root->SetAttribute("digital_move", settings.digitalMove);
-	root->SetAttribute("invert_look", settings.invertLook);
-	root->SetAttribute("show_sticks", settings.showJoysticks);
-	root->SetAttribute("joystick_mode", settings.joystickLookMode);
-	root->SetAttribute("auto_hide_inventory", settings.autoHideInventory);
-	root->SetAttribute("auto_hide_numbers", settings.autoHideNumbers);
-	root->SetAttribute("weapon_wheel_enabled", settings.weaponWheelEnabled);
-	root->SetAttribute("fixed_move_stick", settings.fixedMoveStick);
-	root->SetAttribute("precision_shoot", settings.precisionShoot);
-	root->SetAttribute("show_custom", settings.alwaysShowCust);
 
 	root->SetDoubleAttribute("alpha", settings.alpha);
 	root->SetDoubleAttribute("look_sens", settings.lookSensitivity);
@@ -83,6 +97,12 @@ bool touchSettings_save(std::string filename)
 	root->SetAttribute("volume_down", settings.volumeDown);
 
 	root->SetAttribute("default_color", settings.defaultColor);
+
+	for (SwitchOption &switchOption : switchOptions)
+	{
+		LOGTOUCH("touchSettings_save %s = %d", switchOption.xmlTag.c_str(), *switchOption.settingPtr);
+		root->SetAttribute(switchOption.xmlTag.c_str(), *switchOption.settingPtr);
+	}
 
 	LOGTOUCH("Saving settings to %s\n", filename.c_str());
 	return doc.SaveFile(filename);
@@ -106,16 +126,6 @@ bool touchSettings_load(std::string filename)
 		TiXmlHandle hDoc(doc);
 		TiXmlElement* root = hDoc.FirstChild("settings").Element();
 
-		root->QueryBoolAttribute("digital_move", &settings.digitalMove);
-		root->QueryBoolAttribute("invert_look", &settings.invertLook);
-		root->QueryBoolAttribute("show_sticks", &settings.showJoysticks);
-		root->QueryBoolAttribute("joystick_mode", &settings.joystickLookMode);
-		root->QueryBoolAttribute("auto_hide_inventory", &settings.autoHideInventory);
-		root->QueryBoolAttribute("auto_hide_numbers", &settings.autoHideNumbers);
-		root->QueryBoolAttribute("weapon_wheel_enabled", &settings.weaponWheelEnabled);
-		root->QueryBoolAttribute("fixed_move_stick", &settings.fixedMoveStick);
-		root->QueryBoolAttribute("precision_shoot", &settings.precisionShoot);
-		root->QueryBoolAttribute("show_custom", &settings.alwaysShowCust);
 
 		root->QueryFloatAttribute("alpha",  &settings.alpha);
 		root->QueryFloatAttribute("look_sens",  &settings.lookSensitivity);
@@ -133,6 +143,12 @@ bool touchSettings_load(std::string filename)
 		root->QueryUnsignedAttribute("volume_down",  &settings.volumeDown);
 
 		root->QueryUnsignedAttribute("default_color",  &settings.defaultColor);
+
+		for (SwitchOption &switchOption : switchOptions)
+		{
+			root->QueryBoolAttribute(switchOption.xmlTag.c_str(), switchOption.settingPtr);
+			LOGTOUCH("touchSettings_load %s = %d", switchOption.xmlTag.c_str(), *switchOption.settingPtr);
+		}
 		ok = true;
 	}
 
@@ -194,18 +210,6 @@ static void applyControlValues()
 
 		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor(settings.defaultColor);
 
-		((UI_Switch *)rootControls->getControl("digital_move"))->setValue(settings.digitalMove);
-		((UI_Switch *)rootControls->getControl("invert_switch"))->setValue(settings.invertLook);
-		((UI_Switch *)rootControls->getControl("fixed_move_stick"))->setValue(settings.fixedMoveStick);
-		((UI_Switch *)rootControls->getControl("joystick_look_switch"))->setValue(settings.joystickLookMode);
-
-		((UI_Switch *)rootControls->getControl("auto_hide_inventory"))->setValue(settings.autoHideInventory);
-		((UI_Switch *)rootControls->getControl("auto_hide_number"))->setValue(settings.autoHideNumbers);
-		((UI_Switch *)rootControls->getControl("weapon_wheel_enabled"))->setValue(settings.weaponWheelEnabled);
-		((UI_Switch *)rootControls->getControl("show_joy_sticks"))->setValue(settings.showJoysticks);
-		((UI_Switch *)rootControls->getControl("show_custom"))->setValue(settings.alwaysShowCust);
-
-		((UI_Switch *)rootControls->getControl("precision_shoot"))->setValue(settings.precisionShoot);
 		((UI_Slider *)rootControls->getControl("slider_precision"))->setValue((settings.precisionSenitivity - 0.2f) / 0.5f);
 
 		((UI_DropDown *)rootControls->getControl("dbl_tap_left"))->setSelected(settings.dblTapLeft);
@@ -213,6 +217,11 @@ static void applyControlValues()
 
 		((UI_DropDown *)rootControls->getControl("volume_up"))->setSelected(settings.volumeUp);
 		((UI_DropDown *)rootControls->getControl("volume_down"))->setSelected(settings.volumeDown);
+
+		for (SwitchOption &switchOption : switchOptions)
+        {
+			((UI_Switch *)rootControls->getControl(switchOption.xmlTag))->setValue(*switchOption.settingPtr);
+        }
 	}
 }
 
@@ -273,6 +282,15 @@ static void sliderChange(uint32_t uid, float value)
 
 static void switchChange(uint32_t uid, bool value)
 {
+	LOGTOUCH("switchChange %d, %d", uid, value);
+
+	// The uid is the position  in the vector
+	SwitchOption switchOption = switchOptions.at(uid);
+
+	// Update the settings via the pointer
+	*switchOption.settingPtr = value;
+
+/*
 	if(uid == SWITCH_INVERT_LOOK)
 	{
 		settings.invertLook = value;
@@ -314,6 +332,7 @@ static void switchChange(uint32_t uid, bool value)
 	{
 		settings.digitalMove = value;
 	}
+	*/
 }
 
 static void dropDownChange(uint32_t uid, uint32_t value)
@@ -364,6 +383,43 @@ sigc::signal<void, tTouchSettings> *getSettingsSignal()
 	return &signal_settingChange;
 }
 
+static float divider(UI_Controls * root, float y)
+{
+	const float divHeight = 0.05;
+
+	root->addControl(new Button("", touchcontrols::RectF(windowLeft,  y, windowRight, y + divHeight), "ui_grey_box", -1));
+
+	return divHeight;
+}
+
+static float addSwitch(UI_Controls * root,float y, std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingsPtr, bool showDiv = true)
+{
+
+	const float textSizeTitle = 0.07;
+	const float textSizeDesc = 0.05;
+
+	const float titleTextHeight = 1.3;
+	const float descTextHeight = 1.2;
+
+
+	SwitchOption sw(title, description, xmlTag, defaultValue, settingsPtr);
+
+	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y, 21, y + titleTextHeight), "font_dual", 0, UI_TEXT_LEFT, title, textSizeTitle, COLOUR_WHITE));
+	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y + titleTextHeight, 21, y + titleTextHeight + descTextHeight), "font_dual", 0, UI_TEXT_LEFT, description, textSizeDesc, COLOUR_GREY2));
+
+	UI_Switch *swtch =      new UI_Switch(xmlTag, touchcontrols::RectF(21, y + 0.4, 24, y + 2), switchOptions.size(), "ui_switch4_on", "ui_switch4_off");
+	swtch->signal.connect(sigc::ptr_fun(&switchChange));
+	root->addControl(swtch);
+
+	// Use button to show divider line
+	if(showDiv)
+		divider(root, y + titleTextHeight + descTextHeight);
+
+	switchOptions.push_back(sw);
+
+	return titleTextHeight + descTextHeight + (showDiv ? 0.1 :  0.0);
+}
+
 
 UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile)
 {
@@ -375,115 +431,107 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		//Defaults
 		resetDefaults();
 
-		// Then try and load file
-		touchSettings_load(settingsFilename);
-
-
 		rootControls = new UI_Controls("ui_settings");
 
 		float textSize = 0.07f;
-		uint32_t windownLeft = 3;
-		uint32_t windowRight = 24;
 
-		//rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windownLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
-		// rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windownLeft, 2, windownLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
+
+		//rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windowLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
+		// rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windowLeft, 2, windowLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
 		float y = 0.2;
 
 		// Draws backwards so need background last
-		UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windownLeft, y, windowRight, 15), "Touch settings", "ui_background");
+		UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windowLeft, y, windowRight, 15), "Touch settings", "ui_background");
 		rootControls->addControl(window);
 		window->signal.connect(sigc::ptr_fun(&buttonPress));
 
 		y += 2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize, COLOUR_ORANGE));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize, COLOUR_ORANGE));
 		UI_Slider *slider =   new UI_Slider("slider_alpha",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down sens:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down sens:", textSize));
 		slider =              new UI_Slider("slider_look",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_LOOK, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right sens:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right sens:", textSize));
 		slider =              new UI_Slider("slider_turn",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_TURN, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back sens:", textSize, COLOUR_GREEN3));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back sens:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_fwd",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_FWD, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe sens:", textSize, COLOUR_GREEN3));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe sens:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_strafe",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_STRAFE, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move dead-zone:", textSize, COLOUR_GREEN3));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move dead-zone:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_deadzone",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_DEADZONE, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windownLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Digital move (WASD):", textSize, COLOUR_GREEN3));
-		UI_Switch *swtch =      new UI_Switch("digital_move", touchcontrols::RectF(13, y + 0.2, 16, y + 1.8), SWITCH_DIGITAL_MOVE, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
 
-		y += 2;
+		//y += 2;
 
-		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Default color:", textSize));
-		UI_ColorPicker *colorPicker = new UI_ColorPicker("color_picker",  touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), DEFAULT_COLOR, 0);
-		rootControls->addControl(colorPicker);
-		colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
+		UI_Switch* swtch;
 
-		UI_Button *buttonEdit =   new UI_Button("edit_buttons",  touchcontrols::RectF(13, y, windowRight, y + 2), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg");
+		UI_Button *buttonEdit =   new UI_Button("edit_buttons",  touchcontrols::RectF(windowLeft + 1, y, windowRight - 1, y + 2), BUTTON_EDIT_BUTTONS, "font_dual", 0, UI_TEXT_CENTRE, "Hide/Show buttons", textSize, "ui_button_bg");
 		buttonEdit->signal.connect(sigc::ptr_fun(&buttonPress));
 		rootControls->addControl(buttonEdit);
 
 		y += 2;
 
-		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Invert look:", textSize));
-		swtch =      new UI_Switch("invert_switch", touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_INVERT_LOOK, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
+		rootControls->addControl(new UI_TextBox("text",          touchcontrols::RectF(windowLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Default color:", textSize));
+		UI_ColorPicker *colorPicker = new UI_ColorPicker("color_picker",  touchcontrols::RectF(windowRight - 3, y + 0.2, windowRight, y + 1.8), DEFAULT_COLOR, 0);
+		rootControls->addControl(colorPicker);
+		colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Joystick Look:", textSize));
-		swtch =      new UI_Switch("joystick_look_switch",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICK_MODE, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
 
 		y += 2;
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Fixed Move:", textSize));
-		swtch =      new UI_Switch("fixed_move_stick",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_FIXED_MOVE, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
+		y += divider(rootControls, y);
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Show Custom:", textSize));
-		swtch =      new UI_Switch("show_custom",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_SHOW_CUSTOM, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
+		y += addSwitch(rootControls, y, "Digital move (WASD)", "Map the left move stick to digital keys W,A,S,D", "digital_move", false, &settings.digitalMove);
 
-		y += 2;
+		y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Precision shoot:", textSize));
-		swtch =      new UI_Switch("precision_shoot",  touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_PRECISION_SHOOT, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
+    	y += addSwitch(rootControls, y, "Joystick Look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
+
+		y += addSwitch(rootControls, y, "Fixed Move", "Fix the centre of the Move stick (disable floating)", "fixed_move_stick", false, &settings.fixedMoveStick);
+
+		y += addSwitch(rootControls, y, "Always show Custom buttons", "Force the Custom buttons to always be visible", "show_custom", false, &settings.alwaysShowCust);
+
+		y += addSwitch(rootControls, y, "Auto-hide inventory UI", "Automatically hide the inventory buttons when selected", "auto_hide_inventory", false, &settings.autoHideInventory);
+
+		y += addSwitch(rootControls, y, "Auto-hide numbers UI", "Automatically hide the number buttons when selected", "auto_hide_numbers", false, &settings.autoHideNumbers);
+
+		y += addSwitch(rootControls, y, "Show joystick UI", "Show the left and right joystick UI", "show_sticks", false, &settings.showJoysticks);
+
+		y += addSwitch(rootControls, y, "Weapon wheel enable", "Enable the weapon wheel, press centre of screen to use", "weapon_wheel_enabled", false, &settings.weaponWheelEnabled);
+
+//////////
+		y += addSwitch(rootControls, y, "Precision shoot", "Reduce look sensitivity while shooting, set amount below", "precision_shoot", false, &settings.precisionShoot, false);
+
+		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Sensitivity:", textSize));
 
 		slider =   new UI_Slider("slider_precision",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_PRECISION, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
@@ -491,57 +539,46 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += 2;
 
-		UI_DropDown *dblTapLeft = new UI_DropDown("dbl_tap_left",  touchcontrols::RectF(windownLeft, y, 13, y + 2), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Double tap left  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		y += divider(rootControls, y);
+///////////
+
+		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Double tap left/right:", textSize));
+
+		UI_DropDown *dblTapLeft = new UI_DropDown("dbl_tap_left",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Left : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(dblTapLeft);
 		dblTapLeft->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(13, y, windowRight, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Double tap right  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(18, y, 24, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Right : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(dblTapRight);
 		dblTapRight->signal.connect(sigc::ptr_fun(&dropDownChange));
 
 		y += 2;
+		y += divider(rootControls, y);
 
-		UI_DropDown *volumeUp = new UI_DropDown("volume_up",  touchcontrols::RectF(windownLeft, y, 13, y + 2), DROPDOWN_VOLUME_UP,  "font_dual", 0, "Volume btn up  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Volume buttons:", textSize));
+
+		UI_DropDown *volumeUp = new UI_DropDown("volume_up",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_VOLUME_UP,  "font_dual", 0, "Up : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(volumeUp);
 		volumeUp->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(13, y, windowRight, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Volume btn down  :  ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(18, y, 24, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Down : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(volumeDown);
 		volumeDown->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		y += 2;
-
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide inven:", textSize));
-		swtch =      new UI_Switch("auto_hide_inventory",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_HIDE_INV, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
-
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Auto-hide numbers", textSize));
-		swtch =      new UI_Switch("auto_hide_number",  touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_HIDE_NBRS, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
 
 		y += 2;
+		y += divider(rootControls, y);
 
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(windownLeft, y, 9.5, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Weapon wheel:", textSize));
-		swtch =      new UI_Switch("weapon_wheel_enabled",       touchcontrols::RectF(10, y + 0.2, 13, y + 1.8), SWITCH_WEAP_WHEEL, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
-
-		rootControls->addControl(new UI_TextBox("text",   touchcontrols::RectF(13, y, 21, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Show joysticks:", textSize));
-		swtch =      new UI_Switch("show_joy_sticks",       touchcontrols::RectF(21, y + 0.2, 24, y + 1.8), SWITCH_JOYSTICKS, "ui_switch4_on", "ui_switch4_off");
-		swtch->signal.connect(sigc::ptr_fun(&switchChange));
-		rootControls->addControl(swtch);
-
-		y += 2;
-
-		UI_Button *buttonReset =   new UI_Button("reset_button_pos",  touchcontrols::RectF(windownLeft + 1, y, 13 - 1, y + 2), BUTTON_RESET_POS, "font_dual", 0, UI_TEXT_CENTRE, "Reset positions", textSize, "ui_button_bg");
+		UI_Button *buttonReset =   new UI_Button("reset_button_pos",  touchcontrols::RectF(windowLeft + 1, y, 13 - 1, y + 2), BUTTON_RESET_POS, "font_dual", 0, UI_TEXT_CENTRE, "Reset positions", textSize, "ui_button_bg");
 		buttonReset->signal.connect(sigc::ptr_fun(&buttonPress));
 		rootControls->addControl(buttonReset);
 
 		UI_Button *buttonResetSettings =   new UI_Button("reset_button_set",  touchcontrols::RectF(13 + 1, y, windowRight - 1, y + 2), BUTTON_RESET, "font_dual", 0, UI_TEXT_CENTRE, "Reset settings", textSize, "ui_button_bg");
 		buttonResetSettings->signal.connect(sigc::ptr_fun(&buttonPress));
 		rootControls->addControl(buttonResetSettings);
+
+		// Load the settings file
+		touchSettings_load(settingsFilename);
 
 		applyControlValues();
 
