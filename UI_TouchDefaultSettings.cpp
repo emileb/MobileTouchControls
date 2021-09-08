@@ -62,7 +62,7 @@ public:
 	bool *settingPtr;
 
 	SwitchOption(std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingPtr):
-		title(title),description(description),xmlTag(xmlTag), defaultValue(defaultValue),settingPtr(settingPtr)
+		title(title), description(description), xmlTag(xmlTag), defaultValue(defaultValue), settingPtr(settingPtr)
 	{
 
 	}
@@ -98,7 +98,7 @@ bool touchSettings_save(std::string filename)
 
 	root->SetAttribute("default_color", settings.defaultColor);
 
-	for (SwitchOption &switchOption : switchOptions)
+	for(SwitchOption &switchOption : switchOptions)
 	{
 		LOGTOUCH("touchSettings_save %s = %d", switchOption.xmlTag.c_str(), *switchOption.settingPtr);
 		root->SetAttribute(switchOption.xmlTag.c_str(), *switchOption.settingPtr);
@@ -144,11 +144,12 @@ bool touchSettings_load(std::string filename)
 
 		root->QueryUnsignedAttribute("default_color",  &settings.defaultColor);
 
-		for (SwitchOption &switchOption : switchOptions)
+		for(SwitchOption &switchOption : switchOptions)
 		{
 			root->QueryBoolAttribute(switchOption.xmlTag.c_str(), switchOption.settingPtr);
 			LOGTOUCH("touchSettings_load %s = %d", switchOption.xmlTag.c_str(), *switchOption.settingPtr);
 		}
+
 		ok = true;
 	}
 
@@ -218,10 +219,10 @@ static void applyControlValues()
 		((UI_DropDown *)rootControls->getControl("volume_up"))->setSelected(settings.volumeUp);
 		((UI_DropDown *)rootControls->getControl("volume_down"))->setSelected(settings.volumeDown);
 
-		for (SwitchOption &switchOption : switchOptions)
-        {
+		for(SwitchOption &switchOption : switchOptions)
+		{
 			((UI_Switch *)rootControls->getControl(switchOption.xmlTag))->setValue(*switchOption.settingPtr);
-        }
+		}
 	}
 }
 
@@ -290,49 +291,49 @@ static void switchChange(uint32_t uid, bool value)
 	// Update the settings via the pointer
 	*switchOption.settingPtr = value;
 
-/*
-	if(uid == SWITCH_INVERT_LOOK)
-	{
-		settings.invertLook = value;
-	}
-	else if(uid == SWITCH_JOYSTICKS)
-	{
-		settings.showJoysticks = value;
-		signal_settingChange.emit(settings);
-	}
-	else if(uid == SWITCH_JOYSTICK_MODE)
-	{
-		settings.joystickLookMode = value;
-	}
-	else if(uid == SWITCH_HIDE_INV)
-	{
-		settings.autoHideInventory = value;
-	}
-	else if(uid == SWITCH_HIDE_NBRS)
-	{
-		settings.autoHideNumbers = value;
-	}
-	else if(uid == SWITCH_WEAP_WHEEL)
-	{
-		settings.weaponWheelEnabled = value;
-	}
-	else if(uid == SWITCH_FIXED_MOVE)
-	{
-		settings.fixedMoveStick = value;
-	}
-	else if(uid == SWITCH_PRECISION_SHOOT)
-	{
-		settings.precisionShoot = value;
-	}
-	else if(uid == SWITCH_SHOW_CUSTOM)
-	{
-		settings.alwaysShowCust = value;
-	}
-	else if(uid == SWITCH_DIGITAL_MOVE)
-	{
-		settings.digitalMove = value;
-	}
-	*/
+	/*
+		if(uid == SWITCH_INVERT_LOOK)
+		{
+			settings.invertLook = value;
+		}
+		else if(uid == SWITCH_JOYSTICKS)
+		{
+			settings.showJoysticks = value;
+			signal_settingChange.emit(settings);
+		}
+		else if(uid == SWITCH_JOYSTICK_MODE)
+		{
+			settings.joystickLookMode = value;
+		}
+		else if(uid == SWITCH_HIDE_INV)
+		{
+			settings.autoHideInventory = value;
+		}
+		else if(uid == SWITCH_HIDE_NBRS)
+		{
+			settings.autoHideNumbers = value;
+		}
+		else if(uid == SWITCH_WEAP_WHEEL)
+		{
+			settings.weaponWheelEnabled = value;
+		}
+		else if(uid == SWITCH_FIXED_MOVE)
+		{
+			settings.fixedMoveStick = value;
+		}
+		else if(uid == SWITCH_PRECISION_SHOOT)
+		{
+			settings.precisionShoot = value;
+		}
+		else if(uid == SWITCH_SHOW_CUSTOM)
+		{
+			settings.alwaysShowCust = value;
+		}
+		else if(uid == SWITCH_DIGITAL_MOVE)
+		{
+			settings.digitalMove = value;
+		}
+		*/
 }
 
 static void dropDownChange(uint32_t uid, uint32_t value)
@@ -392,7 +393,7 @@ static float divider(UI_Controls * root, float y)
 	return divHeight;
 }
 
-static float addSwitch(UI_Controls * root,float y, std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingsPtr, bool showDiv = true)
+static float addSwitch(UI_Controls * root, float y, std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingsPtr, bool showDiv = true)
 {
 
 	const float textSizeTitle = 0.07;
@@ -514,7 +515,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);
 
-    	y += addSwitch(rootControls, y, "Joystick Look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
+		y += addSwitch(rootControls, y, "Joystick Look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
 
 		y += addSwitch(rootControls, y, "Fixed Move", "Fix the centre of the Move stick (disable floating)", "fixed_move_stick", false, &settings.fixedMoveStick);
 

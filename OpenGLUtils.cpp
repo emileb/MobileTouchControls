@@ -839,7 +839,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 			}
 			else
 			{
-				xAspectFixTranslate =  (1 - xScale) * rect.width / 2;
+				xAspectFixTranslate = (1 - xScale) * rect.width / 2;
 				mModelMatrixGLSL[0] = xScale;
 				gl_translatef(xAspectFixTranslate, 0, 0);
 			}
@@ -887,7 +887,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 			{
 				float xScale = nominal / actual;
 				glScalef(xScale, 1, 1);
-            	glTranslatef( (1 - xScale) * rect.width / 2,0, 0);
+				glTranslatef((1 - xScale) * rect.width / 2, 0, 0);
 			}
 		}
 

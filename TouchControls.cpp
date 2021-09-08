@@ -310,11 +310,10 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 					//	break;
 					if(cs->type == TC_TYPE_QUADSLIDE)   // Quad slide we should never pass data through
 						return true;
-
 				}
 
 				// Check if point is in control at all
-				if(!cs->isAllowPassThrough()  && cs->controlPos.contains(x, y))
+				if(!cs->isAllowPassThrough() && cs->controlPos.contains(x, y))
 				{
 					return true;
 				}
@@ -323,7 +322,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 		if(passThroughTouch == ALWAYS)
 			return false;
-		else if(passThroughTouch  == NO_CONTROL)
+		else if(passThroughTouch == NO_CONTROL)
 			return controlUsed;
 		else
 			return true;

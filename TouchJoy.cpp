@@ -139,7 +139,7 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 	{
 		if(pid == tpid)  //Finger already down
 		{
-			if((otherTouchJoySWAPFIX->pid == tpid) && (!controlPos.contains(x, y)) ) // If the other control has got the point and not in control area, something FU
+			if((otherTouchJoySWAPFIX->pid == tpid) && (!controlPos.contains(x, y)))  // If the other control has got the point and not in control area, something FU
 			{
 				pid = -1; // Just stop
 			}
