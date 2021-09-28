@@ -31,10 +31,7 @@ void MultitouchMouse::resetOutput()
 
 void MultitouchMouse::updateSize()
 {
-
-	//glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
 	glRect.resize(0.1, 0.16);
-
 
 	glLines->vertices[0] = controlPos.left;
 	glLines->vertices[1] = -controlPos.top;

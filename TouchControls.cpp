@@ -300,6 +300,13 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 			if(cs->isEnabled())
 			{
+
+				// If there is something above the mouse which used the pointer data, don't send it to the mouse
+				if(cs->type == TC_TYPE_MOUSE && controlUsed)
+				{
+					continue;
+				}
+
 				if(cs->processPointer(action, pid, x, y))
 				{
 					controlUsed = true;
