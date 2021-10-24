@@ -880,14 +880,14 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 			// Choose correct sides to make smaller so it does not go out of the area
 			if(yScale <= 1)
 			{
-				glScalef(1, yScale, 1);
 				glTranslatef(0, -(1 - yScale) * rect.height / 2, 0);
+				glScalef(1, yScale, 1);
 			}
 			else
 			{
 				float xScale = nominal / actual;
+				glTranslatef((1 - xScale) * (rect.width / 2.0), 0, 0);
 				glScalef(xScale, 1, 1);
-				glTranslatef((1 - xScale) * rect.width / 2, 0, 0);
 			}
 		}
 
