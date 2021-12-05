@@ -195,6 +195,9 @@ void (CODEGEN_FUNCPTR *_ptrc_glBindVertexArray)(GLuint ren_array);
 void (CODEGEN_FUNCPTR *_ptrc_glUniformMatrix4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value);
 #define glUniformMatrix4fv _ptrc_glUniformMatrix4fv
 
+
+void ( *gl4es_flush)();
+
 static void *glesLib = NULL;
 
 static bool useGL4ES = false;
@@ -226,6 +229,7 @@ static void loadGles(int version)
 		LOGTOUCH("Loading GL4ES");
 
 		glesLib = dlopen("libGL4ES.so", flags);
+		gl4es_flush = (void (*)())loadGlesFunc("gl4es_flush");
 	}
 	else if(version == 1)
 	{
@@ -576,6 +580,7 @@ void gl_resetGL4ES()
 	// This is a hack to force GL4ES to draw the remaning draw call
 	glBindTexture(GL_TEXTURE_2D, 0);
 	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+	gl4es_flush();
 }
 
 
