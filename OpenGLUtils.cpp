@@ -580,7 +580,8 @@ void gl_resetGL4ES()
 	// This is a hack to force GL4ES to draw the remaning draw call
 	glBindTexture(GL_TEXTURE_2D, 0);
 	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-	gl4es_flush();
+	if(gl4es_flush)
+		gl4es_flush();
 }
 
 
