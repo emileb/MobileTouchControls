@@ -25,7 +25,8 @@ class UI_TextBox : public ControlSuper
 
 	std::string image;
 	std::string text;
-	float textSize;
+	float textHeight;
+	float textWidthScale = 0.625; //The glyph width is the height scaled by this
 	float charSpacing;
 	int fontSet; //0 or 1
 	uint32_t params;
@@ -51,6 +52,8 @@ public:
 	bool initGL();
 
 	void updateSize();
+
+	void scaleSize(float x, float y);
 
 	void saveXML(TiXmlDocument &doc);
 

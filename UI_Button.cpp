@@ -17,9 +17,9 @@ UI_Button::UI_Button(std::string tag, RectF pos, uint32_t uid, std::string font_
 
 void UI_Button::updateSize()
 {
+	UI_TextBox::updateSize();
 	glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
 }
-
 
 
 bool UI_Button::processPointer(int action, int pid, float x, float y)

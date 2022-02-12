@@ -45,6 +45,28 @@ void UI_Controls::deleteControls()
 	yOffset = 0;
 }
 
+void UI_Controls::scaleAllControls(float x, float y)
+{
+	int size = controls.size();
+
+	for(int n = 0; n < size; n++)
+	{
+		controls.at(n)->scaleSize(x, y);
+		controls.at(n)->updateSize();
+	}
+}
+
+void UI_Controls::translateAllControls(float x, float y)
+{
+	int size = controls.size();
+
+	for(int n = 0; n < size; n++)
+	{
+		controls.at(n)->positionTranslate(x, y);
+		controls.at(n)->updateSize();
+	}
+}
+
 bool UI_Controls::processPointer(int action, int pid, float x, float y)
 {
 	int size = controls.size();

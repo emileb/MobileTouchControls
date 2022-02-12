@@ -4,9 +4,9 @@
 
 using namespace touchcontrols;
 
-UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textSize, uint32_t color):
+UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, std::string text, float textHeight, uint32_t color):
 	ControlSuper(TC_TYPE_UI_TEXTBOX, tag, pos),
-	textSize(textSize),
+	textHeight(textHeight),
 	text(text),
 	fontSet(fontSet),
 	params(params),
@@ -23,16 +23,21 @@ UI_TextBox::UI_TextBox(std::string tag, RectF pos, std::string font_filename, in
 
 void UI_TextBox::updateSize()
 {
-	float height = textSize;
-	//float width = height * (-GLScaleHeight / GLScaleWidth);
-	float width = height * 0.625; //(-GLScaleHeight / GLScaleWidth);
+	float height = textHeight;
+
+	float width = height * textWidthScale;
 
 	glRect.resize(width, height);
 
 	charSpacing = glRect.height / 30.f;
 }
 
-
+void UI_TextBox::scaleSize(float x, float y)
+{
+	ControlSuper::scaleSize(x, y);
+	textWidthScale *= x;
+	textHeight *= y;
+}
 
 bool UI_TextBox::processPointer(int action, int pid, float x, float y)
 {

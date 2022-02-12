@@ -60,6 +60,8 @@ public:
 
 	void updateSize();
 
+	void scaleSize(float x, float y);
+
 	void saveXML(TiXmlDocument &doc);
 
 	void loadXML(TiXmlDocument &doc);

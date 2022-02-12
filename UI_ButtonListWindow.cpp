@@ -56,13 +56,13 @@ void showButtonListWindow(TouchControlsContainer *con)
 	editableButtons.clear();
 
 	float textSize = 0.07f;
-	uint32_t windownLeft = 2;
+	uint32_t windowLeft = 3;
 	uint32_t windowRight = 23;
 
 #define ROW_HEIGHT 2
 
 	// Background window
-	UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windownLeft, 1, windowRight, 14), "Hide/show buttons", "ui_background");
+	UI_Window *window =  new UI_Window("bg_window", touchcontrols::RectF(windowLeft, 1, windowRight, 15), "Hide/show buttons", "ui_background");
 	rootControls->addControl(window);
 	window->signal.connect(sigc::ptr_fun(&buttonPress));
 
@@ -100,12 +100,12 @@ void showButtonListWindow(TouchControlsContainer *con)
 						imagePng = ((ButtonGrid*)control)->getPrimaryImage().c_str();
 
 					//This is a button for the UI controls, just used for the image
-					Button *image = new Button("", touchcontrols::RectF(windownLeft, yPos, windownLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), imagePng, -1);
+					Button *image = new Button("", touchcontrols::RectF(windowLeft, yPos, windowLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), imagePng, -1);
 
 					rootControls->addControl(image);
 
 					// Add the text desciption
-					rootControls->addControl(new UI_TextBox("text",  touchcontrols::RectF(windownLeft + ROW_HEIGHT, yPos, windowRight - 7, yPos + ROW_HEIGHT),
+					rootControls->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft + ROW_HEIGHT, yPos, windowRight - 7, yPos + ROW_HEIGHT),
 					                                        "font_dual", 0, UI_TEXT_CENTRE, control->description, 0.08));
 
 					// Add the color picker
@@ -126,6 +126,19 @@ void showButtonListWindow(TouchControlsContainer *con)
 				}
 			}
 		}
+
+		// Scale all the controls for wide screen device
+		float nominal = (float)ScaleX / (float)ScaleY;
+		float actual = GLScaleWidth / -GLScaleHeight;
+		float yScale = nominal / actual;
+		rootControls->scaleAllControls(yScale, 1);
+
+		// Translate to put back in the middle
+		float originalWidth = (windowRight - windowLeft) / ScaleY;
+		float newWidth = originalWidth * yScale;
+		float translateX = (windowLeft / ScaleY) * yScale; // Find distance moved left
+		translateX += (originalWidth - newWidth) / 2; // Add on half the reduction in size
+		rootControls->translateAllControls(translateX, 0);
 	}
 
 	con->showUIWindow(rootControls);

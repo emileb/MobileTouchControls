@@ -71,10 +71,19 @@ void ControlSuper::setEditable(bool v)
 	editable = v;
 }
 
-
 bool ControlSuper::isEditable()
 {
 	return editable;
+}
+
+void ControlSuper::scaleSize(float x, float y)
+{
+	controlPos.scale(x, y);
+}
+
+void ControlSuper::positionTranslate(float dx, float dy)
+{
+	controlPos.offset(dx, dy);
 }
 
 void ControlSuper::saveXML(TiXmlElement &root)

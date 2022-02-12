@@ -33,6 +33,9 @@ public:
 
 	sigc::signal<void, uint32_t, uint32_t> signal;
 
+	void scaleSize(float x, float y); // Scale the size of the control
+	void positionTranslate(float x, float y); // Move the control x and y
+
 	float getScrollOffsetY();
 
 	bool processPointer(int action, int pid, float x, float y);

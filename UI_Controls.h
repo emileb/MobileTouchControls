@@ -35,12 +35,15 @@ public:
 	void setEnabled(bool v);
 	bool getEnabled();
 
-
 	void initGL();
 	void setAlpha(float a);
 	void fade(fadedir_t dir, int steps);
 
 	void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
+
+	void scaleAllControls(float x, float y);
+	void translateAllControls(float x, float y);
+
 private:
 	std::string tag;
 	std::vector<ControlSuper *> controls;

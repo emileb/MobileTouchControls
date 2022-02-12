@@ -52,7 +52,11 @@ void UI_DropDown::updateSize()
 	glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
 }
 
-
+void UI_DropDown::scaleSize(float x, float y)
+{
+	ControlSuper::scaleSize(x, y);
+	textDraw.scaleWidth(x);
+}
 
 bool UI_DropDown::processPointer(int action, int pid, float x, float y)
 {

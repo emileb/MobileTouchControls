@@ -53,7 +53,6 @@ protected:
 
 	bool allowPassThrough; // allow controls under to get pointer data. Default true.
 
-
 public:
 
 	int type;
@@ -80,30 +79,20 @@ public:
 
 	bool isAllowPassThrough();
 
-
-
-	virtual void resetOutput() = 0; //This outputs a reset
-
-	virtual bool processPointer(int action, int pid, float x, float y) = 0;
-
-	virtual bool gamepadInput(bool down, GamePadKey key);
-
-	virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
-
 	bool UI_drawGL(bool UIActive);
 
+	virtual void resetOutput() = 0; //This outputs a reset
+	virtual bool processPointer(int action, int pid, float x, float y) = 0;
+	virtual bool gamepadInput(bool down, GamePadKey key);
+	virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
 	virtual bool initGL() = 0;
-
 	virtual void updateSize() = 0;
-
+	virtual void scaleSize(float x, float y); // Scale the size of the control
+	virtual void positionTranslate(float x, float y); // Move the control x and y
 	virtual void saveXML(TiXmlDocument &doc) = 0;
-
 	virtual void loadXML(TiXmlDocument &doc) = 0;
-
 	void saveXML(TiXmlElement &root);
-
 	void loadXML(TiXmlElement &root);
-
 };
 
 }

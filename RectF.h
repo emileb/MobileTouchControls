@@ -17,6 +17,7 @@ public:
 	bool contains(float x, float y);
 	void offset(float dx, float dy);
 	void offsetTo(float newLeft, float newTop);
+	void scale(float width, float height);
 
 	float width();
 	float height();

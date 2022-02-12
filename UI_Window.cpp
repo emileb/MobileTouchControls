@@ -22,9 +22,23 @@ UI_Window::UI_Window(std::string tag, RectF pos, std::string title, std::string 
 void UI_Window::updateSize()
 {
 	glRect.resize(controlPos.right - controlPos.left + PADDING, controlPos.bottom - controlPos.top + PADDING);
+	backButton->updateSize();
+	titleText->updateSize();
 }
 
+void UI_Window::scaleSize(float x, float y)
+{
+	ControlSuper::scaleSize(x, y);
+	backButton->scaleSize(x, y);
+	titleText->scaleSize(x, y);
+}
 
+void UI_Window::positionTranslate(float x, float y)
+{
+	ControlSuper::positionTranslate(x, y);
+	backButton->positionTranslate(x, y);
+	titleText->positionTranslate(x, y);
+}
 
 bool UI_Window::processPointer(int action, int pid, float x, float y)
 {

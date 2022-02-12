@@ -70,8 +70,6 @@ public:
 
 static std::vector<SwitchOption> switchOptions;
 
-
-
 bool touchSettings_save(std::string filename)
 {
 	TiXmlDocument doc;
@@ -122,10 +120,8 @@ bool touchSettings_load(std::string filename)
 	}
 	else
 	{
-
 		TiXmlHandle hDoc(doc);
 		TiXmlElement* root = hDoc.FirstChild("settings").Element();
-
 
 		root->QueryFloatAttribute("alpha",  &settings.alpha);
 		root->QueryFloatAttribute("look_sens",  &settings.lookSensitivity);
@@ -290,50 +286,6 @@ static void switchChange(uint32_t uid, bool value)
 
 	// Update the settings via the pointer
 	*switchOption.settingPtr = value;
-
-	/*
-		if(uid == SWITCH_INVERT_LOOK)
-		{
-			settings.invertLook = value;
-		}
-		else if(uid == SWITCH_JOYSTICKS)
-		{
-			settings.showJoysticks = value;
-			signal_settingChange.emit(settings);
-		}
-		else if(uid == SWITCH_JOYSTICK_MODE)
-		{
-			settings.joystickLookMode = value;
-		}
-		else if(uid == SWITCH_HIDE_INV)
-		{
-			settings.autoHideInventory = value;
-		}
-		else if(uid == SWITCH_HIDE_NBRS)
-		{
-			settings.autoHideNumbers = value;
-		}
-		else if(uid == SWITCH_WEAP_WHEEL)
-		{
-			settings.weaponWheelEnabled = value;
-		}
-		else if(uid == SWITCH_FIXED_MOVE)
-		{
-			settings.fixedMoveStick = value;
-		}
-		else if(uid == SWITCH_PRECISION_SHOOT)
-		{
-			settings.precisionShoot = value;
-		}
-		else if(uid == SWITCH_SHOW_CUSTOM)
-		{
-			settings.alwaysShowCust = value;
-		}
-		else if(uid == SWITCH_DIGITAL_MOVE)
-		{
-			settings.digitalMove = value;
-		}
-		*/
 }
 
 static void dropDownChange(uint32_t uid, uint32_t value)
@@ -395,7 +347,6 @@ static float divider(UI_Controls * root, float y)
 
 static float addSwitch(UI_Controls * root, float y, std::string title, std::string description, std::string xmlTag, bool defaultValue, bool *settingsPtr, bool showDiv = true)
 {
-
 	const float textSizeTitle = 0.07;
 	const float textSizeDesc = 0.05;
 
@@ -408,7 +359,7 @@ static float addSwitch(UI_Controls * root, float y, std::string title, std::stri
 	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y, 21, y + titleTextHeight), "font_dual", 0, UI_TEXT_LEFT, title, textSizeTitle, COLOUR_WHITE));
 	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y + titleTextHeight, 21, y + titleTextHeight + descTextHeight), "font_dual", 0, UI_TEXT_LEFT, description, textSizeDesc, COLOUR_GREY2));
 
-	UI_Switch *swtch =      new UI_Switch(xmlTag, touchcontrols::RectF(21, y + 0.4, 24, y + 2), switchOptions.size(), "ui_switch4_on", "ui_switch4_off");
+	UI_Switch *swtch =      new UI_Switch(xmlTag, touchcontrols::RectF(21, y + 0.4, windowRight, y + 2), switchOptions.size(), "ui_switch4_on", "ui_switch4_off");
 	swtch->signal.connect(sigc::ptr_fun(&switchChange));
 	root->addControl(swtch);
 
@@ -436,9 +387,6 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		float textSize = 0.07f;
 
-
-		//rootControls->addControl ( new UI_TextBox ( "text",         touchcontrols::RectF ( windowLeft, 2, 22, 4 ), "font_dual", 1, UI_TEXT_CENTRE, "Touch settings", 0.09 ) );
-		// rootControls->addControl ( new Button ( "close", touchcontrols::RectF ( windowLeft, 2, windowLeft + 2, 4 ), "ui_back_arrow", BUTTON_CLOSE ) );
 		float y = 0.2;
 
 		// Draws backwards so need background last
@@ -453,30 +401,34 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
+		y += 1.2;
+
+		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, windowRight, y + 3), "font_dual", 0, UI_TEXT_CENTRE, "Stick sensitivity", textSize * 1.5, COLOUR_GREY1));
+
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down sens:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down:", textSize));
 		slider =              new UI_Slider("slider_look",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_LOOK, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right sens:", textSize));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right:", textSize));
 		slider =              new UI_Slider("slider_turn",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_TURN, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back sens:", textSize, COLOUR_GREEN3));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_fwd",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_FWD, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
-		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe sens:", textSize, COLOUR_GREEN3));
+		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe:", textSize, COLOUR_GREEN3));
 		slider =              new UI_Slider("slider_strafe",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_STRAFE, "ui_slider_bg1", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
@@ -488,10 +440,11 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
-		y += 1.5;
+		y += 2.5;
 
+		y += divider(rootControls, y);
 
-		//y += 2;
+		y += 0.5;
 
 		UI_Switch* swtch;
 
@@ -505,7 +458,6 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		UI_ColorPicker *colorPicker = new UI_ColorPicker("color_picker",  touchcontrols::RectF(windowRight - 3, y + 0.2, windowRight, y + 1.8), DEFAULT_COLOR, 0);
 		rootControls->addControl(colorPicker);
 		colorPicker->signal.connect(sigc::ptr_fun(&colorChange));
-
 
 		y += 2;
 
@@ -549,7 +501,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		rootControls->addControl(dblTapLeft);
 		dblTapLeft->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(18, y, 24, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Right : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Right : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(dblTapRight);
 		dblTapRight->signal.connect(sigc::ptr_fun(&dropDownChange));
 
@@ -562,7 +514,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		rootControls->addControl(volumeUp);
 		volumeUp->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(18, y, 24, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Down : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Down : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
 		rootControls->addControl(volumeDown);
 		volumeDown->signal.connect(sigc::ptr_fun(&dropDownChange));
 
@@ -578,6 +530,19 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		buttonResetSettings->signal.connect(sigc::ptr_fun(&buttonPress));
 		rootControls->addControl(buttonResetSettings);
 
+		// Scale all the controls for wide screen device
+		float nominal = (float)ScaleX / (float)ScaleY;
+		float actual = GLScaleWidth / -GLScaleHeight;
+		float yScale = nominal / actual;
+		rootControls->scaleAllControls(yScale, 1);
+
+		// Translate to put back in the middle
+		float originalWidth = (windowRight - windowLeft) / ScaleY;
+		float newWidth = originalWidth * yScale;
+		float translateX = (windowLeft / ScaleY) * yScale; // Find distance moved left
+		translateX += (originalWidth - newWidth) / 2; // Add on half the reduction in size
+		rootControls->translateAllControls(translateX, 0);
+
 		// Load the settings file
 		touchSettings_load(settingsFilename);
 
@@ -588,7 +553,5 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 	return rootControls;
 }
-
-
 
 }

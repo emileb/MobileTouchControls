@@ -22,10 +22,13 @@ class TextDraw
 	float getCharWidth(unsigned char c, int fontSet, float height);
 	float getTotalWidth(const char *text, int fontSet, float height);
 
+	float glyphScaleWidth = 1.0;
 public:
 	TextDraw();
 
 	void initGL(std::string font_filename);
+
+	void scaleWidth(float scale);
 
 	float drawChar(char c, int fontSet, float x, float y, float height, uint32_t params = 0);
 

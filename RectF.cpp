@@ -37,6 +37,14 @@ void RectF::offsetTo(float newLeft, float newTop)
 	top = newTop;
 }
 
+void RectF::scale(float width, float height)
+{
+	left *= width;
+	right *= width;
+	top *= height;
+	bottom *= height;
+}
+
 float RectF::width()
 {
 	return right - left;
