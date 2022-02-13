@@ -34,7 +34,6 @@ TouchControls::TouchControls(std::string t, bool en, bool editable, int edit_gro
 
 	int lines = ScaleX + 1 + ScaleY + 1;
 
-
 	settingsButton  = 0;
 
 	if(editable)
@@ -68,6 +67,20 @@ TouchControls::TouchControls(std::string t, bool en, bool editable, int edit_gro
 			settingsButton = new touchcontrols::ButtonExt("settings_control", touchcontrols::RectF(12, 2, 14, 4), "settings_bars", 0);
 			settingsButton->signal_button.connect(sigc::mem_fun(this, &TouchControls::settingsButtonPress));
 		}
+
+		// Set the size of the resize handles, then we just use offset to move them
+		resizeHandleHeight = 0.1; // Set the size here
+		resizeHandleWidth = resizeHandleHeight / ((float)GLScaleWidth / (float) - GLScaleHeight); // Make it square
+
+		for(int n = 0; n < RH_SIZE; n++)
+		{
+			resizeHandleRects[n].left = 0;
+			resizeHandleRects[n].top = 0;
+			resizeHandleRects[n].right = resizeHandleWidth;
+			resizeHandleRects[n].bottom = resizeHandleHeight;
+		}
+
+		resizeHandleSelected = RH_NONE;
 	}
 }
 
@@ -300,7 +313,6 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 
 			if(cs->isEnabled())
 			{
-
 				// If there is something above the mouse which used the pointer data, don't send it to the mouse
 				if(cs->type == TC_TYPE_MOUSE && controlUsed)
 				{
@@ -343,6 +355,23 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		{
 			if(pid < 2)
 			{
+				// Check if control is selected and pressed a resize handle
+				resizeHandleSelected = RH_NONE;
+
+				if(selectedCtrl)
+				{
+					for(int n = 0; n < RH_SIZE; n++)
+					{
+						// Check if in a resize handle
+						if(resizeHandleRects[n].contains(x, y))
+						{
+							resizeHandleSelected = (ResizeHandle)n;
+							LOGTOUCH("resizeHandleSelected = %d", resizeHandleSelected);
+							break;
+						}
+					}
+				}
+
 				if((!finger1.enabled) && (!finger2.enabled) && (pid == 0))
 				{
 					tapTime = getMS();
@@ -366,7 +395,7 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 			if(pid < 2)
 			{
 				// Select a new control if did a quick tap
-				if((getMS() - tapTime < TAP_TIME) && (totalFingerMove <  0.03) && (pid == 0))
+				if((resizeHandleSelected == RH_NONE) && (getMS() - tapTime < TAP_TIME) && (totalFingerMove <  0.03) && (pid == 0))
 				{
 					selectedCtrl = 0;
 
@@ -384,7 +413,10 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 				}
 
 				if(selectedCtrl != 0)
+				{
 					snapControl(selectedCtrl);
+					moveResizeHandles(selectedCtrl);
+				}
 
 				if(pid == 0)
 					finger1.enabled = false;
@@ -394,61 +426,59 @@ bool TouchControls::processPointer(int action, int pid, float x, float y)
 		}
 		else if(action == P_MOVE)
 		{
-			if((finger1.enabled) && (!finger2.enabled))  //drag
+			if(selectedCtrl != 0)
 			{
-				totalFingerMove += fabs(x - finger1.x) + fabs(y - finger1.y);
-
-				if(selectedCtrl != 0)
+				if((resizeHandleSelected != RH_NONE) && (finger1.enabled) && (!finger2.enabled))
 				{
-					selectedCtrl->controlPos.offset(x - finger1.x, y - finger1.y);
-					windowControl(selectedCtrl);
-
-					finger1.x = x;
-					finger1.y = y;
+					if(resizeHandleSelected == RH_TOP_LEFT)
+					{
+						selectedCtrl->controlPos.left += x - finger1.x;
+						selectedCtrl->controlPos.top += y - finger1.y;
+					}
+					else if(resizeHandleSelected == RH_TOP_RIGHT)
+					{
+						selectedCtrl->controlPos.right += x - finger1.x;
+						selectedCtrl->controlPos.top += y - finger1.y;
+					}
+					else if(resizeHandleSelected == RH_BOT_RIGHT)
+					{
+						selectedCtrl->controlPos.right += x - finger1.x;
+						selectedCtrl->controlPos.bottom += y - finger1.y;
+					}
+					else if(resizeHandleSelected == RH_BOT_LEFT)
+					{
+						selectedCtrl->controlPos.left += x - finger1.x;
+						selectedCtrl->controlPos.bottom += y - finger1.y;
+					}
 				}
-			}
-			else if((finger1.enabled) && (finger2.enabled))  //zoom
-			{
-				if(selectedCtrl != 0)
+				else if((finger1.enabled) && (!finger2.enabled))   //drag
+				{
+					totalFingerMove += fabs(x - finger1.x) + fabs(y - finger1.y);
+					selectedCtrl->controlPos.offset(x - finger1.x, y - finger1.y);
+				}
+				else if((finger1.enabled) && (finger2.enabled))   //zoom
 				{
 					float newDistX = fabs(finger1.x - finger2.x);
 
-					if(fabs(newDistX - oldDist.x) > ((float)1 / (float)ScaleX / 2))
+					if(fabs(newDistX - oldDist.x) > ((float) 1 / (float) ScaleX / 2))
 					{
 						selectedCtrl->controlPos.right += (newDistX - oldDist.x);
 						oldDist.x = newDistX;
-
-						if(selectedCtrl->controlPos.width() < (1 / (float)ScaleX / 2))
-						{
-							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + (1 / (float)ScaleX / 2);
-						}
-						else if(selectedCtrl->controlPos.width() > 0.5)
-						{
-							selectedCtrl->controlPos.right = selectedCtrl->controlPos.left + 0.5;
-						}
 					}
 
 					float newDistY = fabs(finger1.y - finger2.y);
 
-					if(fabs(newDistY - oldDist.y) > ((float)1 / (float)ScaleY / 2))
+					if(fabs(newDistY - oldDist.y) > ((float) 1 / (float) ScaleY / 2))
 					{
 						selectedCtrl->controlPos.bottom += (newDistY - oldDist.y);
 						oldDist.y = newDistY;
-
-						if(selectedCtrl->controlPos.height() < (1 / (float)ScaleY / 2))
-						{
-							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + (1 / (float)ScaleY / 2);
-						}
-						else if(selectedCtrl->controlPos.width() > 0.5)
-						{
-							selectedCtrl->controlPos.bottom = selectedCtrl->controlPos.top + 0.5;
-						}
-
 					}
 
 					snapControl(selectedCtrl);
-					windowControl(selectedCtrl);
 				}
+
+				windowControl(selectedCtrl);
+				moveResizeHandles(selectedCtrl);
 
 				if(pid == 0)
 				{
@@ -483,17 +513,33 @@ void TouchControls::windowControl(ControlSuper *ctrl)
 	if(ctrl->controlPos.left < 0)
 		ctrl->controlPos.offsetTo(0, ctrl->controlPos.top);
 	else if(ctrl->controlPos.right > 1)
-		ctrl->controlPos.offsetTo(1 - (ctrl->controlPos.right - ctrl->controlPos.left),
-		                          ctrl->controlPos.top);
+		ctrl->controlPos.offsetTo(1 - (ctrl->controlPos.right - ctrl->controlPos.left), ctrl->controlPos.top);
 
 	if(ctrl->controlPos.top < 0)
 		ctrl->controlPos.offsetTo(ctrl->controlPos.left, 0);
 	else if(ctrl->controlPos.bottom > 1)
-		ctrl->controlPos.offsetTo(ctrl->controlPos.left,
-		                          1 - (ctrl->controlPos.bottom - ctrl->controlPos.top));
+		ctrl->controlPos.offsetTo(ctrl->controlPos.left, 1 - (ctrl->controlPos.bottom - ctrl->controlPos.top));
+
+	// Check isn't too small or too large
+	if(ctrl->controlPos.width() < (1 / (float) ScaleX / 2))
+	{
+		ctrl->controlPos.right = ctrl->controlPos.left + (1 / (float) ScaleX / 2);
+	}
+	else if(ctrl->controlPos.width() > MAXIMUM_CONTROL_SIZE)
+	{
+		ctrl->controlPos.right = ctrl->controlPos.left + MAXIMUM_CONTROL_SIZE;
+	}
+
+	if(ctrl->controlPos.height() < (1 / (float) ScaleY / 2))
+	{
+		ctrl->controlPos.bottom = ctrl->controlPos.top + (1 / (float) ScaleY / 2);
+	}
+	else if(ctrl->controlPos.height() > MAXIMUM_CONTROL_SIZE)
+	{
+		ctrl->controlPos.bottom = ctrl->controlPos.top + MAXIMUM_CONTROL_SIZE;
+	}
 
 	ctrl->updateSize();
-
 }
 
 void  TouchControls::snapControl(ControlSuper *ctrl)
@@ -511,6 +557,13 @@ void  TouchControls::snapControl(ControlSuper *ctrl)
 	ctrl->updateSize();
 }
 
+void TouchControls::moveResizeHandles(ControlSuper *ctrl)
+{
+	resizeHandleRects[RH_TOP_LEFT].offsetTo(ctrl->controlPos.left - resizeHandleWidth, ctrl->controlPos.top - resizeHandleHeight);
+	resizeHandleRects[RH_TOP_RIGHT].offsetTo(ctrl->controlPos.right, ctrl->controlPos.top - resizeHandleHeight);
+	resizeHandleRects[RH_BOT_RIGHT].offsetTo(ctrl->controlPos.right, ctrl->controlPos.bottom);
+	resizeHandleRects[RH_BOT_LEFT].offsetTo(ctrl->controlPos.left - resizeHandleWidth, ctrl->controlPos.bottom);
+}
 
 int TouchControls::draw()
 {
@@ -599,9 +652,7 @@ int TouchControls::draw()
 
 int  TouchControls::drawEditor()
 {
-
 	gl_clearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
 
 	gl_loadIdentity();
 	gl_scalef(GLScaleWidth, GLScaleHeight, 1);
@@ -616,7 +667,6 @@ int  TouchControls::drawEditor()
 
 		if(c->isEnabled())  //&&  (c->type != TC_TYPE_MOUSE))
 		{
-
 			GLRect rect;
 			rect.resize(c->controlPos.right - c->controlPos.left, c->controlPos.bottom - c->controlPos.top);
 			gl_loadIdentity();
@@ -637,10 +687,6 @@ int  TouchControls::drawEditor()
 
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-
-			//  if (c->isHidden()) //Hidden controls over color
-			//     gl_drawRect((GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,(GLfloat)0.5,c->controlPos.left,c->controlPos.top,rect);
-
 		}
 	}
 
@@ -649,14 +695,23 @@ int  TouchControls::drawEditor()
 	if(sel != 0)
 	{
 		GLRect rect;
-		rect.resize(sel->controlPos.right - sel->controlPos.left, sel->controlPos.bottom - sel->controlPos.top);
+
+		// Make selected control a different color
+		rect.resize(sel->controlPos.width(), sel->controlPos.height());
 		gl_loadIdentity();
 		gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 		gl_drawRect((GLfloat)0.5, (GLfloat)0.3, (GLfloat)0.8, (GLfloat)0.5, sel->controlPos.left, sel->controlPos.top, rect);
+
+		// Draw resize handles
+		rect.resize(resizeHandleRects[RH_TOP_LEFT].width(), resizeHandleRects[RH_TOP_LEFT].height());
+		gl_drawRect(glTexResizeHandle, resizeHandleRects[RH_TOP_LEFT].left, resizeHandleRects[RH_TOP_LEFT].top, rect, true);
+		rect.rotate90(false);
+		gl_drawRect(glTexResizeHandle, resizeHandleRects[RH_TOP_RIGHT].left, resizeHandleRects[RH_TOP_RIGHT].top, rect, true);
+		rect.rotate90(false);
+		gl_drawRect(glTexResizeHandle, resizeHandleRects[RH_BOT_RIGHT].left, resizeHandleRects[RH_BOT_RIGHT].top, rect, true);
+		rect.rotate90(false);
+		gl_drawRect(glTexResizeHandle, resizeHandleRects[RH_BOT_LEFT].left, resizeHandleRects[RH_BOT_LEFT].top, rect, true);
 	}
-
-
-
 
 	if(editing)
 	{
@@ -687,6 +742,9 @@ void  TouchControls::initGL()
 
 	if(settingsButton)
 		settingsButton->initGL();
+
+	int x, y;
+	glTexResizeHandle = loadTextureFromPNG("resize_handle", x, y);
 }
 
 void TouchControls::setXMLFile(std::string file)

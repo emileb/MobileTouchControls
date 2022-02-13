@@ -60,19 +60,20 @@ public:
 		NO_CONTROL,
 		NEVER
 	};
+
 private:
+
+	const float MAXIMUM_CONTROL_SIZE = 0.8; // Maximum size an editable element can be (1 is will size of screen)
 
 	std::vector<ControlSuper *> controls;
 
 	void buttonDown(int code)
 	{
-		//LOGTOUCH("buttonDown %d",code);
 		signal_buttonDown.emit(code);
 	}
 
 	void buttonUp(int code)
 	{
-		//LOGTOUCH("buttonUp %d",code);
 		signal_buttonUp.emit(code);
 	}
 
@@ -117,6 +118,26 @@ private:
 	bool fading;
 
 	bool fixAspect; // Make circles circle, default on.
+
+	// Resize handle stuff
+	float resizeHandleWidth = 0.05;
+	float resizeHandleHeight = 0.05;
+
+	enum ResizeHandle
+	{
+		RH_TOP_LEFT,
+		RH_TOP_RIGHT,
+		RH_BOT_RIGHT,
+		RH_BOT_LEFT,
+		RH_SIZE,
+		RH_NONE
+	};
+
+	GLuint glTexResizeHandle;
+	ResizeHandle resizeHandleSelected = RH_NONE;
+	RectF resizeHandleRects[RH_SIZE];
+	void moveResizeHandles(ControlSuper *ctrl);
+
 public:
 
 	bool enabled;
@@ -143,7 +164,6 @@ public:
 	void animateOut(int steps);
 
 	void fade(fadedir_t dir, int steps);
-
 
 	void edit();
 	void stopEdit();

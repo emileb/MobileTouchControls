@@ -4,8 +4,6 @@
 
 using namespace touchcontrols;
 
-
-
 GLRect::GLRect()
 {
 	for(int n = 0; n < 12; n++)

@@ -43,7 +43,7 @@ void gl_setupForSDLSW();
 float GLESscaleX(float X);
 float GLESscaleY(float Y);
 
-void gl_drawRect(GLuint texture, float x, float y, GLRect &rect);
+void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAspectOff = false);
 void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
 void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
 void gl_setFixAspect(bool v);

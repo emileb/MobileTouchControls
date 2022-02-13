@@ -196,7 +196,7 @@ void (CODEGEN_FUNCPTR *_ptrc_glUniformMatrix4fv)(GLint location, GLsizei count, 
 #define glUniformMatrix4fv _ptrc_glUniformMatrix4fv
 
 
-void ( *gl4es_flush)();
+void (*gl4es_flush)();
 
 static void *glesLib = NULL;
 
@@ -579,6 +579,7 @@ void gl_resetGL4ES()
 	glUseProgram(0);
 	// This is a hack to force GL4ES to draw the remaning draw call
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
 	if(gl4es_flush)
 		gl4es_flush();
@@ -784,7 +785,7 @@ static void gl_useProgram(int prog)
 	}
 }
 
-void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
+void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAspectOff)
 {
 	if(texture == -1)
 	{
@@ -828,7 +829,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 		// Such a hack.The model matrix is just used to scale for gles2
 		// Need to fix all of this so GLES1 and GLES2 coordinates behave the same and model matrix is used properly
-		if(m_fixAspect)
+		if(m_fixAspect && !forceFixAspectOff)
 		{
 			float nominal = (float)ScaleX / (float)ScaleY;
 			float actual = GLScaleWidth / -GLScaleHeight;
@@ -857,7 +858,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-		if(m_fixAspect)
+		if(m_fixAspect && !forceFixAspectOff)
 		{
 			mModelMatrixGLSL[5] = 1;
 			mModelMatrixGLSL[0] = 1;
@@ -875,7 +876,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect)
 
 		glTranslatef(x, -y, 0);
 
-		if(m_fixAspect)
+		if(m_fixAspect && !forceFixAspectOff)
 		{
 			float nominal = (float)ScaleX / (float)ScaleY;
 			float actual = GLScaleWidth / -GLScaleHeight;
@@ -989,9 +990,7 @@ void gl_drawLines(float x, float y, GLLines &lines)
 }
 
 
-
 #define GET_ALPHA_PIXEL( X, Y ) imageData[ (height - 1 - Y) * (width * 4) + (X * 4) + 0 ]
-
 
 void calcFontSpacing(const unsigned char *imageData, int width, int height, std::vector< FontInfo > *fontInfoVec)
 {
