@@ -57,8 +57,19 @@ private:
 	bool fading;
 
 	float yOffset; // Used to scroll up/down
+	void offsetYOffset(float offset);
+
 	PointF finger1;
 	bool scrolling;
+
+	// Used to calculate velocity for fling
+	uint64_t lastMoveTime;
+	float lastYpos;
+	float yMoveSpeed;
+
+	// Used to decelerate in the draw from a fling
+	uint64_t lastDrawTime;
+	float flingMomentum = 0;
 };
 
 }

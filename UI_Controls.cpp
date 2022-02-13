@@ -67,14 +67,46 @@ void UI_Controls::translateAllControls(float x, float y)
 	}
 }
 
-bool UI_Controls::processPointer(int action, int pid, float x, float y)
+void UI_Controls::offsetYOffset(float offset)
 {
-	int size = controls.size();
-
 	float totalHeight = 0; //Find to limit scroll
 	float windowHeight = 0;
 
+	int size = controls.size();
+
+	for(int n = 0; n < size; n++)
+	{
+		ControlSuper *cs = controls.at(n);
+
+		if(cs->type == TC_TYPE_UI_WINDOW)
+		{
+			windowHeight = cs->controlPos.bottom - cs->controlPos.top;
+		}
+
+		if(cs->controlPos.bottom > totalHeight)
+		{
+			totalHeight = cs->controlPos.bottom;
+		}
+	}
+
+	yOffset += offset;
+
+	if(yOffset > (totalHeight - windowHeight))
+	{
+		yOffset = (totalHeight - windowHeight);
+	}
+
+	if(yOffset < 0)
+		yOffset = 0;
+}
+
+
+bool UI_Controls::processPointer(int action, int pid, float x, float y)
+{
+
 	bool eventUsed = false;
+
+	int size = controls.size();
 
 	for(int n = 0; n < size; n++)
 	{
@@ -96,21 +128,13 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
 				eventUsed = true;
 			}
 		}
-
-		if(cs->type == TC_TYPE_UI_WINDOW)
-		{
-			windowHeight = cs->controlPos.bottom - cs->controlPos.top;
-		}
-
-		if(cs->controlPos.bottom > totalHeight)
-		{
-			totalHeight = cs->controlPos.bottom;
-		}
 	}
 
 	if(action == P_UP)
 	{
 		scrolling = false;
+		flingMomentum = yMoveSpeed;
+		LOGTOUCH("flingMomentum = %f", flingMomentum);
 	}
 
 	//if( !eventUsed ) // Finger not over a usable control
@@ -121,27 +145,36 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
 			finger1.x = x;
 			finger1.y = y;
 			scrolling = true;
+			flingMomentum = 0.0;
+
+			// Used to calc speed
+			yMoveSpeed = 0;
+			lastMoveTime = getMS();
+			lastYpos = y;
 		}
 		else if(action == P_MOVE) //Scroll controls
 		{
 			if(scrolling)
 			{
-				yOffset += finger1.y - y;
-
-				if(yOffset > (totalHeight - windowHeight))
-				{
-					yOffset = (totalHeight - windowHeight);
-				}
-
-				if(yOffset < 0)
-					yOffset = 0;
-
+				offsetYOffset(finger1.y - y);
 				finger1.x = x;
 				finger1.y = y;
+
+				uint64_t timeNow = getMS();
+				float duration = (timeNow - lastMoveTime) / 1000.0;
+
+				// There might be very fast pointer updates, this slows down our calculations to at least 25ms
+				if(duration > 0.025)
+				{
+					// Speed = distance/ time
+					yMoveSpeed = (lastYpos - y) / duration;
+					//LOGTOUCH("yMoveSpeed = %f", yMoveSpeed);
+					lastMoveTime = getMS();
+					lastYpos = y;
+				}
 			}
 		}
 	}
-
 
 	return true;
 }
@@ -169,13 +202,34 @@ int UI_Controls::draw()
 			}
 		}
 
-		//LOGTOUCH("fadePos = %f",fadePos);
-
 		gl_color4f(1, 1, 1, fadePos);
-
 	}
 	else
 		gl_color4f(1, 1, 1, 1);
+
+
+	uint64_t timeNow = getMS();
+	float frameDuration = (float)(timeNow - lastDrawTime) / 1000.0;
+
+	float slowRate = frameDuration * 4;
+
+	if(flingMomentum > 0)
+	{
+		if(flingMomentum > slowRate)
+			flingMomentum -= slowRate;
+		else
+			flingMomentum = 0.0;
+	}
+	else if(flingMomentum < 0)
+	{
+		if(flingMomentum < -slowRate)
+			flingMomentum += slowRate;
+		else
+			flingMomentum = 0.0;
+	}
+
+
+	offsetYOffset(flingMomentum * frameDuration);
 
 	int size = controls.size();
 	ControlSuper *controlActive_temp = NULL; // Use temp so reduce threading issues
@@ -218,13 +272,14 @@ int UI_Controls::draw()
 		rect.resize(1, 1);
 		gl_drawRect(0.0, 0.0, 0.0, 0.7, 0.0, 0.0, rect);
 
-
 		// Draw it (active = true)
 		controlActive->UI_drawGL(true);   // drawGL really gets called
 	}
 
 	// The UI window enables this
 	gl_disable(GL_SCISSOR_TEST);
+
+	lastDrawTime = getMS();
 
 	return 0;
 }
