@@ -534,9 +534,9 @@ void TouchControls::windowControl(ControlSuper *ctrl)
 	{
 		ctrl->controlPos.bottom = ctrl->controlPos.top + (1 / (float) ScaleY / 2);
 	}
-	else if(ctrl->controlPos.height() > MAXIMUM_CONTROL_SIZE)
+	else if(ctrl->controlPos.height() > 1.0)
 	{
-		ctrl->controlPos.bottom = ctrl->controlPos.top + MAXIMUM_CONTROL_SIZE;
+		ctrl->controlPos.bottom = ctrl->controlPos.top + 1.0;
 	}
 
 	ctrl->updateSize();
