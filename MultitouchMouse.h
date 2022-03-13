@@ -3,6 +3,7 @@
 #include "GLRect.h"
 #include "PointF.h"
 #include "OpenGLUtils.h"
+#include "TapDetect.h"
 
 #ifndef _MultitouchMouse_H_
 #define _MultitouchMouse_H_
@@ -36,22 +37,16 @@ class MultitouchMouse : public ControlSuper
 	GLRect glRect;
 	GLLines *glLines;
 
-
 	PointF last, last2;
 
 	PointF anchor;
 
+	TapDetect tapDetect;
 
-	//Double tap stuff
-	int tapState; //0 = waiting for first press, 1 = waiting for first lift,
-	int tapCounter;
-
-	//enum mode{
 public:
 	sigc::signal<void, int, float, float, float, float> signal_action;
 
 	sigc::signal<void, int> signal_double_tap;
-
 
 	MultitouchMouse(std::string tag, RectF pos, std::string image_filename);
 

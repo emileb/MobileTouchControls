@@ -2,8 +2,6 @@
 #include "TouchControlsConfig.h"
 #include <math.h>
 
-#define TAP_SPEED 10
-
 using namespace touchcontrols;
 
 MultitouchMouse::MultitouchMouse(std::string tag, RectF pos, std::string image_filename):
@@ -65,7 +63,8 @@ bool MultitouchMouse::processPointer(int action, int pid, float x, float y)
 				anchor.x = x;
 				anchor.y = y;
 
-				tapCounter = 0;
+				tapDetect.reset();
+				tapDetect.processPointer(action, pid, x, y);
 
 				signal_action.emit(MULTITOUCHMOUSE_DOWN, last.x, last.y, 0, 0);
 				return true;
@@ -86,12 +85,11 @@ bool MultitouchMouse::processPointer(int action, int pid, float x, float y)
 	}
 	else if(action == P_UP)
 	{
+		tapDetect.processPointer(action, pid, x, y);
+
 		if(id == pid)
 		{
-
-			//Simple check to see if finger moved very much
-			if((tapCounter < TAP_SPEED) &&
-			        (distancePoints(anchor, last) < 0.05))
+			if(tapDetect.didTap())
 			{
 				signal_action.emit(MULTITOUCHMOUSE_TAP, last.x, last.y, 0, 0);
 			}
@@ -112,9 +110,10 @@ bool MultitouchMouse::processPointer(int action, int pid, float x, float y)
 	}
 	else if(action == P_MOVE)
 	{
+		tapDetect.processPointer(action, pid, x, y);
+
 		if((pid == id)  && (id2 == -1))  //One finger moving
 		{
-
 			float dx = last.x - x;
 			float dy = last.y - y;
 
@@ -144,7 +143,6 @@ bool MultitouchMouse::processPointer(int action, int pid, float x, float y)
 
 			float zoom = new_dist - old_dist;
 			signal_action.emit(MULTITOUCHMOUSE_ZOOM, zoom, 0, 0, 0);
-
 		}
 
 		return false;
@@ -169,10 +167,7 @@ bool MultitouchMouse::drawGL(bool editor)
 			gl_drawRect(glTex, last.x - glRect.width / 2, last.y - glRect.height / 2, glRect);
 		else
 			gl_drawRect(glTex, controlPos.left + controlPos.width() / 2 - glRect.width / 2, controlPos.top + controlPos.height() / 2 - glRect.height / 2, glRect);
-
 	}
-
-	tapCounter++;
 
 	return false;
 }
