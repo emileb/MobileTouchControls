@@ -3,6 +3,7 @@
 #include "GLRect.h"
 #include "PointF.h"
 #include "OpenGLUtils.h"
+#include "TapDetect.h"
 
 #ifndef _Mouse_H_
 #define _Mouse_H_
@@ -41,10 +42,7 @@ class Mouse : public ControlSuper
 	PointF anchor;
 	int glitchFix;
 
-
-	//Double tap stuff
-	int tapState; //0 = waiting for first press, 1 = waiting for first lift,
-	int tapCounter;
+	TapDetect tapDetect;
 
 	void emit(int, float, float, float, float);
 
@@ -68,8 +66,8 @@ public:
 	void saveXML(TiXmlDocument &doc);
 
 	void loadXML(TiXmlDocument &doc);
-private:
 
+private:
 	void reset();
 	void calcNewValue();
 	void doUpdate();

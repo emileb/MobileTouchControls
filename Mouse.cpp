@@ -3,7 +3,6 @@
 #include <sys/time.h>
 #include "math.h"
 
-#define TAP_SPEED 10
 using namespace touchcontrols;
 
 Mouse::Mouse(std::string tag, RectF pos, std::string image_filename):
@@ -72,7 +71,9 @@ bool Mouse::processPointer(int action, int pid, float x, float y)
 				anchor.y = y;
 				fingerPos.x = x;
 				fingerPos.y = y;
-				tapCounter = 0;
+
+				tapDetect.reset();
+				tapDetect.processPointer(action, pid, x, y);
 
 				emit(TOUCHMOUSE_DOWN, fingerPos.x, fingerPos.y, 0, 0);
 				return true;
@@ -92,11 +93,11 @@ bool Mouse::processPointer(int action, int pid, float x, float y)
 	}
 	else if(action == P_UP)
 	{
+		tapDetect.processPointer(action, pid, x, y);
+
 		if(id == pid)
 		{
-			//Simple check to see if finger moved very much
-			if((tapCounter < TAP_SPEED) &&
-			        (((abs(anchor.x - fingerPos.x) + abs(anchor.y - fingerPos.y))) < 0.05))
+			if(tapDetect.didTap())
 			{
 				emit(TOUCHMOUSE_TAP, fingerPos.x, fingerPos.y, 0, 0);
 			}
@@ -111,6 +112,8 @@ bool Mouse::processPointer(int action, int pid, float x, float y)
 	}
 	else if(action == P_MOVE)
 	{
+		tapDetect.processPointer(action, pid, x, y);
+
 		if(pid == id)  //Finger already down
 		{
 			if(glitchFix)  //Need to wait untill the values have changed at least once, otherwise inital jump
@@ -161,17 +164,7 @@ bool Mouse::drawGL(bool editor)
 	gl_drawRect(glTex, controlPos.left, controlPos.top, glRect);
 
 	gl_setFixAspect(fa);
-	/*
-	if (!hideGraphics)
-	{
-		if (id != -1)
-			gl_drawRect(glTex,fingerPos.x-glRect.width/2,fingerPos.y-glRect.height/2,glRect);
-		else
-			gl_drawRect(glTex,controlPos.left+controlPos.width()/2-glRect.width/2,controlPos.top+controlPos.height()/2-glRect.height/2,glRect);
-	}
-	*/
-	tapCounter++;
-	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
+
 	return false;
 }
 
@@ -191,8 +184,6 @@ void Mouse::reset()
 	id2 = -1;
 	valueRel.x = 0;
 	valueRel.y = 0;
-
-	//doUpdate();
 }
 
 void Mouse::calcNewValue()
@@ -204,15 +195,11 @@ void Mouse::calcNewValue()
 	last.x =  fingerPos.x;
 	last.y = fingerPos.y;
 
-	dx = anchor.x - fingerPos.x;
-	dy = anchor.y - fingerPos.y;
-
 	doUpdate();
 }
 
 void Mouse::doUpdate()
 {
-	//LOGTOUCH("xT = %f yT = %f,xJ = %f yJ = %f",valueTouch.x,valueTouch.y,valueJoy.x ,valueJoy.y);
 	emit(TOUCHMOUSE_MOVE, fingerPos.x, fingerPos.y, valueRel.x, valueRel.y);
 }
 
