@@ -51,7 +51,6 @@ void TapDetect::processPointer(int action, int pid, float x, float y)
 			}
 		}
 	}
-
 }
 
 bool TapDetect::didTap()

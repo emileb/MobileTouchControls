@@ -34,15 +34,6 @@ ButtonExt::ButtonExt(std::string tag, RectF pos, std::string image_filename, int
 	flashCount = 0;
 }
 
-int long long ButtonExt::current_timestamp()
-{
-	struct timeval te;
-	gettimeofday(&te, NULL); // get current time
-	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // caculate milliseconds
-	// printf("milliseconds: %lld\n", milliseconds);
-	return milliseconds;
-}
-
 void ButtonExt::updateSize()
 {
 	glRect.resize(controlPos.right - controlPos.left, controlPos.bottom - controlPos.top);
@@ -76,7 +67,7 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 
 			if(doubleTapState == 2) //Second down of double tap
 			{
-				if(((current_timestamp() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
+				if(((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
 				        (((abs(doubleTapPos.x - x) + abs(doubleTapPos.y - y))) < DOUBLE_TAP_DRIFT))
 				{
 					doubleTapState = 3;
@@ -88,7 +79,7 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 			if(doubleTapState == 0)  //First tap of double tap
 			{
 				doubleTapState = 1;
-				doubleTapCounter = current_timestamp();
+				doubleTapCounter = getMS();
 				doubleTapPos.x = x;
 				doubleTapPos.y = y;
 			}
@@ -116,11 +107,11 @@ bool ButtonExt::processPointer(int action, int pid, float x, float y)
 				if(doubleTapState == 1)  //First up of double tap
 				{
 					//Simple check to see if finger moved very much
-					if(((current_timestamp() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
+					if(((getMS() - doubleTapCounter) < DOUBLE_TAP_SPEED) &&
 					        (((abs(doubleTapPos.x - x) + abs(doubleTapPos.y - y))) < DOUBLE_TAP_DRIFT))
 					{
 						doubleTapState = 2;
-						doubleTapCounter = current_timestamp();
+						doubleTapCounter = getMS();
 					}
 					else
 						doubleTapState = 0;
@@ -173,15 +164,11 @@ bool ButtonExt::drawGL(bool forEditor)
 	{
 		if(!hidden)
 		{
-
 			if(flash)
 			{
-				//LOGTOUCH("fc = %lld",flashCount);
-				//LOGTOUCH("flashDir = %d",flashDir);
-
-				if(current_timestamp() > flashCount)
+				if(getMS() > flashCount)
 				{
-					flashCount = current_timestamp() + 300;
+					flashCount = getMS() + 300;
 					flashDir = !flashDir;
 				}
 
@@ -207,7 +194,6 @@ bool ButtonExt::drawGL(bool forEditor)
 			if(getMS() > repeatTime)
 			{
 				repeatTime = getMS() + REPEAT_INTERVAL;
-
 
 				signal_button.emit(BUTTONEXT_DOWN, value);
 				signal_button.emit(BUTTONEXT_UP, value);

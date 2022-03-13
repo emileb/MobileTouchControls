@@ -33,12 +33,10 @@ class ButtonExt : public ControlSuper
 
 	bool flash;
 	bool flashDir;
-	int long long  flashCount;
-
-	int long long current_timestamp();
+	uint64_t  flashCount;
 
 	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
-	int long long doubleTapCounter;
+	uint64_t doubleTapCounter;
 	PointF doubleTapPos;
 
 	double tapTimer;
