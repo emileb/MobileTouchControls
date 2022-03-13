@@ -3,7 +3,6 @@
 #include <math.h>
 
 #define TAP_SPEED 10
-#define LONG_PRESS_SPEED 40
 
 using namespace touchcontrols;
 
@@ -16,7 +15,6 @@ MultitouchMouse::MultitouchMouse(std::string tag, RectF pos, std::string image_f
 	glLines = new GLLines(2);
 	hideGraphics = false;
 	updateSize();
-
 };
 
 void MultitouchMouse::setHideGraphics(bool v)
@@ -176,17 +174,6 @@ bool MultitouchMouse::drawGL(bool editor)
 
 	tapCounter++;
 
-	if((id != -1) && (id2 == -1))  //One finger down
-	{
-		if((tapCounter == LONG_PRESS_SPEED) &&
-		        (distancePoints(anchor, last) < 0.08))
-		{
-			signal_action.emit(MULTITOUCHMOUSE_LONG_PRESS, last.x, last.y, 0, 0);
-		}
-	}
-
-	//LOGTOUCH("state = %d, counter = %d",doubleTapState,doubleTapCounter);
-
 	return false;
 }
 
@@ -194,35 +181,7 @@ void MultitouchMouse::reset()
 {
 	id = -1;
 	id2 = -1;
-
-	//signal_action.emit(MULTITOUCHMOUSE_MOVE,fingerPos.x,fingerPos.y,valueRel.x,valueRel.y);
-
 }
-/*
-void MultitouchMouse::calcNewValue()
-{
-	float dx = last.x - fingerPos.x;
-	float dy = last.y - fingerPos.y;
-	valueRel.x = dx;
-	valueRel.y = dy;
-	last.x =  fingerPos.x;
-	last.y = fingerPos.y;
-
-
-	dx = anchor.x - fingerPos.x;
-	dy = anchor.y - fingerPos.y;
-
-
-	doUpdate();
-
-}
-
-void MultitouchMouse::doUpdate()
-{
-	//LOGTOUCH("xT = %f yT = %f,xJ = %f yJ = %f",valueTouch.x,valueTouch.y,valueJoy.x ,valueJoy.y);
-	signal_action.emit(MULTITOUCHMOUSE_MOVE,fingerPos.x,fingerPos.y,valueRel.x,valueRel.y);
-}
- */
 
 void MultitouchMouse::saveXML(TiXmlDocument &doc)
 {

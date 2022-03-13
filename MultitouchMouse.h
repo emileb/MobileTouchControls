@@ -16,7 +16,6 @@
 #define MULTITOUCHMOUSE_2_UP   5
 
 #define MULTITOUCHMOUSE_ZOOM   6
-#define MULTITOUCHMOUSE_LONG_PRESS   7
 
 namespace touchcontrols
 {
