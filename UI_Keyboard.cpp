@@ -371,7 +371,7 @@ bool UI_Keyboard::gamepadInput(bool down, GamePadKey gamepadKey)
 				}
 
 				uint32_t closestKey = 0;
-				float closestDistance = 0xFFFFFFF;
+				float closestDistance = FLT_MAX;
 
 				for(int n = 0; n < MAX_ROW_KEYS; n++)
 				{
