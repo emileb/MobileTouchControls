@@ -166,6 +166,7 @@ bool touchSettings_save()
 static void resetDefaults()
 {
 	settings.alpha = 0.5;
+	settings.mouseLook = true;
 	settings.invertLook = false;
 	settings.lookSensitivity = 1;
 	settings.turnSensitivity = 1;
@@ -373,7 +374,7 @@ static float addSwitch(UI_Controls * root, float y, std::string title, std::stri
 }
 
 
-UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile)
+UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile, tTouchSettingsModifier *modifier)
 {
 	settingsFilename = settingsFile;
 	container = con;
@@ -465,9 +466,13 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += addSwitch(rootControls, y, "Digital move (WASD)", "Map the left move stick to digital keys W,A,S,D", "digital_move", false, &settings.digitalMove);
 
+		// Mouse look option disabled by default
+		if( (modifier != nullptr) && (modifier->mouseLookVisible == true))
+			y += addSwitch(rootControls, y, "Mouse look", "Enable vertical look", "mouse_look", false, &settings.mouseLook);
+
 		y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);
 
-		y += addSwitch(rootControls, y, "Joystick Look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
+		y += addSwitch(rootControls, y, "Joystick look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
 
 		y += addSwitch(rootControls, y, "Fixed Move", "Fix the centre of the Move stick (disable floating)", "fixed_move_stick", false, &settings.fixedMoveStick);
 

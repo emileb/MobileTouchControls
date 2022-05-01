@@ -20,6 +20,7 @@ typedef struct
 
 	float precisionSenitivity;
 
+	bool mouseLook;
 	bool invertLook;
 	bool showJoysticks;
 	bool joystickLookMode;
@@ -42,7 +43,12 @@ typedef struct
 } tTouchSettings;
 
 
-UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile);
+typedef struct
+{
+	bool mouseLookVisible;
+} tTouchSettingsModifier;
+
+UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string settingsFile, tTouchSettingsModifier *modifier = nullptr);
 sigc::signal<void, tTouchSettings> *getSettingsSignal();
 
 bool touchSettings_save();

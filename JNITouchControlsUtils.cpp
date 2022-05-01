@@ -18,11 +18,7 @@ extern "C"
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "JNITouchControlsUtils", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"JNITouchControlsUtils", __VA_ARGS__))
 
-//static JNIEnv* jni_env_UI = 0;
-
-
 	static JavaVM* jvm;
-
 
 	void setTCJNIEnv(JavaVM* jvm_)
 	{
