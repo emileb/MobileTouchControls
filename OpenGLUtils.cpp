@@ -608,14 +608,6 @@ void gl_startRender()
 		glGetFloatv(GL_PROJECTION_MATRIX, projection);
 		glGetFloatv(GL_MODELVIEW_MATRIX, model);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glViewport(0, 0, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight);
-		glOrthof(0.0f, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight, 0.0f, -1.0f, 1.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		//-----------------
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -627,6 +619,23 @@ void gl_startRender()
 
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_ALPHA_TEST);
+
+		// State for the Frame buffer
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+		gl_color4f(1,1,1,1);
+		R_FrameBufferEnd();
+
+		// State for the touch controls
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glViewport(0, 0, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight);
+		glOrthof(0.0f, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight, 0.0f, -1.0f, 1.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 	else if(gl_getGLESVersion() == 2)
 	{
@@ -648,8 +657,6 @@ void gl_startRender()
 		//glBindTexture(GL_TEXTURE_2D, 0);
 		//glDisable(GL_BLEND);
 		//glEnable(GL_BLEND);
-
-
 	}
 	else if(gl_getGLESVersion() == 3)
 	{
@@ -673,6 +680,8 @@ void gl_endRender()
 {
 	if(gl_getGLESVersion() == 1)
 	{
+		R_FrameBufferStart();
+
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(model);
 		glMatrixMode(GL_PROJECTION);
@@ -773,7 +782,7 @@ static void initGLES2()
 	mPositionTranslateLocColor   = glGetUniformLocation(mProgramObjectColor, "u_translate");
 	mModelMatrixColorLoc        =  glGetUniformLocation(mProgramObjectColor, "u_modelMatrix");
 
-	R_FrameBufferInit(useGL4ES);
+	R_FrameBufferInit(useGL4ES, true);
 }
 
 static void gl_useProgram(int prog)
@@ -803,7 +812,7 @@ void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAs
 		                      false,
 		                      3 * 4, rect.vertices);
 
-		// I messed up the corrdinates for GLES so not the game as GLES2
+		// I messed up the corrdinates for GLES so not the same as GLES2
 		GLfloat texVert[] =
 		{
 			rect.texture[2], rect.texture[3], // TexCoord 0
@@ -1102,6 +1111,21 @@ void setTextureNumberStart(int start)
 	glTexNumber = start;
 }
 
+GLuint getNextTexNum()
+{
+	GLuint texture;
+
+	if(glTexNumber)
+	{
+		texture = glTexNumber;
+		glTexNumber++;
+	}
+	else
+		glGenTextures(1, &texture);
+
+	return texture;
+}
+
 GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* fontInfoVec)
 {
 	if(filename == "")
@@ -1120,7 +1144,10 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 		{
 			initGLES2();
 		}
-
+		else
+		{
+			R_FrameBufferInit(false, false);
+		}
 		initGlesDone = true;
 	}
 
@@ -1284,13 +1311,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 	//GLuint texture = texNumber++;
 	GLuint texture;
 
-	if(glTexNumber)
-	{
-		texture = glTexNumber;
-		glTexNumber++;
-	}
-	else
-		glGenTextures(1, &texture);
+	texture = getNextTexNum();
 
 	//LOGTOUCH( "Texture ID: %d\n", texture );
 

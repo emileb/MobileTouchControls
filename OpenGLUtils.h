@@ -64,6 +64,8 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
 void clearGlTexCache();
 void setTextureNumberStart(int start);
+
+GLuint getNextTexNum();
 /*
 #ifdef USE_GLES2
 extern "C"

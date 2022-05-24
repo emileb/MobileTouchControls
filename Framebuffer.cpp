@@ -6,6 +6,7 @@ GPL3
 //#include <GLES2/gl2.h>
 #include "GLheader_TC.h"
 #include "Framebuffer.h"
+#include "OpenGLUtils.h"
 
 #include <stdint.h>
 #include <dlfcn.h>
@@ -138,6 +139,15 @@ static void (CODEGEN_FUNCPTR *_ptrc_glDrawArrays)(GLenum mode, GLint first, GLsi
 static const GLubyte * (CODEGEN_FUNCPTR *_ptrc_glGetString)(GLenum name);
 #define glGetString _ptrc_glGetString
 
+static void (CODEGEN_FUNCPTR *_ptrc_glVertexPointer)(GLint size, GLenum type, GLsizei stride, const void * pointer);
+#define glVertexPointer _ptrc_glVertexPointer
+
+static void (CODEGEN_FUNCPTR *_ptrc_glTexCoordPointer)(GLint size, GLenum type, GLsizei stride, const void * pointer);
+#define glTexCoordPointer _ptrc_glTexCoordPointer
+
+static void (CODEGEN_FUNCPTR *_ptrc_glScalef)(GLfloat x, GLfloat y, GLfloat z);
+#define glScalef _ptrc_glScalef
+
 static void *glesLib = NULL;
 
 static void* loadGlesFunc(const char * name)
@@ -157,11 +167,20 @@ static void* loadGlesFunc(const char * name)
 	return ret;
 }
 
-static void loadGles(bool useGL4ES)
+static void loadGles(bool useGL4ES, bool isGles2)
 {
 	int flags = RTLD_LOCAL | RTLD_NOW;
 
-	if(useGL4ES)
+	if(!isGles2)
+	{
+		glesLib = dlopen("libGLESv1_CM.so", flags);
+
+		if(!glesLib)
+		{
+			glesLib = dlopen("libGLES_CM.so", flags);
+		}
+	}
+	else if(useGL4ES)
 	{
 		glesLib = dlopen("libGL4ES.so", flags);
 	}
@@ -184,34 +203,52 @@ static void loadGles(bool useGL4ES)
 	_ptrc_glTexParameteri = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLint param))loadGlesFunc("glTexParameteri");
 	_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
 	_ptrc_glViewport = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glViewport");
+    _ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum name))loadGlesFunc("glGetString");
 
-	_ptrc_glCreateShader = (GLuint(CODEGEN_FUNCPTR *)(GLenum type))loadGlesFunc("glCreateShader");
-	_ptrc_glShaderSource = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei count, const GLchar * const * string, const GLint * length))loadGlesFunc("glShaderSource");
-	_ptrc_glCompileShader = (void (CODEGEN_FUNCPTR *)(GLuint shader))loadGlesFunc("glCompileShader");
-	_ptrc_glGetShaderInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetShaderInfoLog");
-	_ptrc_glCreateProgram = (GLuint(CODEGEN_FUNCPTR *)(void))loadGlesFunc("glCreateProgram");
-	_ptrc_glLinkProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glLinkProgram");
-	_ptrc_glGetAttribLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetAttribLocation");
-	_ptrc_glGetShaderiv = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLenum pname, GLint * params))loadGlesFunc("glGetShaderiv");
-	_ptrc_glAttachShader = (void (CODEGEN_FUNCPTR *)(GLuint program, GLuint shader))loadGlesFunc("glAttachShader");
-	_ptrc_glGetUniformLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetUniformLocation");
-	_ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
-	_ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
-	_ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
-	_ptrc_glDisableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glDisableVertexAttribArray");
-	_ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
-	_ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");
-	_ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
-	_ptrc_glGenFramebuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * framebuffers))loadGlesFunc("glGenFramebuffers");
-	_ptrc_glGenRenderbuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * renderbuffers))loadGlesFunc("glGenRenderbuffers");
-	_ptrc_glCheckFramebufferStatus = (GLenum(CODEGEN_FUNCPTR *)(GLenum target))loadGlesFunc("glCheckFramebufferStatus");
-	_ptrc_glBindRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint renderbuffer))loadGlesFunc("glBindRenderbuffer");
-	_ptrc_glRenderbufferStorage = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height))loadGlesFunc("glRenderbufferStorage");
-	_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
-	_ptrc_glFramebufferTexture2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level))loadGlesFunc("glFramebufferTexture2D");
-	_ptrc_glFramebufferRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer))loadGlesFunc("glFramebufferRenderbuffer");
+	if(!isGles2) // ES 1
+    {
+        _ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
+        _ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
 
-	_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum name))loadGlesFunc("glGetString");
+		_ptrc_glGenRenderbuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * renderbuffers))loadGlesFunc("glGenRenderbuffersOES");
+		_ptrc_glCheckFramebufferStatus = (GLenum(CODEGEN_FUNCPTR *)(GLenum target))loadGlesFunc("glCheckFramebufferStatusOES");
+		_ptrc_glGenFramebuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * framebuffers))loadGlesFunc("glGenFramebuffersOES");
+        _ptrc_glBindRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint renderbuffer))loadGlesFunc("glBindRenderbufferOES");
+        _ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebufferOES");
+        _ptrc_glFramebufferTexture2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level))loadGlesFunc("glFramebufferTexture2DOES");
+        _ptrc_glFramebufferRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer))loadGlesFunc("glFramebufferRenderbufferOES");
+        _ptrc_glRenderbufferStorage = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height))loadGlesFunc("glRenderbufferStorageOES");
+		_ptrc_glScalef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glScalef");
+    }
+	else // ES 2
+    {
+        _ptrc_glCreateShader = (GLuint(CODEGEN_FUNCPTR *)(GLenum type))loadGlesFunc("glCreateShader");
+        _ptrc_glShaderSource = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei count, const GLchar * const * string, const GLint * length))loadGlesFunc("glShaderSource");
+        _ptrc_glCompileShader = (void (CODEGEN_FUNCPTR *)(GLuint shader))loadGlesFunc("glCompileShader");
+        _ptrc_glGetShaderInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetShaderInfoLog");
+        _ptrc_glCreateProgram = (GLuint(CODEGEN_FUNCPTR *)(void))loadGlesFunc("glCreateProgram");
+        _ptrc_glLinkProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glLinkProgram");
+        _ptrc_glGetAttribLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetAttribLocation");
+        _ptrc_glGetShaderiv = (void (CODEGEN_FUNCPTR *)(GLuint shader, GLenum pname, GLint * params))loadGlesFunc("glGetShaderiv");
+        _ptrc_glAttachShader = (void (CODEGEN_FUNCPTR *)(GLuint program, GLuint shader))loadGlesFunc("glAttachShader");
+        _ptrc_glGetUniformLocation = (GLint(CODEGEN_FUNCPTR *)(GLuint program, const GLchar * name))loadGlesFunc("glGetUniformLocation");
+        _ptrc_glUseProgram = (void (CODEGEN_FUNCPTR *)(GLuint program))loadGlesFunc("glUseProgram");
+        _ptrc_glVertexAttribPointer = (void (CODEGEN_FUNCPTR *)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer))loadGlesFunc("glVertexAttribPointer");
+        _ptrc_glEnableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glEnableVertexAttribArray");
+        _ptrc_glDisableVertexAttribArray = (void (CODEGEN_FUNCPTR *)(GLuint index))loadGlesFunc("glDisableVertexAttribArray");
+        _ptrc_glUniform1i = (void (CODEGEN_FUNCPTR *)(GLint location, GLint v0))loadGlesFunc("glUniform1i");
+        _ptrc_glGetProgramInfoLog = (void (CODEGEN_FUNCPTR *)(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog))loadGlesFunc("glGetProgramInfoLog");
+        _ptrc_glGetProgramiv = (void (CODEGEN_FUNCPTR *)(GLuint program, GLenum pname, GLint * params))loadGlesFunc("glGetProgramiv");
+        _ptrc_glGenFramebuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * framebuffers))loadGlesFunc("glGenFramebuffers");
+        _ptrc_glGenRenderbuffers = (void (CODEGEN_FUNCPTR *)(GLsizei n, GLuint * renderbuffers))loadGlesFunc("glGenRenderbuffers");
+        _ptrc_glCheckFramebufferStatus = (GLenum(CODEGEN_FUNCPTR *)(GLenum target))loadGlesFunc("glCheckFramebufferStatus");
+        _ptrc_glBindRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint renderbuffer))loadGlesFunc("glBindRenderbuffer");
+        _ptrc_glRenderbufferStorage = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height))loadGlesFunc("glRenderbufferStorage");
+        _ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
+        _ptrc_glFramebufferTexture2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level))loadGlesFunc("glFramebufferTexture2D");
+        _ptrc_glFramebufferRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer))loadGlesFunc("glFramebufferRenderbuffer");
+    }
+
 }
 
 static int fixNpot(int v)
@@ -367,7 +404,7 @@ void R_FrameBufferConfig(fbConfig config)
 	m_fb_config = config;
 }
 
-void R_FrameBufferInit(bool useGL4ES)
+void R_FrameBufferInit(bool useGL4ES, bool isGles2)
 {
 	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight);
 
@@ -384,7 +421,9 @@ void R_FrameBufferInit(bool useGL4ES)
 	}
 
 
-	loadGles(useGL4ES);
+	loadGles(useGL4ES, isGles2);
+
+	m_fb_config.isGles2 = isGles2;
 
 	m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot");
 	m_fb_config.depthStencilAvailable = checkExtension("GL_OES_packed_depth_stencil");
@@ -402,8 +441,10 @@ void R_FrameBufferInit(bool useGL4ES)
 	LOG("Framebuffer buffer size = [%d, %d]", m_framebuffer_width, m_framebuffer_height);
 
 	// Create texture
-	glGenTextures(1, &m_framebuffer_texture);
+	m_framebuffer_texture = getNextTexNum();
+
 	glBindTexture(GL_TEXTURE_2D, m_framebuffer_texture);
+    LOG("Framebuffer TEXTURE = %d", m_framebuffer_texture);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_framebuffer_width, m_framebuffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
@@ -429,7 +470,8 @@ void R_FrameBufferInit(bool useGL4ES)
 	{
 #define GL_DEPTH24_STENCIL8_OES    0x88F0
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_framebuffer_width, m_framebuffer_height);
-	}
+        //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_framebuffer_width, m_framebuffer_height);
+    }
 	else
 	{
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_framebuffer_width, m_framebuffer_height);
@@ -440,13 +482,19 @@ void R_FrameBufferInit(bool useGL4ES)
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_framebuffer_width, m_framebuffer_height);
 	}
 
-	createShaders();
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if(m_fb_config.isGles2)
+	    createShaders();
 }
 
 void R_FrameBufferStart()
 {
 	if(m_framebuffer == -1)
 		return;
+
+    // Reset viewport to the framebuffer size
+    glViewport(0, 0, m_fb_config.vidWidth, m_fb_config.vidHeight);
 
 	// Render to framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
@@ -472,9 +520,6 @@ void R_FrameBufferStart()
 	{
 		LOG("ERROR binding Framebuffer: %d\n", result);
 	}
-
-	// Reset viewport to the framebuffer size
-	glViewport(0, 0, m_fb_config.vidWidth, m_fb_config.vidHeight);
 }
 
 
@@ -489,16 +534,6 @@ void R_FrameBufferEnd()
 	// Bind the texture
 	glBindTexture(GL_TEXTURE_2D, m_framebuffer_texture);
 
-	glUseProgram(r_program);
-
-	GLfloat vert[] =
-	{
-		-1.f, -1.f,  0.0f,  // 0. left-bottom
-		    -1.f,  1.f,  0.0f,  // 1. left-top
-		    1.f, 1.f,  0.0f,    // 2. right-top
-		    1.f, -1.f,  0.0f,   // 3. right-bottom
-	    };
-
 	GLfloat smax = 1;
 	GLfloat tmax = 1;
 
@@ -508,41 +543,69 @@ void R_FrameBufferEnd()
 		tmax = (float)m_fb_config.vidHeight / (float)m_framebuffer_height;
 	}
 
-	GLfloat texVert[] =
+	GLfloat vert[] =
 	{
-		0.0f, 0.0f, // TexCoord 0
-		0.0f, tmax, // TexCoord 1
-		smax, tmax, // TexCoord 2
-		smax, 0.0f  // TexCoord 3
+			-1.f, -1.f,  0.0f,  // 0. left-bottom
+			-1.f,  1.f,  0.0f,  // 1. left-top
+			1.f, 1.f,  0.0f,    // 2. right-top
+			1.f, -1.f,  0.0f,   // 3. right-bottom
 	};
 
-	glVertexAttribPointer(m_positionLoc, 3, GL_FLOAT,
-	                      false,
-	                      3 * 4,
-	                      vert);
+	GLfloat texVert[] =
+	{
+			0.0f, 0.0f, // TexCoord 0
+			0.0f, tmax, // TexCoord 1
+			smax, tmax, // TexCoord 2
+			smax, 0.0f  // TexCoord 3
+	};
 
-	glVertexAttribPointer(m_texCoordLoc, 2, GL_FLOAT,
-	                      false,
-	                      2 * 4,
-	                      texVert);
+    if(m_fb_config.isGles2)
+    {
+        glUseProgram(r_program);
+        // Set the sampler texture unit to 0
+        glUniform1i(m_samplerLoc, 0);
 
-	glEnableVertexAttribArray(m_positionLoc);
-	glEnableVertexAttribArray(m_texCoordLoc);
+        glVertexAttribPointer(m_positionLoc, 3, GL_FLOAT,
+                              false,
+                              3 * 4,
+                              vert);
 
+        glVertexAttribPointer(m_texCoordLoc, 2, GL_FLOAT,
+                              false,
+                              2 * 4,
+                              texVert);
 
-	// Set the sampler texture unit to 0
-	glUniform1i(m_samplerLoc, 0);
+        glEnableVertexAttribArray(m_positionLoc);
+        glEnableVertexAttribArray(m_texCoordLoc);
 
-	glViewport(0, 0, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal);
+        glViewport(0, 0, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal);
 
-	glDisable(GL_BLEND);
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_DEPTH_TEST);
 
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-	glEnable(GL_BLEND);
+        glEnable(GL_BLEND);
+    }
+    else // GLES 1
+    {
+        glVertexPointer(3, GL_FLOAT, 0, vert);
+        glTexCoordPointer(2, GL_FLOAT, 0, texVert);
+
+        glViewport(0, 0, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal);
+
+        glDisable(GL_BLEND);
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_DEPTH_TEST);
+
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+        glEnable(GL_BLEND);
+    }
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 }
-
 
 }

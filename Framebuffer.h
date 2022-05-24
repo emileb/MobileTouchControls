@@ -13,6 +13,7 @@ typedef struct
 	int vidWidthReal;
 	int vidHeightReal;
 
+	bool isGles2;
 	bool npotAvailable;
 	bool filter;
 
@@ -22,7 +23,7 @@ typedef struct
 
 
 void R_FrameBufferConfig(fbConfig config);
-void R_FrameBufferInit(bool useGL4ES);
+void R_FrameBufferInit(bool useGL4ES, bool isGles2);
 void R_FrameBufferStart();
 void R_FrameBufferEnd();
 
