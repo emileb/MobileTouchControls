@@ -543,12 +543,17 @@ void R_FrameBufferEnd()
 		tmax = (float)m_fb_config.vidHeight / (float)m_framebuffer_height;
 	}
 
+	float left = -1;
+	float right = 1;
+	float top = 1;
+	float bottom = -1;
+
 	GLfloat vert[] =
 	{
-			-1.f, -1.f,  0.0f,  // 0. left-bottom
-			-1.f,  1.f,  0.0f,  // 1. left-top
-			1.f, 1.f,  0.0f,    // 2. right-top
-			1.f, -1.f,  0.0f,   // 3. right-bottom
+            left, bottom,  0.0f,  // 0. left-bottom
+            left,  top,  0.0f,  // 1. left-top
+            right, top,  0.0f,    // 2. right-top
+            right, bottom,  0.0f,   // 3. right-bottom
 	};
 
 	GLfloat texVert[] =

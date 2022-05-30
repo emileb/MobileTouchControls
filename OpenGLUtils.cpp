@@ -667,6 +667,8 @@ void gl_startRender()
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 		glBindSampler(0, 0);
 		glBindVertexArray(0);
+
+		R_FrameBufferEnd();
 	}
 
 	mCurrentProgram = -1;
@@ -678,19 +680,15 @@ void gl_startRender()
 
 void gl_endRender()
 {
+	R_FrameBufferStart();
+
 	if(gl_getGLESVersion() == 1)
 	{
-		R_FrameBufferStart();
-
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(model);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(projection);
 		glMatrixMode(matrixMode);
-	}
-	else if(gl_getGLESVersion() == 2)
-	{
-		R_FrameBufferStart();
 	}
 }
 
