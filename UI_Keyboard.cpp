@@ -41,11 +41,8 @@ using namespace touchcontrols;
 #define ROW_HEIGHT   0.1
 #define ROW_GAP      0.001
 
-//#define EVEN_SPACE_11 ( 1.f / MAX_ROW_KEYS )
-
 #define EVEN_SPACE_11 ( 1.f / 11 )
 #define EVEN_SPACE_13 ( 1.f / 13 )
-
 
 
 UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, int fontSet, uint32_t params, float textSize):
@@ -109,9 +106,9 @@ UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, 
 	setKey(3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.020f, "key_symbol_shift");
 
 	setKey(4, 0, UI_KEYBOARD_HIDE, 0, 0.10f, 0, "hide_key");   //Hide keyboard
-	setKey(4, 1, ',', 0, 0.1f, 0);
+	setKey(4, 1, ',', SDLK_DELETE, 0.1f, 0);
 	setKey(4, 2, ' ', 0, 0.48f, 0);
-	setKey(4, 3, '.', 0, 0.084f, 0);
+	setKey(4, 3, '.', SDLK_INSERT, 0.084f, 0);
 	setKey(4, 4, SDLK_LEFT, SDLK_HOME, 0.07f, 0.004, "key_arrow_left");
 	setKey(4, 5, SDLK_DOWN, SDLK_PAGEDOWN, 0.07f, 0, "key_arrow_down");
 	setKey(4, 6, SDLK_RIGHT, SDLK_END, 0.07f, 0, "key_arrow_right");
@@ -505,19 +502,27 @@ bool UI_Keyboard::drawGL(bool forEditor)
 					}
 					else if(key->keyAlt == SDLK_HOME)
 					{
-						textDrawer.drawText("Home", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER | TEXT_DRAW_Y_CENTER);
+						textDrawer.drawText("Home", fontSet, middleX, middleY, 0.05, TEXT_DRAW_X_CENTER | TEXT_DRAW_Y_CENTER);
 					}
 					else if(key->keyAlt == SDLK_END)
 					{
-						textDrawer.drawText("End", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+						textDrawer.drawText("End", fontSet, middleX, middleY, 0.05, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
 					}
 					else if(key->keyAlt == SDLK_PAGEUP)
 					{
-						textDrawer.drawText("PgUp", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+						textDrawer.drawText("PgUp", fontSet, middleX, middleY, 0.05, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
 					}
 					else if(key->keyAlt == SDLK_PAGEDOWN)
 					{
-						textDrawer.drawText("PgDn", fontSet, middleX, middleY, 0.06, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+						textDrawer.drawText("PgDn", fontSet, middleX, middleY, 0.05, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+					}
+					else if(key->keyAlt == SDLK_DELETE)
+					{
+						textDrawer.drawText("Del", fontSet, middleX, middleY, 0.07, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
+					}
+					else if(key->keyAlt == SDLK_INSERT)
+					{
+						textDrawer.drawText("Ins", fontSet, middleX, middleY, 0.07, TEXT_DRAW_X_CENTER  | TEXT_DRAW_Y_CENTER);
 					}
 					else if(key->keyAlt < 256)
 					{
@@ -537,7 +542,7 @@ bool UI_Keyboard::drawGL(bool forEditor)
 					{
 						textDrawer.drawChar(shiftKey(key->keyPrim), fontSet, rowXPos + (key->width * 0.5), rowYPos, 0.1, TEXT_DRAW_X_CENTER);
 
-						if(key->keyAlt && key->keyAlt < 256)
+						if(key->keyAlt && key->keyAlt < 256 && key->keyAlt != SDLK_DELETE) // Don't show Delete key
 							textDrawer.drawChar(key->keyAlt, fontSet, rowXPos + (key->width * 0.8), rowYPos, 0.05, TEXT_DRAW_X_CENTER);
 					}
 				}
