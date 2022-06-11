@@ -467,7 +467,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += addSwitch(rootControls, y, "Digital move (WASD)", "Map the left move stick to digital keys W,A,S,D", "digital_move", false, &settings.digitalMove);
 
 		// Mouse look option disabled by default
-		if( (modifier != nullptr) && (modifier->mouseLookVisible == true))
+		if((modifier != nullptr) && (modifier->mouseLookVisible == true))
 			y += addSwitch(rootControls, y, "Mouse look", "Enable vertical look", "mouse_look", false, &settings.mouseLook);
 
 		y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);

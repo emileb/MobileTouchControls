@@ -621,12 +621,12 @@ void gl_startRender()
 		glDisable(GL_ALPHA_TEST);
 
 		// State for the Frame buffer
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-		gl_color4f(1,1,1,1);
+		gl_color4f(1, 1, 1, 1);
 		R_FrameBufferEnd();
 
 		// State for the touch controls
@@ -1146,6 +1146,7 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 		{
 			R_FrameBufferInit(false, false);
 		}
+
 		initGlesDone = true;
 	}
 
