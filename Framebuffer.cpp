@@ -3,7 +3,6 @@ Emile Belanger
 GPL3
 */
 
-//#include <GLES2/gl2.h>
 #include "GLheader_TC.h"
 #include "Framebuffer.h"
 #include "OpenGLUtils.h"
