@@ -176,14 +176,17 @@ bool QuadSlide::drawGL(bool forEditor)
 		if(!hidden)
 		{
 			gl_drawRect(glBgTex, controlPos.left, controlPos.top, glRect);
-			drawArrows = STATE_DOWN; // Show arrows when editing
+			drawArrows =
+					(valueUp ? STATE_DOWN_UP : 0) |
+					(valueDown ? STATE_DOWN_DOWN : 0) |
+					(valueLeft ? STATE_DOWN_LEFT : 0) |
+					(valueRight ? STATE_DOWN_RIGHT : 0);
 		}
 	}
 	else //Draw normal in game
 	{
 		if(!hidden)
 		{
-
 			gl_drawRect(glBgTex, controlPos.left, controlPos.top, glRect);
 
 			if(slideState == STATE_UP)
