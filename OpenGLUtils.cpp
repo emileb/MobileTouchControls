@@ -512,7 +512,7 @@ const char vShaderStr [] =
 			";
 
 const char  fShaderStr [] =
-    "precision mediump float;                            \
+    "precision highp float;                            \
 			varying vec2 v_texCoord;                            \
 			uniform sampler2D s_texture;                        \
 		    uniform vec4 u_color;    \
@@ -524,7 +524,7 @@ const char  fShaderStr [] =
 			";
 
 const char  fShaderColorStr [] =
-    "precision mediump float;                            \
+    "precision highp float;                            \
 		    uniform vec4 u_color;    \
 			void main()                                         \
 			{                                                   \
@@ -585,7 +585,6 @@ void gl_resetGL4ES()
 		gl4es_flush();
 }
 
-
 static GLint     matrixMode;
 static GLfloat   projection[16];
 static GLfloat   model[16];
@@ -607,7 +606,6 @@ void gl_startRender()
 		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
 		glGetFloatv(GL_PROJECTION_MATRIX, projection);
 		glGetFloatv(GL_MODELVIEW_MATRIX, model);
-
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -660,6 +658,9 @@ void gl_startRender()
 	}
 	else if(gl_getGLESVersion() == 3)
 	{
+        glActiveTexture(GL_TEXTURE0);
+        glDisable(GL_DEPTH_TEST);
+
 		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

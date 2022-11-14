@@ -578,7 +578,6 @@ int TouchControls::draw()
 
 			if(fadePos >= 1)
 				fading = false;
-
 		}
 		else //Fading out
 		{
@@ -610,7 +609,7 @@ int TouchControls::draw()
 			if(animating)
 				gl_translatef(0, -slidePos, 0);
 
-			// check if control has defualt color or not
+			// check if control has default color or not
 			if(c->color == COLOUR_NONE)
 				gl_color4f(defaultColor, alpha * fadePos);
 			else
@@ -628,7 +627,6 @@ int TouchControls::draw()
 
 			if(slidePos <= 0)
 				animating = false;
-
 		}
 		else //Animate out
 		{

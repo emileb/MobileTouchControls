@@ -197,7 +197,6 @@ int TouchControlsContainer::draw()
 		}
 	}
 
-
 	openGL_start.emit();
 
 	if(editingControls == 0)
@@ -235,7 +234,6 @@ int TouchControlsContainer::draw()
 	}
 	else
 	{
-
 		if(!editingControls->drawEditor())  //Check if finished editing..
 		{
 			signal_settings.emit(0);
@@ -245,11 +243,9 @@ int TouchControlsContainer::draw()
 		if(drawEditButton && editorButton)
 		{
 			drawEditButton = true;
-
 			gl_loadIdentity();
 			gl_scalef(GLScaleWidth, GLScaleHeight, 1);
 			editorButton->drawGL();
-
 		}
 
 #ifdef USE_LIBROCKET
@@ -313,7 +309,6 @@ int TouchControlsContainer::draw()
 
 void TouchControlsContainer::initGL(const char * root_path)
 {
-
 	gl_Init();
 
 	if(!editorButton)
