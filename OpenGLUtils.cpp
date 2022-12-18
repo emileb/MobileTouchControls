@@ -639,6 +639,7 @@ void gl_startRender()
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_DEPTH_TEST);
+		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
 		/*
 		 glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
