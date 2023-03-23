@@ -37,8 +37,6 @@ static float mModelMatrixGLSL[16] = {1, 0, 0, 0,
                                     };
 #define CODEGEN_FUNCPTR
 
-
-
 // COMMON -------------------------------------------------
 void (CODEGEN_FUNCPTR *_ptrc_glClearColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #define glClearColor _ptrc_glClearColor
