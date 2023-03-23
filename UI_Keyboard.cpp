@@ -69,38 +69,38 @@ UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, 
 	setKey(0, 12, '=', SDLK_F12, numberKeySize, 0);
 
 
-	setKey(1, 0, 'Q', '`', EVEN_SPACE_11, 0);
-	setKey(1, 1, 'W', '!', EVEN_SPACE_11, 0);
-	setKey(1, 2, 'E', '\\', EVEN_SPACE_11, 0);
-	setKey(1, 3, 'R', '%', EVEN_SPACE_11, 0);
-	setKey(1, 4, 'T', '^', EVEN_SPACE_11, 0);
-	setKey(1, 5, 'Y', '?', EVEN_SPACE_11, 0);
-	setKey(1, 6, 'U', '<', EVEN_SPACE_11, 0);
-	setKey(1, 7, 'I', '>', EVEN_SPACE_11, 0);
-	setKey(1, 8, 'O', '[', EVEN_SPACE_11, 0);
-	setKey(1, 9, 'P', ']', EVEN_SPACE_11, 0);
+	setKey(1, 0, 'q', '`', EVEN_SPACE_11, 0);
+	setKey(1, 1, 'w', '!', EVEN_SPACE_11, 0);
+	setKey(1, 2, 'e', '\\', EVEN_SPACE_11, 0);
+	setKey(1, 3, 'r', '%', EVEN_SPACE_11, 0);
+	setKey(1, 4, 't', '^', EVEN_SPACE_11, 0);
+	setKey(1, 5, 'y', '?', EVEN_SPACE_11, 0);
+	setKey(1, 6, 'u', '<', EVEN_SPACE_11, 0);
+	setKey(1, 7, 'i', '>', EVEN_SPACE_11, 0);
+	setKey(1, 8, 'o', '[', EVEN_SPACE_11, 0);
+	setKey(1, 9, 'p', ']', EVEN_SPACE_11, 0);
 	setKey(1, 10, 8,    0, EVEN_SPACE_11, 0, "key_backspace");    //Backspace
 
 	setKey(2, 0, '\t', 0,     0.05f, 0, "key_tab");   //blank
-	setKey(2, 1, 'A', '@', EVEN_SPACE_11, 0);
-	setKey(2, 2, 'S', '#', EVEN_SPACE_11, 0);
-	setKey(2, 3, 'D', '&', EVEN_SPACE_11, 0);
-	setKey(2, 4, 'F', '*', EVEN_SPACE_11, 0);
-	setKey(2, 5, 'G', '-', EVEN_SPACE_11, 0);
-	setKey(2, 6, 'H', '+', EVEN_SPACE_11, 0);
-	setKey(2, 7, 'J', '=', EVEN_SPACE_11, 0);
-	setKey(2, 8, 'K', '(', EVEN_SPACE_11, 0);
-	setKey(2, 9, 'L', ')', EVEN_SPACE_11, 0);
+	setKey(2, 1, 'a', '@', EVEN_SPACE_11, 0);
+	setKey(2, 2, 's', '#', EVEN_SPACE_11, 0);
+	setKey(2, 3, 'd', '&', EVEN_SPACE_11, 0);
+	setKey(2, 4, 'f', '*', EVEN_SPACE_11, 0);
+	setKey(2, 5, 'g', '-', EVEN_SPACE_11, 0);
+	setKey(2, 6, 'h', '+', EVEN_SPACE_11, 0);
+	setKey(2, 7, 'j', '=', EVEN_SPACE_11, 0);
+	setKey(2, 8, 'k', '(', EVEN_SPACE_11, 0);
+	setKey(2, 9, 'l', ')', EVEN_SPACE_11, 0);
 	setKey(2, 10, 13,   0,   0.145f, 0, "enter_key");   //Enter
 
 	setKey(3, 0,  UI_KEYBOARD_SHIFT,  0, EVEN_SPACE_11, 0, "key_shift");    //Shift key
-	setKey(3, 1, 'Z', '_', EVEN_SPACE_11, 0);
-	setKey(3, 2, 'X', '$', EVEN_SPACE_11, 0);
-	setKey(3, 3, 'C', '"', EVEN_SPACE_11, 0);
-	setKey(3, 4, 'V', '\'', EVEN_SPACE_11, 0);
-	setKey(3, 5, 'B', ':', EVEN_SPACE_11, 0);
-	setKey(3, 6, 'N', ';', EVEN_SPACE_11, 0);
-	setKey(3, 7, 'M', '/', EVEN_SPACE_11, 0);
+	setKey(3, 1, 'z', '_', EVEN_SPACE_11, 0);
+	setKey(3, 2, 'x', '$', EVEN_SPACE_11, 0);
+	setKey(3, 3, 'c', '"', EVEN_SPACE_11, 0);
+	setKey(3, 4, 'v', '\'', EVEN_SPACE_11, 0);
+	setKey(3, 5, 'b', ':', EVEN_SPACE_11, 0);
+	setKey(3, 6, 'n', ';', EVEN_SPACE_11, 0);
+	setKey(3, 7, 'm', '/', EVEN_SPACE_11, 0);
 	setKey(3, 8, '_',  0, EVEN_SPACE_11, 0);
 	setKey(3, 9, SDLK_UP, SDLK_PAGEUP, 0.07f, 0.020f, "key_arrow_up");
 	setKey(3, 10, UI_KEYBOARD_SYMBOLS, 0, 0.07f, 0.020f, "key_symbol_shift");
@@ -132,9 +132,9 @@ UI_Keyboard::UI_Keyboard(std::string tag, RectF pos, std::string font_filename, 
 
 uint32_t UI_Keyboard::shiftKey(uint32_t key)
 {
-	if(shiftActive && key >= 'A' &&  key <= 'Z')
+	if(shiftActive && key >= 'a' &&  key <= 'z')
 	{
-		return key + 32;
+		return key - 32;
 	}
 	else
 	{
