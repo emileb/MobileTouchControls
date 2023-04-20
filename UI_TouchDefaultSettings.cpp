@@ -502,11 +502,11 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Double tap left/right:", textSize));
 
-		UI_DropDown *dblTapLeft = new UI_DropDown("dbl_tap_left",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Left : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *dblTapLeft = new UI_DropDown("dbl_tap_left",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_DBL_TAP_LEFT,  "font_dual", 0, "Left : ", "None:Use:Jump:Fire:Alt-fire:Crouch", textSize, "ui_dropdown_bg");
 		rootControls->addControl(dblTapLeft);
 		dblTapLeft->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Right : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *dblTapRight = new UI_DropDown("dbl_tap_right",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_DBL_TAP_RIGHT,  "font_dual", 0, "Right : ", "None:Use:Jump:Fire:Alt-fire:Crouch", textSize, "ui_dropdown_bg");
 		rootControls->addControl(dblTapRight);
 		dblTapRight->signal.connect(sigc::ptr_fun(&dropDownChange));
 
@@ -515,11 +515,11 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Volume buttons:", textSize));
 
-		UI_DropDown *volumeUp = new UI_DropDown("volume_up",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_VOLUME_UP,  "font_dual", 0, "Up : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *volumeUp = new UI_DropDown("volume_up",  touchcontrols::RectF(12, y, 18, y + 2), DROPDOWN_VOLUME_UP,  "font_dual", 0, "Up : ", "None:Use:Jump:Fire:Alt-fire:Crouch", textSize, "ui_dropdown_bg");
 		rootControls->addControl(volumeUp);
 		volumeUp->signal.connect(sigc::ptr_fun(&dropDownChange));
 
-		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Down : ", "None:Use:Jump:Fire:Alt-fire", textSize, "ui_dropdown_bg");
+		UI_DropDown *volumeDown = new UI_DropDown("volume_down",  touchcontrols::RectF(18, y, windowRight, y + 2), DROPDOWN_VOLUME_DOWN,  "font_dual", 0, "Down : ", "None:Use:Jump:Fire:Alt-fire:Crouch", textSize, "ui_dropdown_bg");
 		rootControls->addControl(volumeDown);
 		volumeDown->signal.connect(sigc::ptr_fun(&dropDownChange));
 
