@@ -211,7 +211,7 @@ static void* loadGlesFunc(const char * name)
 	}
 	else
 	{
-		LOGTOUCH("Loaded %s func OK", name);
+		// LOGTOUCH("Loaded %s func OK", name);
 	}
 
 	return ret;
