@@ -19,6 +19,9 @@ GPL3
 namespace touchcontrols
 {
 
+typedef unsigned int GLbitfield;
+#define GL_COLOR_BUFFER_BIT 0x00004000
+
 static GLuint m_framebuffer = -1;
 static GLuint m_depthbuffer;
 static GLuint m_stencilbuffer;
@@ -147,6 +150,12 @@ static void (CODEGEN_FUNCPTR *_ptrc_glTexCoordPointer)(GLint size, GLenum type, 
 static void (CODEGEN_FUNCPTR *_ptrc_glScalef)(GLfloat x, GLfloat y, GLfloat z);
 #define glScalef _ptrc_glScalef
 
+static void (CODEGEN_FUNCPTR *_ptrc_glClear)(GLbitfield mask);
+#define glClear _ptrc_glClear
+
+static void (CODEGEN_FUNCPTR *_ptrc_glClearColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+#define glClearColor _ptrc_glClearColor
+
 static void *glesLib = NULL;
 
 static void* loadGlesFunc(const char * name)
@@ -203,6 +212,8 @@ static void loadGles(bool useGL4ES, bool isGles2)
 	_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
 	_ptrc_glViewport = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glViewport");
 	_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum name))loadGlesFunc("glGetString");
+	_ptrc_glClear =  (void (CODEGEN_FUNCPTR *)(GLbitfield mask))loadGlesFunc("glClear");
+	_ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
 
 	if(!isGles2) // ES 1
 	{
@@ -419,6 +430,14 @@ void R_FrameBufferInit(bool useGL4ES, bool isGles2)
 		return;
 	}
 
+    float aspectReal = (float)m_fb_config.vidWidthReal / (float)m_fb_config.vidHeightReal;
+    float aspectFb =  (float)m_fb_config.vidWidth / (float)m_fb_config.vidHeight;
+
+    if(m_fb_config.maintainAspect && fabs(aspectReal - aspectFb) < 0.01)
+    {
+        LOG("Aspect is close enough, disabling aspect correction");
+        m_fb_config.maintainAspect = false;
+    }
 
 	loadGles(useGL4ES, isGles2);
 
@@ -546,6 +565,29 @@ void R_FrameBufferEnd()
 	float right = 1;
 	float top = 1;
 	float bottom = -1;
+
+	if(m_fb_config.maintainAspect)
+	{
+		float realRatio = (float)m_fb_config.vidWidthReal / (float)m_fb_config.vidHeightReal;
+		float fbRatio = (float)m_fb_config.vidWidth / (float)m_fb_config.vidHeight;
+
+		float xScale =  fbRatio / realRatio;
+		float yScale = realRatio / fbRatio;
+
+		if(xScale < 1)
+		{
+			left = -xScale;
+			right = xScale;
+		}
+		else
+		{
+			top = yScale;
+			bottom = -yScale;
+		}
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+        glClear(GL_COLOR_BUFFER_BIT);
+	}
 
 	GLfloat vert[] =
 	{

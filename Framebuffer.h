@@ -13,6 +13,8 @@ typedef struct
 	int vidWidthReal;
 	int vidHeightReal;
 
+	bool maintainAspect;
+
 	bool isGles2;
 	bool npotAvailable;
 	bool filter;
