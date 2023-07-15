@@ -309,7 +309,7 @@ int TouchControlsContainer::draw()
 
 void TouchControlsContainer::initGL(const char * root_path)
 {
-	gl_Init();
+    gl_Init();
 
 	if(!editorButton)
 	{
@@ -324,9 +324,11 @@ void TouchControlsContainer::initGL(const char * root_path)
 
 	int size = controls.size();
 
-	for(int n = 0; n < size; n++) //draw
+    // NOTE! This must be loaded in this order, for some strange reason if loaded reversed it causes Mali G57 GPU to not load texture correctly
+    // Must be bug in the driver
+	for(int n = 0; n < size; n++) // Load GL
 	{
-		TouchControls *c = controls.at(size - 1 - n);
+		TouchControls *c = controls.at(n);
 		c->initGL();
 	}
 
