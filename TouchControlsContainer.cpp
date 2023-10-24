@@ -232,8 +232,14 @@ int TouchControlsContainer::draw()
 		touchGui->update();
 #endif
 	}
-	else
+	else // Editing controls
 	{
+        // Check if we have controls to draw in the background
+		if(editingControls->getEditBackgroundControl())
+		{
+			editingControls->getEditBackgroundControl()->draw(0.4); // Draw background controls, low alpha
+		}
+
 		if(!editingControls->drawEditor())  //Check if finished editing..
 		{
 			signal_settings.emit(0);

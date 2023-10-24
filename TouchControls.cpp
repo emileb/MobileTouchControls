@@ -296,10 +296,8 @@ bool TouchControls::gamepadInput(bool down, GamePadKey key)
 bool TouchControls::processPointer(int action, int pid, float x, float y)
 {
 #ifdef __ANDROID__
-
 	if(android_app_is_shutting_down)
 		return 0;
-
 #endif
 
 	if(!editing)
@@ -563,6 +561,19 @@ void TouchControls::moveResizeHandles(ControlSuper *ctrl)
 	resizeHandleRects[RH_TOP_RIGHT].offsetTo(ctrl->controlPos.right, ctrl->controlPos.top - resizeHandleHeight);
 	resizeHandleRects[RH_BOT_RIGHT].offsetTo(ctrl->controlPos.right, ctrl->controlPos.bottom);
 	resizeHandleRects[RH_BOT_LEFT].offsetTo(ctrl->controlPos.left - resizeHandleWidth, ctrl->controlPos.bottom);
+}
+
+// Draw with custom alpha
+int TouchControls::draw(float alphaDraw)
+{
+	float tempAlpha = alpha;
+	alpha = alphaDraw;
+
+	draw();
+
+	alpha = tempAlpha;
+
+    return 0;
 }
 
 int TouchControls::draw()

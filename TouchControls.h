@@ -138,6 +138,7 @@ private:
 	RectF resizeHandleRects[RH_SIZE];
 	void moveResizeHandles(ControlSuper *ctrl);
 
+	TouchControls *editingBackgroundControls = NULL; // Set to show other controls in the background when editing (used for custom controls)
 public:
 
 	bool enabled;
@@ -158,6 +159,16 @@ public:
 
 	TouchControls(std::string t, bool en, bool editable, int edit_group = -1, bool showExtraSettings = true);
 
+	void setEditBackgroundControl(TouchControls * bg)
+	{
+		editingBackgroundControls = bg;
+	}
+
+	TouchControls* getEditBackgroundControl()
+	{
+		return editingBackgroundControls;
+	}
+
 	void setPassThroughTouch(PassThrough v);
 
 	void animateIn(int steps);
@@ -166,7 +177,9 @@ public:
 	void fade(fadedir_t dir, int steps);
 
 	void edit();
+
 	void stopEdit();
+
 	bool isEditing();
 
 	void setEnabled(bool v);
@@ -178,6 +191,7 @@ public:
 	bool isFixAspect();
 
 	void setAlpha(float a);
+
 	void setColour(uint32_t defaultColor);
 
 	void addControl(Button *cntrl);
@@ -189,6 +203,8 @@ public:
 	void addControl(ControlSuper *cntrl);
 
 	int draw();
+
+    int draw(float alpha);
 
 	int drawEditor();
 
