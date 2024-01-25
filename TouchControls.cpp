@@ -296,8 +296,10 @@ bool TouchControls::gamepadInput(bool down, GamePadKey key)
 bool TouchControls::processPointer(int action, int pid, float x, float y)
 {
 #ifdef __ANDROID__
+
 	if(android_app_is_shutting_down)
 		return 0;
+
 #endif
 
 	if(!editing)
@@ -573,7 +575,7 @@ int TouchControls::draw(float alphaDraw)
 
 	alpha = tempAlpha;
 
-    return 0;
+	return 0;
 }
 
 int TouchControls::draw()

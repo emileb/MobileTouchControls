@@ -212,7 +212,7 @@ static void loadGles(bool useGL4ES, bool isGles2)
 	_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
 	_ptrc_glViewport = (void (CODEGEN_FUNCPTR *)(GLint x, GLint y, GLsizei width, GLsizei height))loadGlesFunc("glViewport");
 	_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum name))loadGlesFunc("glGetString");
-	_ptrc_glClear =  (void (CODEGEN_FUNCPTR *)(GLbitfield mask))loadGlesFunc("glClear");
+	_ptrc_glClear = (void (CODEGEN_FUNCPTR *)(GLbitfield mask))loadGlesFunc("glClear");
 	_ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
 
 	if(!isGles2) // ES 1
@@ -430,14 +430,14 @@ void R_FrameBufferInit(bool useGL4ES, bool isGles2)
 		return;
 	}
 
-    float aspectReal = (float)m_fb_config.vidWidthReal / (float)m_fb_config.vidHeightReal;
-    float aspectFb =  (float)m_fb_config.vidWidth / (float)m_fb_config.vidHeight;
+	float aspectReal = (float)m_fb_config.vidWidthReal / (float)m_fb_config.vidHeightReal;
+	float aspectFb = (float)m_fb_config.vidWidth / (float)m_fb_config.vidHeight;
 
-    if(m_fb_config.maintainAspect && fabs(aspectReal - aspectFb) < 0.01)
-    {
-        LOG("Aspect is close enough, disabling aspect correction");
-        m_fb_config.maintainAspect = false;
-    }
+	if(m_fb_config.maintainAspect && fabs(aspectReal - aspectFb) < 0.01)
+	{
+		LOG("Aspect is close enough, disabling aspect correction");
+		m_fb_config.maintainAspect = false;
+	}
 
 	loadGles(useGL4ES, isGles2);
 
@@ -585,8 +585,8 @@ void R_FrameBufferEnd()
 			bottom = -yScale;
 		}
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
-        glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	GLfloat vert[] =

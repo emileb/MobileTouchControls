@@ -234,7 +234,7 @@ int TouchControlsContainer::draw()
 	}
 	else // Editing controls
 	{
-        // Check if we have controls to draw in the background
+		// Check if we have controls to draw in the background
 		if(editingControls->getEditBackgroundControl())
 		{
 			editingControls->getEditBackgroundControl()->draw(0.4); // Draw background controls, low alpha
@@ -315,7 +315,7 @@ int TouchControlsContainer::draw()
 
 void TouchControlsContainer::initGL(const char * root_path)
 {
-    gl_Init();
+	gl_Init();
 
 	if(!editorButton)
 	{
@@ -330,8 +330,8 @@ void TouchControlsContainer::initGL(const char * root_path)
 
 	int size = controls.size();
 
-    // NOTE! This must be loaded in this order, for some strange reason if loaded reversed it causes Mali G57 GPU to not load texture correctly
-    // Must be bug in the driver
+	// NOTE! This must be loaded in this order, for some strange reason if loaded reversed it causes Mali G57 GPU to not load texture correctly
+	// Must be bug in the driver
 	for(int n = 0; n < size; n++) // Load GL
 	{
 		TouchControls *c = controls.at(n);

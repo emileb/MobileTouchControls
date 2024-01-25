@@ -204,7 +204,7 @@ public:
 
 	int draw();
 
-    int draw(float alpha);
+	int draw(float alpha);
 
 	int drawEditor();
 

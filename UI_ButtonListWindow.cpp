@@ -91,13 +91,13 @@ void showButtonListWindow(TouchControlsContainer *con)
 					const char * imagePng;
 
 					if(editing->getControls()->at(n)->type == TC_TYPE_BUTTON)
-						imagePng = ((Button*)control)->image.c_str();
+						imagePng = ((Button *)control)->image.c_str();
 
 					if(editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE)
-						imagePng = ((QuadSlide*)control)->bgImage.c_str();
+						imagePng = ((QuadSlide *)control)->bgImage.c_str();
 
 					if(editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID)
-						imagePng = ((ButtonGrid*)control)->getPrimaryImage().c_str();
+						imagePng = ((ButtonGrid *)control)->getPrimaryImage().c_str();
 
 					//This is a button for the UI controls, just used for the image
 					Button *image = new Button("", touchcontrols::RectF(windowLeft, yPos, windowLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), imagePng, -1);

@@ -29,7 +29,7 @@ extern "C"
 	{
 		JNIEnv *pJNIEnv ;
 
-		if(jvm && (jvm->GetEnv((void**) &pJNIEnv, JNI_VERSION_1_4) >= 0))
+		if(jvm && (jvm->GetEnv((void * *) &pJNIEnv, JNI_VERSION_1_4) >= 0))
 		{
 			return pJNIEnv ;
 		}
