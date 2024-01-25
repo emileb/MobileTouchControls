@@ -416,7 +416,7 @@ void R_FrameBufferConfig(fbConfig config)
 
 void R_FrameBufferInit(bool useGL4ES, bool isGles2)
 {
-	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight);
+	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]. Maint aspect : %d", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight, m_fb_config.maintainAspect);
 
 	if(m_fb_config.vidWidthReal == 0 || m_fb_config.vidHeightReal == 0 || m_fb_config.vidWidth == 0 || m_fb_config.vidHeight == 0)
 	{
