@@ -16,8 +16,11 @@ class Button : public ControlSuper
 
 	int id;
 
-	GLuint glTex;
-	GLuint glTexHidden;
+	// Two possible images to draw
+	GLuint glTex[2];
+
+	// glText above to draw
+	int32_t glTexDraw = 0;
 
 	GLRect glRect;
 
@@ -43,6 +46,8 @@ public:
 	void setRepeat(bool v);
 
 	void setFlash(bool v);
+
+    void setImage(int32_t i);
 
 	void resetOutput();
 

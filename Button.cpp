@@ -17,7 +17,8 @@ Button::Button(std::string tag, RectF pos, std::string image_filename, int value
 	value = value_;
 	image = image_filename;
 	description = description_;
-	glTex = 0;
+	glTex[0] = -1;
+	glTex[1] = -1;
 	id = -1;
 	repeat = repeat_;
 	hidden = hidden_;
@@ -37,6 +38,14 @@ void Button::updateSize()
 void Button::setFlash(bool v)
 {
 	flash = v;
+}
+
+void Button::setImage(int32_t i)
+{
+	if(i < 2)
+		glTexDraw = i;
+	else
+		glTexDraw = 0;
 }
 
 void Button::resetOutput()
@@ -87,12 +96,28 @@ bool Button::processPointer(int action, int pid, float x, float y)
 	return false;
 }
 
-
 bool Button::initGL()
 {
-	int x, y;
-	glTex = loadTextureFromPNG(image, x, y);
+	std::vector<std::string> images;
 
+	std::istringstream iss(image);
+
+	for(std::string token; std::getline(iss, token, ';'); )
+	{
+		images.push_back(std::move(token));
+	}
+
+	int x, y;
+
+    if(images.size() > 0)
+    {
+        glTex[0] = loadTextureFromPNG(images[0], x, y);
+    }
+
+    if(images.size() > 1)
+    {
+        glTex[1] = loadTextureFromPNG(images[1], x, y);
+    }
 	return false;
 }
 
@@ -102,7 +127,7 @@ bool Button::drawGL(bool forEditor)
 	{
 		if(!hidden)
 		{
-			gl_drawRect(glTex, controlPos.left, controlPos.top, glRect);
+			gl_drawRect(glTex[0], controlPos.left, controlPos.top, glRect);
 		}
 	}
 	else //Draw normal in game
@@ -111,9 +136,6 @@ bool Button::drawGL(bool forEditor)
 		{
 			if(flash)
 			{
-				//LOGTOUCH("fc = %lld",flashCount);
-				//LOGTOUCH("flashDir = %d",flashDir);
-
 				if(getMS() > flashCount)
 				{
 					flashCount = getMS() + 300;
@@ -124,14 +146,7 @@ bool Button::drawGL(bool forEditor)
 					return false;
 			}
 
-			if(id == -1)
-				gl_drawRect(glTex, controlPos.left, controlPos.top, glRect);
-			else //Highlight buttons if pressed
-			{
-				//glBlendFunc(GL_CONSTANT_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-				gl_drawRect(glTex, controlPos.left, controlPos.top, glRect);
-				//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			}
+            gl_drawRect(glTex[glTexDraw], controlPos.left, controlPos.top, glRect);
 		}
 	}
 
