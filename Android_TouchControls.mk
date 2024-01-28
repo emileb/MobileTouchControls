@@ -7,7 +7,6 @@ LOCAL_MODULE := touchcontrols
 
 LOCAL_CFLAGS := -Werror -DANDROID_NDK
 
-
 ifeq ($(TOUCH_CONTROLS_NO_SDL),1)
 LOCAL_CFLAGS += -DTOUCH_CONTROLS_NO_SDL
 endif
@@ -51,10 +50,10 @@ LOCAL_SRC_FILES:= \
     UI_DropDown.cpp \
     UI_ColorPicker.cpp
 
-
  	
 LOCAL_LDLIBS := -ldl -llog  -landroid
-LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml 
+LOCAL_STATIC_LIBRARIES := sigc libzip libpng tinyxml
+LOCAL_SHARED_LIBRARIES := saffal
 
 include $(BUILD_SHARED_LIBRARY)
 
