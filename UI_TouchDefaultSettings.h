@@ -22,7 +22,8 @@ typedef struct
 
 	bool mouseLook;
 	bool invertLook;
-	bool showJoysticks;
+	bool showLeftStick;
+	bool showRightStick;
 	bool joystickLookMode;
 	bool autoHideInventory;
 	bool autoHideNumbers;

@@ -175,7 +175,8 @@ static void resetDefaults()
 	settings.deadzoneSensitivity = 0.1;
 
 	settings.digitalMove = false;
-	settings.showJoysticks = true;
+	settings.showLeftStick = true;
+	settings.showRightStick = true;
 	settings.joystickLookMode = false;
 	settings.autoHideInventory = true;
 	settings.autoHideNumbers = true;
@@ -354,7 +355,6 @@ static float addSwitch(UI_Controls * root, float y, std::string title, std::stri
 	const float titleTextHeight = 1.3;
 	const float descTextHeight = 1.2;
 
-
 	SwitchOption sw(title, description, xmlTag, defaultValue, settingsPtr);
 
 	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y, 21, y + titleTextHeight), "font_dual", 0, UI_TEXT_LEFT, title, textSizeTitle, COLOUR_WHITE));
@@ -482,7 +482,9 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += addSwitch(rootControls, y, "Auto-hide numbers UI", "Automatically hide the number buttons when selected", "auto_hide_numbers", false, &settings.autoHideNumbers);
 
-		y += addSwitch(rootControls, y, "Show joystick UI", "Show the left and right joystick UI", "show_sticks", false, &settings.showJoysticks);
+		y += addSwitch(rootControls, y, "Show left joystick", "Show the left stick graphic", "show_left_stick", true, &settings.showLeftStick);
+
+		y += addSwitch(rootControls, y, "Show right joystick", "Show the right stick graphic", "show_right_stick", true, &settings.showRightStick);
 
 		y += addSwitch(rootControls, y, "Weapon wheel enable", "Enable the weapon wheel, press centre of screen to use", "weapon_wheel_enabled", false, &settings.weaponWheelEnabled);
 
