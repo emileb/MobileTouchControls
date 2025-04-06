@@ -361,7 +361,7 @@ static float addSwitch(UI_Controls * root, float y, std::string title, std::stri
 	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y, 21, y + titleTextHeight), "font_dual", 0, UI_TEXT_LEFT, title, textSizeTitle, COLOUR_WHITE));
 	root->addControl(new UI_TextBox("text",  touchcontrols::RectF(windowLeft, y + titleTextHeight, 21, y + titleTextHeight + descTextHeight), "font_dual", 0, UI_TEXT_LEFT, description, textSizeDesc, COLOUR_GREY2));
 
-	UI_Switch *swtch =      new UI_Switch(xmlTag, touchcontrols::RectF(21, y + 0.4, windowRight, y + 2), switchOptions.size(), "ui_switch4_on", "ui_switch4_off");
+	UI_Switch *swtch =      new UI_Switch(xmlTag, touchcontrols::RectF(21, y + 0.4, windowRight, y + 2), switchOptions.size(), "ui_switch_on", "ui_switch_off");
 	swtch->signal.connect(sigc::ptr_fun(&switchChange));
 	root->addControl(swtch);
 
@@ -399,7 +399,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 2;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Transparency:", textSize, COLOUR_ORANGE));
-		UI_Slider *slider =   new UI_Slider("slider_alpha",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_ALPHA, "ui_slider_bg1", "ui_slider_handle");
+		UI_Slider *slider =   new UI_Slider("slider_alpha",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_ALPHA, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
@@ -410,35 +410,35 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		y += 2.2;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Up/Down:", textSize));
-		slider =              new UI_Slider("slider_look",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_LOOK, "ui_slider_bg1", "ui_slider_handle");
+		slider =              new UI_Slider("slider_look",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_LOOK, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Look Left/Right:", textSize));
-		slider =              new UI_Slider("slider_turn",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_TURN, "ui_slider_bg1", "ui_slider_handle");
+		slider =              new UI_Slider("slider_turn",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_TURN, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 2.2;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Fwd/Back:", textSize, COLOUR_GREEN3));
-		slider =              new UI_Slider("slider_fwd",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_FWD, "ui_slider_bg1", "ui_slider_handle");
+		slider =              new UI_Slider("slider_fwd",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_FWD, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move Strafe:", textSize, COLOUR_GREEN3));
-		slider =              new UI_Slider("slider_strafe",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_STRAFE, "ui_slider_bg1", "ui_slider_handle");
+		slider =              new UI_Slider("slider_strafe",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_STRAFE, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
 		y += 1.5;
 
 		rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Move dead-zone:", textSize, COLOUR_GREEN3));
-		slider =              new UI_Slider("slider_deadzone",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_DEADZONE, "ui_slider_bg1", "ui_slider_handle");
+		slider =              new UI_Slider("slider_deadzone",    touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_DEADZONE, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 
@@ -496,7 +496,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Sensitivity:", textSize));
 
-		slider =   new UI_Slider("slider_precision",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_PRECISION, "ui_slider_bg1", "ui_slider_handle");
+		slider =   new UI_Slider("slider_precision",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_PRECISION, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 

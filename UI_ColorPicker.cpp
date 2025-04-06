@@ -129,7 +129,7 @@ bool UI_ColorPicker::initGL()
 {
 	int x, y;
 	glTex = loadTextureFromPNG(bg_image, x, y);
-	glColorCube = loadTextureFromPNG("color_cube", x, y);
+	glColorCube = loadTextureFromPNG("ui_color_cube", x, y);
 	glRedCross = loadTextureFromPNG("red_strike", x, y);
 	return false;
 }
