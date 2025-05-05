@@ -37,6 +37,9 @@ static GLuint r_program;
 
 static fbConfig m_fb_config = {0};
 
+static bool m_isGles2 = false;
+static bool m_useGL4ES = false;
+
 #define CODEGEN_FUNCPTR
 
 static GLuint(CODEGEN_FUNCPTR *_ptrc_glCreateShader)(GLenum type);
@@ -414,7 +417,13 @@ void R_FrameBufferConfig(fbConfig config)
 	m_fb_config = config;
 }
 
-void R_FrameBufferInit(bool useGL4ES, bool isGles2)
+void R_FrameBufferSetRenderer(bool useGL4ES, bool isGles2)
+{
+    m_isGles2 = isGles2;
+    m_useGL4ES = useGL4ES;
+}
+
+void R_FrameBufferInit()
 {
 	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]. Maint aspect : %d", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight, m_fb_config.maintainAspect);
 
@@ -439,9 +448,9 @@ void R_FrameBufferInit(bool useGL4ES, bool isGles2)
 		m_fb_config.maintainAspect = false;
 	}
 
-	loadGles(useGL4ES, isGles2);
+	loadGles(m_useGL4ES, m_isGles2);
 
-	m_fb_config.isGles2 = isGles2;
+	m_fb_config.isGles2 = m_isGles2;
 
 	m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot");
 	m_fb_config.depthStencilAvailable = checkExtension("GL_OES_packed_depth_stencil");

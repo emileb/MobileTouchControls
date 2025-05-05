@@ -610,10 +610,10 @@ void gl_startRender()
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
 		glDisable(GL_ALPHA_TEST);
 
 		// State for the Frame buffer
@@ -638,22 +638,8 @@ void gl_startRender()
 		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
-		/*
-		 glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		 glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		 glBindSampler(0,0);
-		 glBindVertexArray(0);
-		 */
 
 		R_FrameBufferEnd();
-
-		// Framebuffer changes state
-		//glUseProgram(0);
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		//glDisable(GL_BLEND);
-		//glEnable(GL_BLEND);
 	}
 	else if(gl_getGLESVersion() == 3)
 	{
@@ -672,10 +658,6 @@ void gl_startRender()
 	}
 
 	mCurrentProgram = -1;
-
-	//glEnable (GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glEnable(GL_TEXTURE_2D);
 }
 
 void gl_endRender()
@@ -779,8 +761,6 @@ static void initGLES2()
 	mColorLocColor               = glGetUniformLocation(mProgramObjectColor, "u_color");
 	mPositionTranslateLocColor   = glGetUniformLocation(mProgramObjectColor, "u_translate");
 	mModelMatrixColorLoc        =  glGetUniformLocation(mProgramObjectColor, "u_modelMatrix");
-
-	R_FrameBufferInit(useGL4ES, true);
 }
 
 static void gl_useProgram(int prog)
@@ -1141,10 +1121,6 @@ GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::ve
 		if(isGLES2)
 		{
 			initGLES2();
-		}
-		else
-		{
-			R_FrameBufferInit(false, false);
 		}
 
 		initGlesDone = true;
