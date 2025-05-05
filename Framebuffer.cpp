@@ -419,8 +419,8 @@ void R_FrameBufferConfig(fbConfig config)
 
 void R_FrameBufferSetRenderer(bool useGL4ES, bool isGles2)
 {
-    m_isGles2 = isGles2;
-    m_useGL4ES = useGL4ES;
+	m_isGles2 = isGles2;
+	m_useGL4ES = useGL4ES;
 }
 
 void R_FrameBufferInit()

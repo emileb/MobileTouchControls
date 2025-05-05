@@ -47,7 +47,7 @@ public:
 
 	void setFlash(bool v);
 
-    void setImage(int32_t i);
+	void setImage(int32_t i);
 
 	void resetOutput();
 

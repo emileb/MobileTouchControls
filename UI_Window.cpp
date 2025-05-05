@@ -11,7 +11,7 @@ UI_Window::UI_Window(std::string tag, RectF pos, std::string title, std::string 
 	image = image_filename;
 	glTex = 0;
 
-	backButton =  new Button("close", touchcontrols::RectF(pos.left + 0.5 , pos.top , pos.left + 2 + 0.5,  pos.top + 2), "ui_close_button", UI_WINDOW_BUTTON_BACK);
+	backButton =  new Button("close", touchcontrols::RectF(pos.left + 0.5, pos.top, pos.left + 2 + 0.5,  pos.top + 2), "ui_close_button", UI_WINDOW_BUTTON_BACK);
 	titleText = new UI_TextBox("text", touchcontrols::RectF(pos.left, pos.top, pos.right,     pos.top + 2), "font_dual", 1, UI_TEXT_CENTRE, title, 0.09, 0x73f8ffff);
 
 	backButton->signal_button.connect(signal);

@@ -185,7 +185,7 @@ static void resetDefaults()
 	settings.precisionShoot = false;
 	settings.precisionSenitivity = 0.3;
 	settings.alwaysShowCust = false;
-    settings.weaponWheelOpaque = false;
+	settings.weaponWheelOpaque = false;
 
 	settings.dblTapLeft = 0;
 	settings.dblTapRight = 0;
@@ -489,7 +489,7 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += addSwitch(rootControls, y, "Weapon wheel enable", "Enable the weapon wheel, press centre of screen to use", "weapon_wheel_enabled", false, &settings.weaponWheelEnabled);
 
-        y += addSwitch(rootControls, y, "Weapon wheel opaque", "Weapon wheel alpha value fixed", "weapon_wheel_opaque", false, &settings.weaponWheelOpaque);
+		y += addSwitch(rootControls, y, "Weapon wheel opaque", "Weapon wheel alpha value fixed", "weapon_wheel_opaque", false, &settings.weaponWheelOpaque);
 
 //////////
 		y += addSwitch(rootControls, y, "Precision shoot", "Reduce look sensitivity while shooting, set amount below", "precision_shoot", false, &settings.precisionShoot, false);

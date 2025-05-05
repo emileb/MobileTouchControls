@@ -102,22 +102,23 @@ bool Button::initGL()
 
 	std::istringstream iss(image);
 
-	for(std::string token; std::getline(iss, token, ';'); )
+	for(std::string token; std::getline(iss, token, ';');)
 	{
 		images.push_back(std::move(token));
 	}
 
 	int x, y;
 
-    if(images.size() > 0)
-    {
-        glTex[0] = loadTextureFromPNG(images[0], x, y);
-    }
+	if(images.size() > 0)
+	{
+		glTex[0] = loadTextureFromPNG(images[0], x, y);
+	}
 
-    if(images.size() > 1)
-    {
-        glTex[1] = loadTextureFromPNG(images[1], x, y);
-    }
+	if(images.size() > 1)
+	{
+		glTex[1] = loadTextureFromPNG(images[1], x, y);
+	}
+
 	return false;
 }
 
@@ -146,7 +147,7 @@ bool Button::drawGL(bool forEditor)
 					return false;
 			}
 
-            gl_drawRect(glTex[glTexDraw], controlPos.left, controlPos.top, glRect);
+			gl_drawRect(glTex[glTexDraw], controlPos.left, controlPos.top, glRect);
 		}
 	}
 

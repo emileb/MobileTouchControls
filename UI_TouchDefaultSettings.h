@@ -32,7 +32,7 @@ typedef struct
 	bool precisionShoot;
 	bool digitalMove;
 	bool alwaysShowCust;
-    bool weaponWheelOpaque;
+	bool weaponWheelOpaque;
 
 	uint32_t dblTapLeft;
 	uint32_t dblTapRight;
