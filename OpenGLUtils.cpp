@@ -346,8 +346,6 @@ static bool isGLES2 = false;
 
 static bool m_fixAspect = true;
 
-static int mCurrentProgram = -1;
-
 
 void gl_setGLESVersion(int v)
 {
@@ -572,116 +570,6 @@ void gl_useGL4ES()
 	useGL4ES = true;
 }
 
-void gl_resetGL4ES()
-{
-	glUseProgram(0);
-	// This is a hack to force GL4ES to draw the remaning draw call
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-	if(gl4es_flush)
-		gl4es_flush();
-}
-
-static GLint     matrixMode;
-static GLfloat   projection[16];
-static GLfloat   model[16];
-
-void gl_startRender()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-
-	// Need this otherwise GLES2 mode for GZDoom v1.9.1 controls are blank
-	if(useGL4ES)
-		glDisable(GL_ALPHA_TEST);
-
-	if(gl_getGLESVersion() == 1)
-	{
-		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
-		glGetFloatv(GL_PROJECTION_MATRIX, projection);
-		glGetFloatv(GL_MODELVIEW_MATRIX, model);
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_ALPHA_TEST);
-
-		// State for the Frame buffer
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		gl_color4f(1, 1, 1, 1);
-		R_FrameBufferEnd();
-
-		// State for the touch controls
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glViewport(0, 0, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight);
-		glOrthof(0.0f, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight, 0.0f, -1.0f, 1.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	}
-	else if(gl_getGLESVersion() == 2)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_DEPTH_TEST);
-		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
-
-		R_FrameBufferEnd();
-	}
-	else if(gl_getGLESVersion() == 3)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_DEPTH_TEST);
-
-		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		glBindSampler(0, 0);
-		glBindVertexArray(0);
-
-		R_FrameBufferEnd();
-	}
-
-	mCurrentProgram = -1;
-}
-
-void gl_endRender()
-{
-	R_FrameBufferStart();
-
-	if(gl_getGLESVersion() == 1)
-	{
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(model);
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(projection);
-		glMatrixMode(matrixMode);
-	}
-}
-
-void gl_setupForSDLSW()
-{
-	glDisable(GL_BLEND);
-	glColor4f(1, 1, 1, 1);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
 
 int createProgram(const char * vertexSource, const char *  fragmentSource)
 {
@@ -765,11 +653,7 @@ static void initGLES2()
 
 static void gl_useProgram(int prog)
 {
-	if(prog != mCurrentProgram)
-	{
-		mCurrentProgram = prog;
-		glUseProgram(mCurrentProgram);
-	}
+    glUseProgram(prog);
 }
 
 void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAspectOff)
@@ -996,7 +880,7 @@ void calcFontSpacing(const unsigned char *imageData, int width, int height, std:
 
 		for(int y = 0; y < charWidth; y++)
 		{
-			unsigned char alpha[charWidth];
+			unsigned char alpha[256];
 
 			bool hit = false;
 
@@ -1093,12 +977,12 @@ GLuint getNextTexNum()
 {
 	GLuint texture;
 
-	if(glTexNumber)
+	//if(glTexNumber)
 	{
-		texture = glTexNumber;
-		glTexNumber++;
+	//	texture = glTexNumber;
+	//	glTexNumber++;
 	}
-	else
+	//else
 		glGenTextures(1, &texture);
 
 	return texture;

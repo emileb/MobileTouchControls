@@ -59,9 +59,6 @@ TouchGui::TouchGui(const char * root_path, int width, int height)
 		document->Show();
 		document->RemoveReference();
 	}
-
-
-
 }
 
 void TouchGui::update()

@@ -18,6 +18,7 @@ GPL3
 
 namespace touchcontrols
 {
+static void (*gl4es_flush)();
 
 typedef unsigned int GLbitfield;
 #define GL_COLOR_BUFFER_BIT 0x00004000
@@ -37,7 +38,7 @@ static GLuint r_program;
 
 static fbConfig m_fb_config = {0};
 
-static bool m_isGles2 = false;
+static int m_glesVersion = 1;
 static bool m_useGL4ES = false;
 
 #define CODEGEN_FUNCPTR
@@ -159,6 +160,51 @@ static void (CODEGEN_FUNCPTR *_ptrc_glClear)(GLbitfield mask);
 static void (CODEGEN_FUNCPTR *_ptrc_glClearColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #define glClearColor _ptrc_glClearColor
 
+static void (CODEGEN_FUNCPTR *_ptrc_glBlendFunc)(GLenum sfactor, GLenum dfactor);
+#define glBlendFunc _ptrc_glBlendFunc
+
+static void (CODEGEN_FUNCPTR *_ptrc_glBindBuffer)(GLenum target, GLuint buffer);
+#define glBindBuffer _ptrc_glBindBuffer
+
+static void (CODEGEN_FUNCPTR *_ptrc_glLoadMatrixf)(const GLfloat * m);
+#define glLoadMatrixf _ptrc_glLoadMatrixf
+
+static void (CODEGEN_FUNCPTR *_ptrc_glMatrixMode)(GLenum mode);
+#define glMatrixMode _ptrc_glMatrixMode
+
+static void (CODEGEN_FUNCPTR *_ptrc_glLoadIdentity)(void);
+#define glLoadIdentity _ptrc_glLoadIdentity
+
+static void (CODEGEN_FUNCPTR *_ptrc_glGetFloatv)(GLenum pname, GLfloat * data);
+#define glGetFloatv _ptrc_glGetFloatv
+
+static void (CODEGEN_FUNCPTR *_ptrc_glGetIntegerv)(GLenum pname, GLint * data);
+#define glGetIntegerv _ptrc_glGetIntegerv
+
+static void (CODEGEN_FUNCPTR *_ptrc_glOrthof)(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar);
+#define glOrthof _ptrc_glOrthof
+
+static void (CODEGEN_FUNCPTR *_ptrc_glDisableClientState)(GLenum ren_array);
+#define glDisableClientState _ptrc_glDisableClientState
+
+static void (CODEGEN_FUNCPTR *_ptrc_glEnableClientState)(GLenum ren_array);
+#define glEnableClientState _ptrc_glEnableClientState
+
+static void (CODEGEN_FUNCPTR *_ptrc_glTexEnvf)(GLenum target, GLenum pname, GLfloat param);
+#define glTexEnvf _ptrc_glTexEnvf
+
+static void (CODEGEN_FUNCPTR *_ptrc_glBindSampler)(GLuint unit, GLuint sampler);
+#define glBindSampler _ptrc_glBindSampler
+
+static void (CODEGEN_FUNCPTR *_ptrc_glBindVertexArray)(GLuint ren_array);
+#define glBindVertexArray _ptrc_glBindVertexArray
+
+static void (CODEGEN_FUNCPTR *_ptrc_glActiveTexture)(GLenum texture);
+#define glActiveTexture _ptrc_glActiveTexture
+
+static void (CODEGEN_FUNCPTR *_ptrc_glColor4f)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+#define glColor4f _ptrc_glColor4f
+
 static void *glesLib = NULL;
 
 static void* loadGlesFunc(const char * name)
@@ -194,6 +240,7 @@ static void loadGles(bool useGL4ES, bool isGles2)
 	else if(useGL4ES)
 	{
 		glesLib = dlopen("libGL4ES.so", flags);
+		gl4es_flush = (void (*)())loadGlesFunc("gl4es_flush");
 	}
 	else
 	{
@@ -217,9 +264,15 @@ static void loadGles(bool useGL4ES, bool isGles2)
 	_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum name))loadGlesFunc("glGetString");
 	_ptrc_glClear = (void (CODEGEN_FUNCPTR *)(GLbitfield mask))loadGlesFunc("glClear");
 	_ptrc_glClearColor = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glClearColor");
+	_ptrc_glBindBuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint buffer))loadGlesFunc("glBindBuffer");
+	_ptrc_glBlendFunc = (void (CODEGEN_FUNCPTR *)(GLenum sfactor, GLenum dfactor))loadGlesFunc("glBlendFunc");
 
 	if(!isGles2) // ES 1
 	{
+		_ptrc_glLoadMatrixf = (void (CODEGEN_FUNCPTR *)(const GLfloat * m))loadGlesFunc("glLoadMatrixf");
+		_ptrc_glMatrixMode = (void (CODEGEN_FUNCPTR *)(GLenum mode))loadGlesFunc("glMatrixMode");
+		_ptrc_glLoadIdentity = (void (CODEGEN_FUNCPTR *)(void))loadGlesFunc("glLoadIdentity");
+
 		_ptrc_glVertexPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glVertexPointer");
 		_ptrc_glTexCoordPointer = (void (CODEGEN_FUNCPTR *)(GLint size, GLenum type, GLsizei stride, const void * pointer))loadGlesFunc("glTexCoordPointer");
 
@@ -232,6 +285,13 @@ static void loadGles(bool useGL4ES, bool isGles2)
 		_ptrc_glFramebufferRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer))loadGlesFunc("glFramebufferRenderbufferOES");
 		_ptrc_glRenderbufferStorage = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height))loadGlesFunc("glRenderbufferStorageOES");
 		_ptrc_glScalef = (void (CODEGEN_FUNCPTR *)(GLfloat x, GLfloat y, GLfloat z))loadGlesFunc("glScalef");
+		_ptrc_glGetFloatv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLfloat * data))loadGlesFunc("glGetFloatv");
+		_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum pname, GLint * data))loadGlesFunc("glGetIntegerv");
+		_ptrc_glOrthof = (void (CODEGEN_FUNCPTR *)(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar))loadGlesFunc("glOrthof");
+		_ptrc_glDisableClientState = (void (CODEGEN_FUNCPTR *)(GLenum ren_array))loadGlesFunc("glDisableClientState");
+		_ptrc_glEnableClientState = (void (CODEGEN_FUNCPTR *)(GLenum ren_array))loadGlesFunc("glEnableClientState");
+		_ptrc_glTexEnvf = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum pname, GLfloat param))loadGlesFunc("glTexEnvf");
+        _ptrc_glColor4f = (void (CODEGEN_FUNCPTR *)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha))loadGlesFunc("glColor4f");
 	}
 	else // ES 2
 	{
@@ -260,8 +320,120 @@ static void loadGles(bool useGL4ES, bool isGles2)
 		_ptrc_glBindFramebuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLuint framebuffer))loadGlesFunc("glBindFramebuffer");
 		_ptrc_glFramebufferTexture2D = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level))loadGlesFunc("glFramebufferTexture2D");
 		_ptrc_glFramebufferRenderbuffer = (void (CODEGEN_FUNCPTR *)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer))loadGlesFunc("glFramebufferRenderbuffer");
+		_ptrc_glActiveTexture = (void (CODEGEN_FUNCPTR *)(GLenum texture))loadGlesFunc("glActiveTexture");
+		_ptrc_glBindSampler = (void (CODEGEN_FUNCPTR *)(GLuint unit, GLuint sampler))loadGlesFunc("glBindSampler");
+		_ptrc_glBindVertexArray = (void (CODEGEN_FUNCPTR *)(GLuint ren_array))loadGlesFunc("glBindVertexArray");;
 	}
 
+}
+
+static GLint     matrixMode;
+static GLfloat   projection[16];
+static GLfloat   model[16];
+
+void gl_startRender()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+
+	// Need this otherwise GLES2 mode for GZDoom v1.9.1 controls are blank
+	if(m_useGL4ES)
+		glDisable(GL_ALPHA_TEST);
+
+	if(m_glesVersion == 1)
+	{
+		glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+		glGetFloatv(GL_PROJECTION_MATRIX, projection);
+		glGetFloatv(GL_MODELVIEW_MATRIX, model);
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_ALPHA_TEST);
+
+		// State for the Frame buffer
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		gl_color4f(1, 1, 1, 1);
+		R_FrameBufferEnd();
+
+		// State for the touch controls
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glViewport(0, 0, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight);
+		glOrthof(0.0f, (int)touchcontrols::GLScaleWidth, -(int)touchcontrols::GLScaleHeight, 0.0f, -1.0f, 1.0f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+	}
+	else if(m_glesVersion == 2)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glDisable(GL_DEPTH_TEST);
+		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
+
+		R_FrameBufferEnd();
+	}
+	else if(m_glesVersion == 3)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glDisable(GL_DEPTH_TEST);
+
+		glViewport(0, 0, GLScaleWidth, -GLScaleHeight);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		glBindSampler(0, 0);
+		glBindVertexArray(0);
+
+		R_FrameBufferEnd();
+	}
+}
+
+void gl_endRender()
+{
+	R_FrameBufferStart();
+
+	if(fb_getGLESVersion() == 1)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(model);
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(projection);
+		glMatrixMode(matrixMode);
+	}
+}
+
+void gl_setupForSDLSW()
+{
+    glDisable(GL_BLEND);
+    glColor4f(1, 1, 1, 1);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+void gl_resetGL4ES()
+{
+	glUseProgram(0);
+	// This is a hack to force GL4ES to draw the remaining draw call
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+	if(gl4es_flush)
+		gl4es_flush();
 }
 
 static int fixNpot(int v)
@@ -417,15 +589,23 @@ void R_FrameBufferConfig(fbConfig config)
 	m_fb_config = config;
 }
 
-void R_FrameBufferSetRenderer(bool useGL4ES, bool isGles2)
+void R_FrameBufferSetRenderer(bool useGL4ES,  int glesVersion)
 {
-	m_isGles2 = isGles2;
+	m_glesVersion = glesVersion;
 	m_useGL4ES = useGL4ES;
+}
+
+int fb_getGLESVersion()
+{
+    return m_glesVersion;
 }
 
 void R_FrameBufferInit()
 {
-	LOG("R_FrameBufferInit Real[%d, %d] -> Framebuffer[%d,%d]. Maint aspect : %d", m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight, m_fb_config.maintainAspect);
+	LOG("GLES = %d, GL4ES = %d, Real[%d, %d] -> Framebuffer[%d,%d]. Maint aspect : %d", m_glesVersion, m_useGL4ES, m_fb_config.vidWidthReal, m_fb_config.vidHeightReal, m_fb_config.vidWidth, m_fb_config.vidHeight, m_fb_config.maintainAspect);
+
+	// Always load this
+	loadGles(m_useGL4ES, m_glesVersion > 1);
 
 	if(m_fb_config.vidWidthReal == 0 || m_fb_config.vidHeightReal == 0 || m_fb_config.vidWidth == 0 || m_fb_config.vidHeight == 0)
 	{
@@ -448,9 +628,7 @@ void R_FrameBufferInit()
 		m_fb_config.maintainAspect = false;
 	}
 
-	loadGles(m_useGL4ES, m_isGles2);
-
-	m_fb_config.isGles2 = m_isGles2;
+	m_fb_config.isGles2 = m_glesVersion > 1;
 
 	m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot");
 	m_fb_config.depthStencilAvailable = checkExtension("GL_OES_packed_depth_stencil");
@@ -468,7 +646,9 @@ void R_FrameBufferInit()
 	LOG("Framebuffer buffer size = [%d, %d]", m_framebuffer_width, m_framebuffer_height);
 
 	// Create texture
-	m_framebuffer_texture = getNextTexNum();
+	GLuint tex;
+	glGenTextures(1, &tex);
+	m_framebuffer_texture = tex;
 
 	glBindTexture(GL_TEXTURE_2D, m_framebuffer_texture);
 	LOG("Framebuffer TEXTURE = %d", m_framebuffer_texture);

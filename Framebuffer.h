@@ -22,13 +22,14 @@ typedef struct
 	bool depthStencilAvailable;
 } fbConfig;
 
-void R_FrameBufferSetRenderer(bool useGL4ES, bool isGles2);
+void R_FrameBufferSetRenderer(bool useGL4ES, int glesVersion);
 
 void R_FrameBufferConfig(fbConfig config);
 void R_FrameBufferInit();
 void R_FrameBufferStart();
 void R_FrameBufferEnd();
 
+int fb_getGLESVersion();
 
 }
 

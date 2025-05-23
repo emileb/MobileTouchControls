@@ -315,6 +315,8 @@ int TouchControlsContainer::draw()
 
 void TouchControlsContainer::initGL(const char * root_path)
 {
+    clearGlTexCache();
+
 	gl_Init();
 
 	if(!editorButton)
