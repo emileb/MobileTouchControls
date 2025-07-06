@@ -18,6 +18,8 @@ namespace touchcontrols
 
 #define SLIDER_PRECISION  15
 #define SLIDER_DEADZONE   16
+#define SLIDER_DIG_MOVE_Y   18
+#define SLIDER_DIG_MOVE_X   19
 
 #define SWITCH_DIGITAL_MOVE   19
 #define SWITCH_INVERT_LOOK   20
@@ -86,7 +88,10 @@ bool touchSettings_save(std::string filename)
 	root->SetDoubleAttribute("strafe_sens", settings.strafeSensitivity);
 	root->SetDoubleAttribute("deadzone_sens", settings.deadzoneSensitivity);
 
-	root->SetDoubleAttribute("precision_sens", settings.precisionSenitivity);
+	root->SetDoubleAttribute("precision_sens", settings.precisionSensitivity);
+
+    root->SetDoubleAttribute("dig_move_y_sens", settings.digMoveYSensitivity);
+    root->SetDoubleAttribute("dig_move_x_sens", settings.digMoveXSensitivity);
 
 	root->SetAttribute("dbl_tap_left", settings.dblTapLeft);
 	root->SetAttribute("dbl_tap_right", settings.dblTapRight);
@@ -130,7 +135,8 @@ bool touchSettings_load(std::string filename)
 		root->QueryFloatAttribute("strafe_sens",  &settings.strafeSensitivity);
 		root->QueryFloatAttribute("deadzone_sens",  &settings.deadzoneSensitivity);
 
-		root->QueryFloatAttribute("precision_sens",  &settings.precisionSenitivity);
+		root->QueryFloatAttribute("dig_move_y_sens",  &settings.digMoveYSensitivity);
+        root->QueryFloatAttribute("dig_move_x_sens",  &settings.digMoveXSensitivity);
 
 		root->QueryUnsignedAttribute("dbl_tap_left",  &settings.dblTapLeft);
 		root->QueryUnsignedAttribute("dbl_tap_right",  &settings.dblTapRight);
@@ -183,8 +189,10 @@ static void resetDefaults()
 	settings.weaponWheelEnabled = true;
 	settings.fixedMoveStick = false;
 	settings.precisionShoot = false;
-	settings.precisionSenitivity = 0.3;
-	settings.alwaysShowCust = false;
+	settings.precisionSensitivity = 0.3;
+    settings.digMoveYSensitivity = 0.5;
+    settings.digMoveXSensitivity = 0.5;
+    settings.alwaysShowCust = false;
 	settings.weaponWheelOpaque = false;
 
 	settings.dblTapLeft = 0;
@@ -210,7 +218,9 @@ static void applyControlValues()
 
 		((UI_ColorPicker *)rootControls->getControl("color_picker"))->setColor(settings.defaultColor);
 
-		((UI_Slider *)rootControls->getControl("slider_precision"))->setValue((settings.precisionSenitivity - 0.2f) / 0.5f);
+		((UI_Slider *)rootControls->getControl("slider_precision"))->setValue((settings.precisionSensitivity - 0.2f) / 0.5f);
+        ((UI_Slider *)rootControls->getControl("slider_dig_move_y"))->setValue((1.0 - settings.digMoveYSensitivity));
+        ((UI_Slider *)rootControls->getControl("slider_dig_move_x"))->setValue((1.0 - settings.digMoveXSensitivity));
 
 		((UI_DropDown *)rootControls->getControl("dbl_tap_left"))->setSelected(settings.dblTapLeft);
 		((UI_DropDown *)rootControls->getControl("dbl_tap_right"))->setSelected(settings.dblTapRight);
@@ -276,8 +286,20 @@ static void sliderChange(uint32_t uid, float value)
 	}
 	else if(uid == SLIDER_PRECISION)
 	{
-		settings.precisionSenitivity =  0.2 + (value * 0.5);
+		settings.precisionSensitivity = 0.2 + (value * 0.5);
 	}
+    else if(uid == SLIDER_DIG_MOVE_Y)
+    {
+        settings.digMoveYSensitivity = 1.0 - value;
+        if(settings.digMoveYSensitivity  > 0.95) // Clamp
+            settings.digMoveYSensitivity = 0.95;
+    }
+    else if(uid == SLIDER_DIG_MOVE_X)
+    {
+        settings.digMoveXSensitivity = 1.0 - value;
+        if(settings.digMoveXSensitivity  > 0.95) // Clamp
+            settings.digMoveXSensitivity = 0.95;
+    }
 }
 
 static void switchChange(uint32_t uid, bool value)
@@ -465,7 +487,22 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 
 		y += divider(rootControls, y);
 
-		y += addSwitch(rootControls, y, "Digital move (WASD)", "Map the left move stick to digital keys W,A,S,D", "digital_move", false, &settings.digitalMove);
+		y += addSwitch(rootControls, y, "Digital move (WASD)", "Map the left move stick to digital keys W,A,S,D", "digital_move", false, &settings.digitalMove, false);
+
+        // Add sliders for Digital Move sensitivity
+        rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Fwd/Back sens:", textSize * 0.8, COLOUR_GREEN3));
+        slider =   new UI_Slider("slider_dig_move_y",  touchcontrols::RectF(9, y, windowRight - 1, y + 2), SLIDER_DIG_MOVE_Y, "ui_slider_bg", "ui_slider_handle");
+        slider->signal.connect(sigc::ptr_fun(&sliderChange));
+        rootControls->addControl(slider);
+        y += 1.8;
+
+        rootControls->addControl(new UI_TextBox("text",         touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Strafe sens:", textSize * 0.8, COLOUR_GREEN3));
+        slider =   new UI_Slider("slider_dig_move_x",  touchcontrols::RectF(9, y, windowRight - 1, y + 2), SLIDER_DIG_MOVE_X, "ui_slider_bg", "ui_slider_handle");
+        slider->signal.connect(sigc::ptr_fun(&sliderChange));
+        rootControls->addControl(slider);
+        y += 1.8;
+
+        y += divider(rootControls, y);
 
 		// Mouse look option disabled by default
 		if((modifier != nullptr) && (modifier->mouseLookVisible == true))
@@ -494,9 +531,9 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 //////////
 		y += addSwitch(rootControls, y, "Precision shoot", "Reduce look sensitivity while shooting, set amount below", "precision_shoot", false, &settings.precisionShoot, false);
 
-		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 12, y + 2), "font_dual", 0, UI_TEXT_LEFT, "Sensitivity:", textSize));
+		rootControls->addControl(new UI_TextBox("text", touchcontrols::RectF(windowLeft, y, 8, y + 2), "font_dual", 0, UI_TEXT_RIGHT, "Sensitivity:", textSize * 0.8, COLOUR_GREEN3));
 
-		slider =   new UI_Slider("slider_precision",  touchcontrols::RectF(13, y, windowRight - 1, y + 2), SLIDER_PRECISION, "ui_slider_bg", "ui_slider_handle");
+		slider =   new UI_Slider("slider_precision",  touchcontrols::RectF(9, y, windowRight - 1, y + 2), SLIDER_PRECISION, "ui_slider_bg", "ui_slider_handle");
 		slider->signal.connect(sigc::ptr_fun(&sliderChange));
 		rootControls->addControl(slider);
 

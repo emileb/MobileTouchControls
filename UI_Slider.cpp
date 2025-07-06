@@ -30,6 +30,11 @@ float UI_Slider::getValue()
 
 void UI_Slider::setValue(float v)
 {
+    if(v < 0)
+        v = 0;
+    else if(v > 1)
+        v = 1;
+
 	value = v;
 }
 

@@ -18,7 +18,10 @@ typedef struct
 	float strafeSensitivity;
 	float deadzoneSensitivity;
 
-	float precisionSenitivity;
+	float precisionSensitivity;
+
+    float digMoveYSensitivity;
+    float digMoveXSensitivity;
 
 	bool mouseLook;
 	bool invertLook;
@@ -33,7 +36,7 @@ typedef struct
 	bool digitalMove;
 	bool alwaysShowCust;
 	bool weaponWheelOpaque;
-
+    
 	uint32_t dblTapLeft;
 	uint32_t dblTapRight;
 
