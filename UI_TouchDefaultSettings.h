@@ -36,7 +36,8 @@ typedef struct
 	bool digitalMove;
 	bool alwaysShowCust;
 	bool weaponWheelOpaque;
-    
+    bool alwaysRunDefault;
+
 	uint32_t dblTapLeft;
 	uint32_t dblTapRight;
 

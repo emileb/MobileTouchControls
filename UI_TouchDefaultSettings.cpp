@@ -194,6 +194,7 @@ static void resetDefaults()
     settings.digMoveXSensitivity = 0.5;
     settings.alwaysShowCust = false;
 	settings.weaponWheelOpaque = false;
+    settings.alwaysRunDefault = true;
 
 	settings.dblTapLeft = 0;
 	settings.dblTapRight = 0;
@@ -201,8 +202,6 @@ static void resetDefaults()
 	settings.volumeDown = 0;
 
 	settings.defaultColor = COLOUR_WHITE;
-
-	signal_settingChange.emit(settings);
 }
 
 static void applyControlValues()
@@ -246,6 +245,7 @@ static void buttonPress(int state, int code)
 	if(code == BUTTON_RESET)
 	{
 		resetDefaults();
+        signal_settingChange.emit(settings);
 		applyControlValues();
 	}
 	else if(code == BUTTON_RESET_POS)
@@ -508,7 +508,9 @@ UI_Controls *createDefaultSettingsUI(TouchControlsContainer *con, std::string se
 		if((modifier != nullptr) && (modifier->mouseLookVisible == true))
 			y += addSwitch(rootControls, y, "Mouse look", "Enable vertical look", "mouse_look", false, &settings.mouseLook);
 
-		y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);
+        y += addSwitch(rootControls, y, "Always Run Default", "Set default value of Run when starting the engine", "always_run_default", true, &settings.alwaysRunDefault);
+
+        y += addSwitch(rootControls, y, "Invert look", "Invert the direction of the vertical look stick", "invert_switch", false, &settings.invertLook);
 
 		y += addSwitch(rootControls, y, "Joystick look", "Look stick operates like a joystick", "joystick_look_switch", false, &settings.joystickLookMode);
 
