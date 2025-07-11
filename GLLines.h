@@ -6,16 +6,16 @@
 namespace touchcontrols
 {
 
-class GLLines
-{
-public:
-	GLfloat *vertices;
+    class GLLines
+    {
+    public:
+        GLfloat *vertices;
 
-	GLuint len;
+        GLuint len;
 
-	GLLines(int nbr);
+        GLLines(int nbr);
 
-};
+    };
 
 }
 #endif

@@ -11,102 +11,107 @@
 namespace touchcontrols
 {
 
-enum WheelSelectMode
-{
-	WHEELSELECT_GP_MODE_HOLD,
-	WHEELSELECT_GP_MODE_TAP,
-};
+    enum WheelSelectMode
+    {
+        WHEELSELECT_GP_MODE_HOLD,
+        WHEELSELECT_GP_MODE_TAP,
+    };
 
-class WheelSelect : public ControlSuper
-{
-	bool pressed;
-	bool hideGraphics;
+    class WheelSelect : public ControlSuper
+    {
+        bool pressed;
+        bool hideGraphics;
 
-	int id;
+        int id;
 
-	std::string image;
+        std::string image;
 
-	GLuint glTex;
-	GLuint glTexFade;
-	GLuint glTexSelected;
+        GLuint glTex;
+        GLuint glTexFade;
+        GLuint glTexSelected;
 
-	GLRect glRect;
-	GLRect glRectFade;
-	GLRect glRectSelected;
+        GLRect glRect;
+        GLRect glRectFade;
+        GLRect glRectSelected;
 
-	PointF last;
-	PointF fingerPos;
-	PointF anchor;
+        PointF last;
+        PointF fingerPos;
+        PointF anchor;
 
-	PointF centre;
+        PointF centre;
 
-	bool visible;
+        bool visible;
 
-	int nbrSegs;
+        int nbrSegs;
 
-	int selectedSeg;
+        int selectedSeg;
 
-	WheelSelectMode gamepadMode;
-	bool            gamepadMultiTap; // True to allow rapid taping of button to cycle weapons
-	int             gamepadAutoTimeout;
-	bool            gamepadInUse;
-	float           gamepadLastX;
-	float           gamepadLastY;
+        WheelSelectMode gamepadMode;
+        bool gamepadMultiTap; // True to allow rapid taping of button to cycle weapons
+        int gamepadAutoTimeout;
+        bool gamepadInUse;
+        float gamepadLastX;
+        float gamepadLastY;
 
-	uint64_t        gamepadLastMoveTime; // Store the time the gamepad axis last moved, used for auto timout
+        uint64_t gamepadLastMoveTime; // Store the time the gamepad axis last moved, used for auto timout
 
-	bool            axisBlock;
-	uint64_t        axisBlockDelay; // Stop the gamepad axis working for a short amount of time after selection
+        bool axisBlock;
+        uint64_t axisBlockDelay; // Stop the gamepad axis working for a short amount of time after selection
 
-	bool            useFadeSegs; //default no
-	int             enabledSegs;
-public:
+        bool useFadeSegs; //default no
+        int enabledSegs;
+    public:
 
-	sigc::signal<void, int> signal_selected;
-	sigc::signal<void, int> signal_enabled;
-	sigc::signal<void, int> signal_scroll;
+        sigc::signal<void, int> signal_selected;
+        sigc::signal<void, int> signal_enabled;
+        sigc::signal<void, int> signal_scroll;
 
-	WheelSelect(std::string tag, RectF pos, std::string image_filename, int segments);
+        WheelSelect(std::string tag, RectF pos, std::string image_filename, int segments);
 
-	void setWheelVisible(bool visible);
+        void setWheelVisible(bool visible);
 
-	void setSegmentEnabled(int seg, bool v);
+        void setSegmentEnabled(int seg, bool v);
 
-	void setHideGraphics(bool v);
+        void setHideGraphics(bool v);
 
-	void resetOutput();
+        void resetOutput();
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	void processGamepad(float x, float y);
+        void processGamepad(float x, float y);
 
-	bool blockGamepad(); // Returns true if need to block the axis values
+        bool blockGamepad(); // Returns true if need to block the axis values
 
-	void setGamepadMode(WheelSelectMode mode, int autoTimeout);
+        void setGamepadMode(WheelSelectMode mode, int autoTimeout);
 
-	bool gamepadActionButton(int state);
+        bool gamepadActionButton(int state);
 
-	bool drawGL(bool forEditor = false);
+        bool drawGL(bool forEditor = false);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
+        void loadXML(TiXmlDocument &doc);
 
-	void reset();
+        void reset();
 
-private:
+    private:
 
-	void calcNewValue();
-	void doUpdate();
-	float distCentre(float x, float y);
-	bool inCentre(float x, float y);
-	bool gamepadUpdateSeg();
-	void gamepadSelect();
-};
+        void calcNewValue();
+
+        void doUpdate();
+
+        float distCentre(float x, float y);
+
+        bool inCentre(float x, float y);
+
+        bool gamepadUpdateSeg();
+
+        void gamepadSelect();
+    };
 
 }
 

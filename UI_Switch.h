@@ -12,49 +12,50 @@
 namespace touchcontrols
 {
 
-class UI_Switch : public ControlSuper
-{
-	bool pressed;
+    class UI_Switch : public ControlSuper
+    {
+        bool pressed;
 
-	int touchId;
+        int touchId;
 
-	uint32_t uid;
+        uint32_t uid;
 
-	GLuint glTexOn;
-	GLuint glTexOff;
+        GLuint glTexOn;
+        GLuint glTexOff;
 
-	GLRect glRect;
+        GLRect glRect;
 
-	std::string off_image;
-	std::string on_image;
+        std::string off_image;
+        std::string on_image;
 
-	bool isOn;
+        bool isOn;
 
-	TapDetect tapDetect;
+        TapDetect tapDetect;
 
-public:
+    public:
 
-	UI_Switch(std::string tag, RectF pos, uint32_t uid, std::string on_image, std::string off_image);
+        UI_Switch(std::string tag, RectF pos, uint32_t uid, std::string on_image, std::string off_image);
 
-	sigc::signal<void, uint32_t, bool> signal;
+        sigc::signal<void, uint32_t, bool> signal;
 
-	bool getValue();
-	void setValue(bool);
+        bool getValue();
 
-	bool processPointer(int action, int pid, float x, float y);
+        void setValue(bool);
 
-	void resetOutput();
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool drawGL(bool forEditor = false);
+        void resetOutput();
 
-	bool initGL();
+        bool drawGL(bool forEditor = false);
 
-	void updateSize();
+        bool initGL();
 
-	void saveXML(TiXmlDocument &doc);
+        void updateSize();
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void saveXML(TiXmlDocument &doc);
+
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

@@ -5,13 +5,13 @@
 namespace touchcontrols
 {
 
-class PointF
-{
-public:
-	float x = 0;
-	float y = 0;
-	bool enabled = false;
-};
+    class PointF
+    {
+    public:
+        float x = 0;
+        float y = 0;
+        bool enabled = false;
+    };
 
 }
 

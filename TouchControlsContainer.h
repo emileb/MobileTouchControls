@@ -19,73 +19,79 @@ namespace touchcontrols
 {
 
 
-class TouchControlsContainer: public TouchControlsInterface
-{
-	std::vector<TouchControls *> controls;
+    class TouchControlsContainer : public TouchControlsInterface
+    {
+        std::vector<TouchControls *> controls;
 
-	TouchControls * editingControls = NULL;
+        TouchControls *editingControls = NULL;
 
 
-	//For when we have an edit group
-	Button *editorButton;
-	void editorButtonPress(int state, int code);
-	int drawEditButton;
+        //For when we have an edit group
+        Button *editorButton;
 
-	// Set to UI control group
-	UI_Controls * uiControls = NULL;
-	UI_Controls * uiControlsTemp = NULL; // To try and avoid threading issues this is set then copied to uiControls
-	uint32_t      uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
+        void editorButtonPress(int state, int code);
 
-	uint32_t defaultColor = COLOUR_WHITE; // Default white
-	float alpha;
+        int drawEditButton;
 
-	bool mouseShow = false;
-	float mouseX;
-	float mouseY;
-	int mouseCursorGL = 0;
+        // Set to UI control group
+        UI_Controls *uiControls = NULL;
+        UI_Controls *uiControlsTemp = NULL; // To try and avoid threading issues this is set then copied to uiControls
+        uint32_t uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
 
-public:
+        uint32_t defaultColor = COLOUR_WHITE; // Default white
+        float alpha;
 
-	sigc::signal<void, int> signal_settings;
+        bool mouseShow = false;
+        float mouseX;
+        float mouseY;
+        int mouseCursorGL = 0;
 
-	sigc::signal<void> openGL_start;
-	sigc::signal<void> openGL_end;
+    public:
 
-	TouchControlsContainer();
+        sigc::signal<void, int> signal_settings;
 
-	void addControlGroup(TouchControls *cntrl);
+        sigc::signal<void> openGL_start;
+        sigc::signal<void> openGL_end;
 
-	void editControls(TouchControls * ctrl);
+        TouchControlsContainer();
 
-	void setColour(uint32_t defaultColor);
-	void setAlpha(float alpha);
+        void addControlGroup(TouchControls *cntrl);
 
-	int draw();
+        void editControls(TouchControls *ctrl);
 
-	void initGL(const char * root_path = NULL);
+        void setColour(uint32_t defaultColor);
 
-	bool processPointer(int action, int pid, float x, float y);
+        void setAlpha(float alpha);
 
-	bool gamepadInput(bool down, GamePadKey key);
+        int draw();
 
-	bool isEditing();
-	void finishEditing();
+        void initGL(const char *root_path = NULL);
 
-	void resetDefaults();
+        bool processPointer(int action, int pid, float x, float y);
 
-	TouchControls* getEditingControls();
+        bool gamepadInput(bool down, GamePadKey key);
 
-	void showUIWindow(UI_Controls * uiControls);
-	void hideUIWindow(bool andDelete = false);
+        bool isEditing();
 
-	void showMouse(bool show);
-	void mousePos(float x, float y);
-	//Needs to be here for IOS, breaks otherwise. Memory or compiler bug
+        void finishEditing();
+
+        void resetDefaults();
+
+        TouchControls *getEditingControls();
+
+        void showUIWindow(UI_Controls *uiControls);
+
+        void hideUIWindow(bool andDelete = false);
+
+        void showMouse(bool show);
+
+        void mousePos(float x, float y);
+        //Needs to be here for IOS, breaks otherwise. Memory or compiler bug
 #ifdef USE_LIBROCKET
-	TouchGui *touchGui;
+        TouchGui *touchGui;
 #endif
 
-};
+    };
 
 }
 

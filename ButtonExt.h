@@ -16,57 +16,57 @@
 namespace touchcontrols
 {
 
-class ButtonExt : public ControlSuper
-{
-	bool pressed;
+    class ButtonExt : public ControlSuper
+    {
+        bool pressed;
 
-	int id;
+        int id;
 
-	GLuint glTex;
+        GLuint glTex;
 
-	GLRect glRect;
+        GLRect glRect;
 
-	int value;
+        int value;
 
-	bool repeat;
-	double repeatTime;
+        bool repeat;
+        double repeatTime;
 
-	bool flash;
-	bool flashDir;
-	uint64_t  flashCount;
+        bool flash;
+        bool flashDir;
+        uint64_t flashCount;
 
-	int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
-	uint64_t doubleTapCounter;
-	PointF doubleTapPos;
+        int doubleTapState; //0 = waiting for first press, 1 = waiting for first lift,
+        uint64_t doubleTapCounter;
+        PointF doubleTapPos;
 
-	double tapTimer;
+        double tapTimer;
 
-public:
-	std::string image;
-	sigc::signal<void, int, int> signal_button;
+    public:
+        std::string image;
+        sigc::signal<void, int, int> signal_button;
 
-	ButtonExt(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false);
-	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
-	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
+        ButtonExt(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false);
+        //Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
+        //Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 
-	void setRepeat(bool v);
+        void setRepeat(bool v);
 
-	void setFlash(bool v);
+        void setFlash(bool v);
 
-	void resetOutput();
+        void resetOutput();
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool drawGL(bool forEditor = false);
+        bool drawGL(bool forEditor = false);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

@@ -11,50 +11,52 @@
 namespace touchcontrols
 {
 
-class QuadSlide : public ControlSuper
-{
-	int32_t pid;
+    class QuadSlide : public ControlSuper
+    {
+        int32_t pid;
 
-	GLuint glBgTex;
-	GLuint glArrowTex;
-	GLRect glRect;
+        GLuint glBgTex;
+        GLuint glArrowTex;
+        GLRect glRect;
 
-	int32_t valueUp, valueDown, valueLeft, valueRight;
-	int32_t valueCurrent;
+        int32_t valueUp, valueDown, valueLeft, valueRight;
+        int32_t valueCurrent;
 
 
-	std::string arrowImage;
+        std::string arrowImage;
 
-	float arrowSlidePos;
-	uint64_t arrowSlideTime;
+        float arrowSlidePos;
+        uint64_t arrowSlideTime;
 
-	uint32_t showDemoArrowsTime;
+        uint32_t showDemoArrowsTime;
 
-	PointF anchorPoint;
-	uint32_t slideState;
+        PointF anchorPoint;
+        uint32_t slideState;
 
-	void valueOutput(bool down, int32_t value);
-public:
-	std::string bgImage; // Public so button list can access
+        void valueOutput(bool down, int32_t value);
 
-	sigc::signal<void, int32_t, int32_t> signal;
+    public:
+        std::string bgImage; // Public so button list can access
 
-	QuadSlide(std::string tag, RectF pos, std::string bgImage, std::string arrowImage, int32_t valueUp, int32_t valueRight, int32_t valueDown, int32_t valueLeft, bool hidden = false, std::string description = "");
+        sigc::signal<void, int32_t, int32_t> signal;
 
-	void resetOutput();
+        QuadSlide(std::string tag, RectF pos, std::string bgImage, std::string arrowImage, int32_t valueUp, int32_t valueRight, int32_t valueDown, int32_t valueLeft,
+                  bool hidden = false, std::string description = "");
 
-	bool processPointer(int action, int pid, float x, float y);
+        void resetOutput();
 
-	bool drawGL(bool forEditor = false);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool initGL();
+        bool drawGL(bool forEditor = false);
 
-	void updateSize();
+        bool initGL();
 
-	void saveXML(TiXmlDocument &doc);
+        void updateSize();
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void saveXML(TiXmlDocument &doc);
+
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

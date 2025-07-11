@@ -1,6 +1,7 @@
 
 #ifndef _TouchControlsConfig_H_
 #define _TouchControlsConfig_H_
+
 #include <string>
 #include <sys/time.h>
 #include <time.h>
@@ -28,30 +29,30 @@
 
 namespace touchcontrols
 {
-const int ScaleX = 26;
-const int ScaleY = 16;
+    const int ScaleX = 26;
+    const int ScaleY = 16;
 
-inline uint64_t getMS()
-{
-	uint64_t            ms; // Milliseconds
-	time_t          s;  // Seconds
-	struct timespec spec;
+    inline uint64_t getMS()
+    {
+        uint64_t ms; // Milliseconds
+        time_t s;  // Seconds
+        struct timespec spec;
 
-	clock_gettime(CLOCK_REALTIME, &spec);
+        clock_gettime(CLOCK_REALTIME, &spec);
 
-	s  = spec.tv_sec;
-	ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
+        s = spec.tv_sec;
+        ms = round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
 
-	if(ms > 999)
-	{
-		s++;
-		ms = 0;
-	}
+        if(ms > 999)
+        {
+            s++;
+            ms = 0;
+        }
 
-	return (s * 1000ull) + ms;
-}
+        return (s * 1000ull) + ms;
+    }
 
-extern sigc::signal<void, int> signal_vibrate;
+    extern sigc::signal<void, int> signal_vibrate;
 
 }
 

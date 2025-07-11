@@ -10,57 +10,58 @@
 namespace touchcontrols
 {
 
-static const uint32_t DPAD_LEFT = 0;
-static const uint32_t DPAD_UP = 1;
-static const uint32_t DPAD_RIGHT = 2;
-static const uint32_t DPAD_DOWN = 3;
+    static const uint32_t DPAD_LEFT = 0;
+    static const uint32_t DPAD_UP = 1;
+    static const uint32_t DPAD_RIGHT = 2;
+    static const uint32_t DPAD_DOWN = 3;
 
 
+    class DPadSelect : public ControlSuper
+    {
+        int32_t pid;
 
-class DPadSelect : public ControlSuper
-{
-	int32_t pid;
+        GLuint glDPad;
+        GLRect glRect;
 
-	GLuint glDPad;
-	GLRect glRect;
+        std::string dPadImage;
 
-	std::string dPadImage;
+        std::string cellImages[4];
+        GLuint cellGlTex[4];
+        int32_t cellValues[4];
 
-	std::string cellImages[4];
-	GLuint      cellGlTex[4];
-	int32_t     cellValues[4];
+        bool cellPressed[4];
 
-	bool cellPressed[4];
+        int32_t selectValue;
 
-	int32_t     selectValue;
+        void cellDown(uint32_t x);
 
-	void cellDown(uint32_t x);
-	void cellUp(uint32_t x);
-public:
-	sigc::signal<void, int32_t, int32_t> signal_button;
+        void cellUp(uint32_t x);
 
-	sigc::signal< void, bool > signal_outside; // Signaled when press down OUTSIDE of control (used to hide it)
+    public:
+        sigc::signal<void, int32_t, int32_t> signal_button;
 
-	DPadSelect(std::string tag, RectF pos, std::string dPadImage, int32_t selectValue, bool hidden = false, std::string description = "");
+        sigc::signal<void, bool> signal_outside; // Signaled when press down OUTSIDE of control (used to hide it)
 
-	void addCell(uint32_t x, std::string image, int32_t value);
+        DPadSelect(std::string tag, RectF pos, std::string dPadImage, int32_t selectValue, bool hidden = false, std::string description = "");
 
-	void resetOutput();
+        void addCell(uint32_t x, std::string image, int32_t value);
 
-	bool processPointer(int action, int pid, float x, float y);
+        void resetOutput();
 
-	bool gamepadInput(bool down, GamePadKey key);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool drawGL(bool forEditor = false);
+        bool gamepadInput(bool down, GamePadKey key);
 
-	bool initGL();
+        bool drawGL(bool forEditor = false);
 
-	void updateSize();
+        bool initGL();
 
-	void saveXML(TiXmlDocument &doc);
+        void updateSize();
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void saveXML(TiXmlDocument &doc);
+
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

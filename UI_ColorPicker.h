@@ -13,61 +13,61 @@
 namespace touchcontrols
 {
 
-class UI_ColorPicker : public ControlSuper
-{
-	bool pressed;
+    class UI_ColorPicker : public ControlSuper
+    {
+        bool pressed;
 
-	int touchId;
+        int touchId;
 
-	GLuint glTex;
-	GLuint glColorCube;
-	GLuint glRedCross;
+        GLuint glTex;
+        GLuint glColorCube;
+        GLuint glRedCross;
 
-	GLRect glRect;
+        GLRect glRect;
 
-	std::string bg_image;
+        std::string bg_image;
 
-	uint32_t uid;
+        uint32_t uid;
 
-	uint32_t selectedItem;
+        uint32_t selectedItem;
 
-	uint32_t currentColor;
+        uint32_t currentColor;
 
-	float colorGridTop;
-	float colorGridLeft;
+        float colorGridTop;
+        float colorGridLeft;
 
 
-	bool isOpen;
-	float fadePos;
+        bool isOpen;
+        float fadePos;
 
-	float listTop, listBottom, listItemHeight;
+        float listTop, listBottom, listItemHeight;
 
-	TapDetect tapDetect;
+        TapDetect tapDetect;
 
-public:
+    public:
 
-	sigc::signal<bool, uint32_t, uint32_t> signal;
+        sigc::signal<bool, uint32_t, uint32_t> signal;
 
-	void setColor(uint32_t color);
+        void setColor(uint32_t color);
 
-	UI_ColorPicker(std::string tag, RectF pos, uint32_t uid, uint32_t currentColor);
+        UI_ColorPicker(std::string tag, RectF pos, uint32_t uid, uint32_t currentColor);
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	void resetOutput();
+        void resetOutput();
 
-	bool drawGL(bool active = false);
+        bool drawGL(bool active = false);
 
-	bool UI_drawGL(bool active = false);
+        bool UI_drawGL(bool active = false);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

@@ -12,52 +12,54 @@
 namespace touchcontrols
 {
 
-class UI_Slider : public ControlSuper
-{
-	bool pressed;
+    class UI_Slider : public ControlSuper
+    {
+        bool pressed;
 
-	int touchId;
+        int touchId;
 
-	GLuint glTex;
-	GLuint glTexHandle;
+        GLuint glTex;
+        GLuint glTexHandle;
 
-	GLRect glRect;
-	GLRect glRectHandle;
+        GLRect glRect;
+        GLRect glRectHandle;
 
-	std::string bg_texture;
-	std::string handle_texture;
+        std::string bg_texture;
+        std::string handle_texture;
 
-	float value;
-	uint32_t uid;
+        float value;
+        uint32_t uid;
 
-	uint64_t timeDown;
-	PointF   anchor;
-	int32_t  lockState; // 0 = start, -1 = bad, 1 = good
+        uint64_t timeDown;
+        PointF anchor;
+        int32_t lockState; // 0 = start, -1 = bad, 1 = good
 
-	void updateValue(float x);
-public:
+        void updateValue(float x);
 
-	UI_Slider(std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture);
+    public:
 
-	float getValue();
-	void setValue(float);
+        UI_Slider(std::string tag, RectF pos, uint32_t uid, std::string bg_texture, std::string handle_texture);
 
-	sigc::signal<void, uint32_t, float> signal;
+        float getValue();
 
-	bool processPointer(int action, int pid, float x, float y);
+        void setValue(float);
 
-	void resetOutput();
+        sigc::signal<void, uint32_t, float> signal;
 
-	bool drawGL(bool forEditor = false);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool initGL();
+        void resetOutput();
 
-	void updateSize();
+        bool drawGL(bool forEditor = false);
 
-	void saveXML(TiXmlDocument &doc);
+        bool initGL();
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void updateSize();
+
+        void saveXML(TiXmlDocument &doc);
+
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

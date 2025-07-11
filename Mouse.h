@@ -19,59 +19,61 @@
 namespace touchcontrols
 {
 
-class Mouse : public ControlSuper
-{
-	bool pressed;
-	bool hideGraphics;
+    class Mouse : public ControlSuper
+    {
+        bool pressed;
+        bool hideGraphics;
 
-	int id;
+        int id;
 
-	int id2;
+        int id2;
 
-	std::string image;
+        std::string image;
 
-	GLuint glTex;
+        GLuint glTex;
 
-	GLRect glRect;
-	//GLLines *glLines;
+        GLRect glRect;
+        //GLLines *glLines;
 
-	PointF valueRel;
+        PointF valueRel;
 
-	PointF last;
-	PointF fingerPos;
-	PointF anchor;
-	int glitchFix;
+        PointF last;
+        PointF fingerPos;
+        PointF anchor;
+        int glitchFix;
 
-	TapDetect tapDetect;
+        TapDetect tapDetect;
 
-	void emit(int, float, float, float, float);
+        void emit(int, float, float, float, float);
 
-public:
-	sigc::signal<void, int, float, float, float, float> signal_action;
+    public:
+        sigc::signal<void, int, float, float, float, float> signal_action;
 
-	Mouse(std::string tag, RectF pos, std::string image_filename);
+        Mouse(std::string tag, RectF pos, std::string image_filename);
 
-	void setHideGraphics(bool v);
+        void setHideGraphics(bool v);
 
-	void resetOutput();
+        void resetOutput();
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool drawGL(bool);
+        bool drawGL(bool);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
+        void loadXML(TiXmlDocument &doc);
 
-private:
-	void reset();
-	void calcNewValue();
-	void doUpdate();
-};
+    private:
+        void reset();
+
+        void calcNewValue();
+
+        void doUpdate();
+    };
 
 }
 

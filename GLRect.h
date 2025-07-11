@@ -6,23 +6,23 @@
 namespace touchcontrols
 {
 
-class GLRect
-{
-public:
-	float width, height;
+    class GLRect
+    {
+    public:
+        float width, height;
 
-	GLfloat vertices[12];
+        GLfloat vertices[12];
 
-	GLfloat texture[8];
+        GLfloat texture[8];
 
-	GLRect();
+        GLRect();
 
-	void resize(float width, float height);
+        void resize(float width, float height);
 
-	void mirror(bool v, bool h);
+        void mirror(bool v, bool h);
 
-	void rotate90(bool ccw);
-};
+        void rotate90(bool ccw);
+    };
 
 }
 #endif

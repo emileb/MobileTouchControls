@@ -13,47 +13,47 @@
 namespace touchcontrols
 {
 
-class UI_Window : public ControlSuper
-{
-	bool pressed;
+    class UI_Window : public ControlSuper
+    {
+        bool pressed;
 
-	int id;
+        int id;
 
-	GLuint glTex;
+        GLuint glTex;
 
-	GLRect glRect;
+        GLRect glRect;
 
-	Button *backButton;
-	UI_TextBox *titleText;
+        Button *backButton;
+        UI_TextBox *titleText;
 
-public:
-	std::string image;
+    public:
+        std::string image;
 
-	UI_Window(std::string tag, RectF pos, std::string title, std::string image_filename);
+        UI_Window(std::string tag, RectF pos, std::string title, std::string image_filename);
 
-	sigc::signal<void, uint32_t, uint32_t> signal;
+        sigc::signal<void, uint32_t, uint32_t> signal;
 
-	void scaleSize(float x, float y); // Scale the size of the control
-	void positionTranslate(float x, float y); // Move the control x and y
+        void scaleSize(float x, float y); // Scale the size of the control
+        void positionTranslate(float x, float y); // Move the control x and y
 
-	float getScrollOffsetY();
+        float getScrollOffsetY();
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	void resetOutput();
+        void resetOutput();
 
-	void setScissor(void);
+        void setScissor(void);
 
-	bool drawGL(bool forEditor = false);
+        bool drawGL(bool forEditor = false);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

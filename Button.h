@@ -10,59 +10,60 @@
 namespace touchcontrols
 {
 
-class Button : public ControlSuper
-{
-	bool pressed;
+    class Button : public ControlSuper
+    {
+        bool pressed;
 
-	int id;
+        int id;
 
-	// Two possible images to draw
-	GLuint glTex[2];
+        // Two possible images to draw
+        GLuint glTex[2];
 
-	// glText above to draw
-	int32_t glTexDraw = 0;
+        // glText above to draw
+        int32_t glTexDraw = 0;
 
-	GLRect glRect;
+        GLRect glRect;
 
-	int value;
+        int value;
 
-	bool repeat;
-	double repeatTime;
+        bool repeat;
+        double repeatTime;
 
-	bool flash;
-	bool flashDir;
-	int long long  flashCount;
+        bool flash;
+        bool flashDir;
+        int long long flashCount;
 
-public:
-	std::string image;
-	sigc::signal<void, int> signal_buttonDown;
-	sigc::signal<void, int> signal_buttonUp;
-	sigc::signal<void, int, int> signal_button;
+    public:
+        std::string image;
+        sigc::signal<void, int> signal_buttonDown;
+        sigc::signal<void, int> signal_buttonUp;
+        sigc::signal<void, int, int> signal_button;
 
-	Button(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false, std::string description = "", uint32_t color = COLOUR_NONE);
-	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
-	//Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
+        Button(std::string tag, RectF pos, std::string image_filename, int value, bool repeat = false, bool hidden = false, std::string description = "",
+               uint32_t color = COLOUR_NONE);
+        //Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
+        //Button(std::string tag,RectF pos,std::string image_filename,int value,bool repeat,bool hidden);
 
-	void setRepeat(bool v);
+        void setRepeat(bool v);
 
-	void setFlash(bool v);
+        void setFlash(bool v);
 
-	void setImage(int32_t i);
+        void setImage(int32_t i);
 
-	void resetOutput();
+        void resetOutput();
 
-	bool processPointer(int action, int pid, float x, float y);
+        bool processPointer(int action, int pid, float x, float y);
 
-	bool drawGL(bool forEditor = false);
+        bool drawGL(bool forEditor = false);
 
-	bool initGL();
+        bool initGL();
 
-	void updateSize();
+        void updateSize();
 
-	void saveXML(TiXmlDocument &doc);
+        void saveXML(TiXmlDocument &doc);
 
-	void loadXML(TiXmlDocument &doc);
-};
+        void loadXML(TiXmlDocument &doc);
+    };
 
 }
 

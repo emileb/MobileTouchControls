@@ -13,27 +13,28 @@ namespace touchcontrols
 #define TEXT_DRAW_X_CENTER 0x1
 #define TEXT_DRAW_Y_CENTER 0x2
 
-class TextDraw
-{
-	std::string font_filename;
-	std::vector< FontInfo > fontInfoVec;
-	GLuint glTex;
+    class TextDraw
+    {
+        std::string font_filename;
+        std::vector <FontInfo> fontInfoVec;
+        GLuint glTex;
 
-	float getCharWidth(unsigned char c, int fontSet, float height);
-	float getTotalWidth(const char *text, int fontSet, float height);
+        float getCharWidth(unsigned char c, int fontSet, float height);
 
-	float glyphScaleWidth = 1.0;
-public:
-	TextDraw();
+        float getTotalWidth(const char *text, int fontSet, float height);
 
-	void initGL(std::string font_filename);
+        float glyphScaleWidth = 1.0;
+    public:
+        TextDraw();
 
-	void scaleWidth(float scale);
+        void initGL(std::string font_filename);
 
-	float drawChar(char c, int fontSet, float x, float y, float height, uint32_t params = 0);
+        void scaleWidth(float scale);
 
-	float drawText(const char *text, int fontSet, float x, float y, float height, uint32_t params = 0);
-};
+        float drawChar(char c, int fontSet, float x, float y, float height, uint32_t params = 0);
+
+        float drawText(const char *text, int fontSet, float x, float y, float height, uint32_t params = 0);
+    };
 
 }
 #endif //OPENTOUCH_TEXTDRAW_H

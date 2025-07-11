@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "TouchControlsConfig.h"
+
 extern "C" {
 #include <libpng/png.h>
 }
@@ -16,56 +17,76 @@ extern "C" {
 namespace touchcontrols
 {
 
-struct FontInfo
-{
-	float leftGap;
-	float rightGap;
-};
+    struct FontInfo
+    {
+        float leftGap;
+        float rightGap;
+    };
 
-extern float GLScaleWidth ;
-extern float GLScaleHeight ;
+    extern float GLScaleWidth;
+    extern float GLScaleHeight;
 
-void gl_setGLESVersion(int v);
-int  gl_getGLESVersion();
+    void gl_setGLESVersion(int v);
 
-void gl_Init();
+    int gl_getGLESVersion();
 
-void gl_setGraphicsBasePath(std::string path);
+    void gl_Init();
 
-void gl_useGL4ES();
+    void gl_setGraphicsBasePath(std::string path);
 
-void gl_resetGL4ES();
+    void gl_useGL4ES();
 
-void gl_startRender();
-void gl_endRender();
-void gl_setupForSDLSW();
+    void gl_resetGL4ES();
 
-float GLESscaleX(float X);
-float GLESscaleY(float Y);
+    void gl_startRender();
 
-void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAspectOff = false);
-void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
-void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
-void gl_setFixAspect(bool v);
-bool gl_getFixAspect();
+    void gl_endRender();
 
-void gl_color4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-void gl_color4f(uint32_t rgb, GLfloat a);
-void gl_color3f(uint32_t rgb);
-void gl_clearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
-void gl_loadIdentity();
-void gl_scalef(GLfloat x, GLfloat y, GLfloat z);
-void gl_translatef(GLfloat x, GLfloat y, GLfloat z);
-void gl_disable(GLuint v);
-void gl_enable(GLuint v);
-void gl_scissor(GLint x, GLint y, GLint width, GLint height);
+    void gl_setupForSDLSW();
 
-GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector< FontInfo >* = NULL);
-void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
-void clearGlTexCache();
-void setTextureNumberStart(int start);
+    float GLESscaleX(float X);
 
-GLuint getNextTexNum();
+    float GLESscaleY(float Y);
+
+    void gl_drawRect(GLuint texture, float x, float y, GLRect &rect, bool forceFixAspectOff = false);
+
+    void gl_drawRect(GLfloat r, GLfloat g, GLfloat b, GLfloat a, float x, float y, GLRect &rect);
+
+    void gl_drawLines(GLfloat x, GLfloat y, GLLines &lines);
+
+    void gl_setFixAspect(bool v);
+
+    bool gl_getFixAspect();
+
+    void gl_color4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+    void gl_color4f(uint32_t rgb, GLfloat a);
+
+    void gl_color3f(uint32_t rgb);
+
+    void gl_clearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+    void gl_loadIdentity();
+
+    void gl_scalef(GLfloat x, GLfloat y, GLfloat z);
+
+    void gl_translatef(GLfloat x, GLfloat y, GLfloat z);
+
+    void gl_disable(GLuint v);
+
+    void gl_enable(GLuint v);
+
+    void gl_scissor(GLint x, GLint y, GLint width, GLint height);
+
+    GLuint loadTextureFromPNG(std::string filename, int &width, int &height, std::vector <FontInfo> * = NULL);
+
+    void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
+
+    void clearGlTexCache();
+
+    void setTextureNumberStart(int start);
+
+    GLuint getNextTexNum();
 /*
 #ifdef USE_GLES2
 extern "C"

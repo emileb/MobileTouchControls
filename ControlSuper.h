@@ -2,7 +2,9 @@
 
 #include "RectF.h"
 #include "Colors.h"
+
 #define TIXML_USE_STL
+
 #include "TinyXML/tinyxml.h"
 
 #ifndef _ControlSuper_H_
@@ -32,68 +34,82 @@
 namespace touchcontrols
 {
 
-typedef enum
-{
-	FADE_IN, FADE_OUT
-} fadedir_t;
+    typedef enum
+    {
+        FADE_IN, FADE_OUT
+    } fadedir_t;
 
-enum GamePadKey
-{
-	LEFT, RIGHT, UP, DOWN, SELECT, BACK
-};
+    enum GamePadKey
+    {
+        LEFT, RIGHT, UP, DOWN, SELECT, BACK
+    };
 
-class ControlSuper
-{
-protected:
-	bool enabled;
+    class ControlSuper
+    {
+    protected:
+        bool enabled;
 
-	bool hidden; //Can hide control from view, but still enabled
+        bool hidden; //Can hide control from view, but still enabled
 
-	bool editable; // If can edit position, default true
+        bool editable; // If can edit position, default true
 
-	bool allowPassThrough; // allow controls under to get pointer data. Default true.
+        bool allowPassThrough; // allow controls under to get pointer data. Default true.
 
-public:
+    public:
 
-	int type;
+        int type;
 
-	std::string description;
+        std::string description;
 
-	std::string tag;
+        std::string tag;
 
-	RectF controlPos;
+        RectF controlPos;
 
-	uint32_t color; // 0 = use default
+        uint32_t color; // 0 = use default
 
-	ControlSuper(int type, std::string t, RectF pos);
-	virtual ~ControlSuper();
+        ControlSuper(int type, std::string t, RectF pos);
 
-	void setEnabled(bool v);
-	void setHidden(bool v);
-	void setEditable(bool v);
-	void setAllowPassThrough(bool v);
+        virtual ~ControlSuper();
 
-	bool isEnabled();
-	bool isHidden();
-	bool isEditable();
+        void setEnabled(bool v);
 
-	bool isAllowPassThrough();
+        void setHidden(bool v);
 
-	bool UI_drawGL(bool UIActive);
+        void setEditable(bool v);
 
-	virtual void resetOutput() = 0; //This outputs a reset
-	virtual bool processPointer(int action, int pid, float x, float y) = 0;
-	virtual bool gamepadInput(bool down, GamePadKey key);
-	virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
-	virtual bool initGL() = 0;
-	virtual void updateSize() = 0;
-	virtual void scaleSize(float x, float y); // Scale the size of the control
-	virtual void positionTranslate(float x, float y); // Move the control x and y
-	virtual void saveXML(TiXmlDocument &doc) = 0;
-	virtual void loadXML(TiXmlDocument &doc) = 0;
-	void saveXML(TiXmlElement &root);
-	void loadXML(TiXmlElement &root);
-};
+        void setAllowPassThrough(bool v);
+
+        bool isEnabled();
+
+        bool isHidden();
+
+        bool isEditable();
+
+        bool isAllowPassThrough();
+
+        bool UI_drawGL(bool UIActive);
+
+        virtual void resetOutput() = 0; //This outputs a reset
+        virtual bool processPointer(int action, int pid, float x, float y) = 0;
+
+        virtual bool gamepadInput(bool down, GamePadKey key);
+
+        virtual bool drawGL(bool forEditor_or_UIActive = false) = 0;
+
+        virtual bool initGL() = 0;
+
+        virtual void updateSize() = 0;
+
+        virtual void scaleSize(float x, float y); // Scale the size of the control
+        virtual void positionTranslate(float x, float y); // Move the control x and y
+        virtual void saveXML(TiXmlDocument &doc) = 0;
+
+        virtual void loadXML(TiXmlDocument &doc) = 0;
+
+        void saveXML(TiXmlElement &root);
+
+        void loadXML(TiXmlElement &root);
+    };
 
 }
 

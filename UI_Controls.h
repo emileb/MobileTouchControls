@@ -18,59 +18,65 @@ namespace touchcontrols
 {
 
 
-class UI_Controls
-{
-public:
-	UI_Controls(std::string t);
+    class UI_Controls
+    {
+    public:
+        UI_Controls(std::string t);
 
-	sigc::signal< void, bool > signalEnable; // This signal gets called when the control is enabled or disabled
+        sigc::signal<void, bool> signalEnable; // This signal gets called when the control is enabled or disabled
 
 
-	bool processPointer(int action, int pid, float x, float y);
-	int draw();
+        bool processPointer(int action, int pid, float x, float y);
 
-	void addControl(ControlSuper *cntrl);
-	void deleteControls();
+        int draw();
 
-	void setEnabled(bool v);
-	bool getEnabled();
+        void addControl(ControlSuper *cntrl);
 
-	void initGL();
-	void setAlpha(float a);
-	void fade(fadedir_t dir, int steps);
+        void deleteControls();
 
-	void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
+        void setEnabled(bool v);
 
-	void scaleAllControls(float x, float y);
-	void translateAllControls(float x, float y);
+        bool getEnabled();
 
-private:
-	std::string tag;
-	std::vector<ControlSuper *> controls;
-	bool enabled;
+        void initGL();
 
-	ControlSuper *controlActive; // If a control wants to show something over the screen use this
+        void setAlpha(float a);
 
-	float fadePos; //current fade
-	fadedir_t fadeDir;
-	float fadeStep;
-	bool fading;
+        void fade(fadedir_t dir, int steps);
 
-	float yOffset; // Used to scroll up/down
-	void offsetYOffset(float offset);
+        void *getControl(std::string name); //Get control by name, obviously you must cast to correct type!
 
-	PointF finger1;
-	bool scrolling;
+        void scaleAllControls(float x, float y);
 
-	// Used to calculate velocity for fling
-	uint64_t lastMoveTime;
-	float lastYpos;
-	float yMoveSpeed;
+        void translateAllControls(float x, float y);
 
-	// Used to decelerate in the draw from a fling
-	uint64_t lastDrawTime;
-	float flingMomentum = 0;
-};
+    private:
+        std::string tag;
+        std::vector<ControlSuper *> controls;
+        bool enabled;
+
+        ControlSuper *controlActive; // If a control wants to show something over the screen use this
+
+        float fadePos; //current fade
+        fadedir_t fadeDir;
+        float fadeStep;
+        bool fading;
+
+        float yOffset; // Used to scroll up/down
+        void offsetYOffset(float offset);
+
+        PointF finger1;
+        bool scrolling;
+
+        // Used to calculate velocity for fling
+        uint64_t lastMoveTime;
+        float lastYpos;
+        float yMoveSpeed;
+
+        // Used to decelerate in the draw from a fling
+        uint64_t lastDrawTime;
+        float flingMomentum = 0;
+    };
 
 }
 #endif //OPENTOUCH_UI_CONTROLS_H

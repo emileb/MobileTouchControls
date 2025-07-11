@@ -14,7 +14,7 @@
 class TouchControlsInterface
 {
 public:
-	virtual bool processPointer(int action, int pid, float x, float y) = 0;
+    virtual bool processPointer(int action, int pid, float x, float y) = 0;
 };
 
 #endif
