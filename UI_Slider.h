@@ -60,7 +60,6 @@ namespace touchcontrols
 
         void loadXML(TiXmlDocument &doc);
     };
-
 }
 
 #endif

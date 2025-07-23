@@ -280,7 +280,7 @@ bool TouchControls::gamepadInput(bool down, GamePadKey key)
     {
         ControlSuper *cs = controls.at(n);
 
-        if(cs->isEnabled())
+        if(cs->isEnabled() && !cs->isHidden())
             if(cs->gamepadInput(down, key))
             {
                 // Gamepad actions only ever go to one control
