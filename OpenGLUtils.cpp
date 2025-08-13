@@ -1041,13 +1041,15 @@ GLfloat mTexVertices[] =
     {
         GLuint texture;
 
-        //if(glTexNumber)
+        if(glTexNumber)
         {
-            //	texture = glTexNumber;
-            //	glTexNumber++;
+            texture = glTexNumber;
+            glTexNumber++;
         }
-        //else
-        glGenTextures(1, &texture);
+        else
+        {
+            glGenTextures(1, &texture);
+        }
 
         return texture;
     }
