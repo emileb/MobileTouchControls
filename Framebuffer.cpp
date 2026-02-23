@@ -907,7 +907,5 @@ namespace touchcontrols
         }
 
         glBindTexture(GL_TEXTURE_2D, 0);
-
     }
-
 }
