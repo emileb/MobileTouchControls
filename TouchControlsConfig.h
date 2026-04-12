@@ -54,6 +54,10 @@ namespace touchcontrols
 
     extern sigc::signal<void, int> signal_vibrate;
 
+    // When false (default), TouchJoy only accepts P_DOWN when the control is inactive
+    extern bool g_touchJoyMultiTouch;
+    void setTouchJoyMultiTouch(bool enable);
+
 }
 
 

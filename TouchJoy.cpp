@@ -55,8 +55,7 @@ bool TouchJoy::processPointer(int action, int tpid, float x, float y)
 {
     if(action == P_DOWN)
     {
-        //if (id == -1) //Only process if not active
-        if(1)  //Testing this, try to fix random pointer swap 08/12/13
+        if((g_touchJoyMultiTouch == false) || pid == -1)  // default (off): always accept; multitouch (on): only if inactive
         {
             if(controlPos.contains(x, y))
             {

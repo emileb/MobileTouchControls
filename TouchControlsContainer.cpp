@@ -6,6 +6,12 @@
 
 using namespace touchcontrols;
 
+bool touchcontrols::g_touchJoyMultiTouch = false;
+
+void touchcontrols::setTouchJoyMultiTouch(bool enable)
+{
+    g_touchJoyMultiTouch = enable;
+}
 
 TouchControlsContainer::TouchControlsContainer()
 {
