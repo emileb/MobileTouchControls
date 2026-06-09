@@ -62,6 +62,9 @@ namespace touchcontrols
 
     void gl_color4f(uint32_t rgb, GLfloat a);
 
+    // Current colour last set via gl_color4f (used to e.g. scale alpha relative to it).
+    void gl_getColor(GLfloat &r, GLfloat &g, GLfloat &b, GLfloat &a);
+
     void gl_color3f(uint32_t rgb);
 
     void gl_clearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);

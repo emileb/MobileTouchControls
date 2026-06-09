@@ -33,6 +33,11 @@ namespace touchcontrols
         bool flashDir;
         int long long flashCount;
 
+        // Per-button draw alpha multiplier. 1.0 (default) leaves the alpha set by
+        // the owning TouchControls unchanged; e.g. 0.5 draws this button at 50% of
+        // that alpha (used to dim it).
+        float drawAlpha;
+
     public:
         std::string image;
         sigc::signal<void, int> signal_buttonDown;
@@ -49,6 +54,9 @@ namespace touchcontrols
         void setFlash(bool v);
 
         void setImage(int32_t i);
+
+        // Set this button's draw alpha multiplier (1.0 = unchanged, 0.5 = half).
+        void setAlpha(float a);
 
         void resetOutput();
 

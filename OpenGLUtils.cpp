@@ -479,6 +479,14 @@ namespace touchcontrols
         gl_color4f(rgb, glColorA);
     }
 
+    void gl_getColor(GLfloat &r, GLfloat &g, GLfloat &b, GLfloat &a)
+    {
+        r = glColorR;
+        g = glColorG;
+        b = glColorB;
+        a = glColorA;
+    }
+
     void gl_loadIdentity()
     {
         glTranslateX = glTranslateY = glTranslateZ = 0;

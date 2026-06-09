@@ -28,6 +28,8 @@ Button::Button(std::string tag, RectF pos, std::string image_filename, int value
     flash = false;
     flashDir = false;
     flashCount = 0;
+
+    drawAlpha = 1.0f; // multiplier: 1.0 leaves the TouchControls' alpha unchanged
 }
 
 void Button::updateSize()
@@ -46,6 +48,11 @@ void Button::setImage(int32_t i)
         glTexDraw = i;
     else
         glTexDraw = 0;
+}
+
+void Button::setAlpha(float a)
+{
+    drawAlpha = a;
 }
 
 void Button::resetOutput()
@@ -145,6 +152,16 @@ bool Button::drawGL(bool forEditor)
 
                 if(flashDir)
                     return false;
+            }
+
+            // Per-button alpha multiplier (e.g. dim an unavailable action). The
+            // owning TouchControls already set the colour/alpha; scale that alpha,
+            // preserving the RGB. 1.0 (default) leaves it untouched.
+            if(drawAlpha != 1.0f)
+            {
+                GLfloat r, g, b, a;
+                gl_getColor(r, g, b, a);
+                gl_color4f(r, g, b, a * drawAlpha);
             }
 
             gl_drawRect(glTex[glTexDraw], controlPos.left, controlPos.top, glRect);
