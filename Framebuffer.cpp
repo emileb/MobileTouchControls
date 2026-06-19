@@ -712,10 +712,8 @@ namespace touchcontrols
 
         LOG("Framebuffer buffer size = [%d, %d]", m_framebuffer_width, m_framebuffer_height);
 
-        // Create texture
-        GLuint tex;
-        glGenTextures(1, &tex);
-        m_framebuffer_texture = tex;
+        // Honour any reserved texture-number band (setTextureNumberStart) instead of glGenTextures
+        m_framebuffer_texture = getNextTexNum();
 
         glBindTexture(GL_TEXTURE_2D, m_framebuffer_texture);
         LOG("Framebuffer TEXTURE = %d", m_framebuffer_texture);
