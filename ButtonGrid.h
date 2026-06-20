@@ -31,6 +31,7 @@ namespace touchcontrols
         std::string cellImages[MAX_X_CELLS][MAX_Y_CELLS];
         GLuint cellGlTex[MAX_X_CELLS][MAX_Y_CELLS];
         int32_t cellValues[MAX_X_CELLS][MAX_Y_CELLS];
+        float cellAspect[MAX_X_CELLS][MAX_Y_CELLS]; // image width/height, for centred aspect-fit
 
         int32_t gamepadXSel;
         int32_t gamepadYSel;

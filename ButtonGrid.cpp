@@ -18,6 +18,10 @@ ButtonGrid::ButtonGrid(std::string tag, RectF pos, std::string cellBgImage, uint
     memset(cellValues, 0, sizeof(cellValues));
     memset(cellGlTex, 0, sizeof(cellGlTex));
 
+    for(int cy = 0; cy < MAX_Y_CELLS; cy++)
+        for(int cx = 0; cx < MAX_X_CELLS; cx++)
+            cellAspect[cx][cy] = 1.0f;
+
     this->hidden = hidden;
     this->description = description;
     updateSize();
@@ -182,7 +186,11 @@ bool ButtonGrid::initGL()
 
     for(int cy = 0; cy < yNbr; cy++)
         for(int cx = 0; cx < xNbr; cx++)
+        {
             cellGlTex[cx][cy] = loadTextureFromPNG(cellImages[cx][cy], x, y);
+            if(y > 0)
+                cellAspect[cx][cy] = (float) x / (float) y;
+        }
 
     return false;
 }
@@ -192,14 +200,21 @@ bool ButtonGrid::drawGL(bool forEditor)
     if(hidden)
         return false;
 
-    GLRect glRect;
+    GLRect cellRect;
     float cellWidth = controlPos.width() / xNbr;
     float cellHeight = controlPos.height() / yNbr;
-    glRect.resize(cellWidth, cellHeight);
+    cellRect.resize(cellWidth, cellHeight);
 
     bool aspect = gl_getFixAspect(); // Save old
 
     gl_setFixAspect(false);   // Turn off aspect fixing for this
+
+    // Screen-aspect correction: grid X and Y units don't map to equal screen pixels
+    // unless the screen matches the nominal grid ratio. We work in "screen units"
+    // (sx for X, sy for Y) so the icon's contain-fit keeps the image's real aspect.
+    float nominal = (float) ScaleX / (float) ScaleY;
+    float actual  = GLScaleWidth / -GLScaleHeight;
+    float sy = nominal / actual;   // px-per-unit Y relative to X (sx == 1)
 
     for(int cy = 0; cy < yNbr; cy++)
         for(int cx = 0; cx < xNbr; cx++)
@@ -212,11 +227,36 @@ bool ButtonGrid::drawGL(bool forEditor)
                 if(cx == gamepadXSel && cy == gamepadYSel)
                     gl_disable(GL_BLEND);
 
-                gl_drawRect(glCellBgTex, x, y, glRect);   // Background
+                gl_drawRect(glCellBgTex, x, y, cellRect);   // Background fills the cell
 
                 gl_enable(GL_BLEND);  //reset
 
-                gl_drawRect(cellGlTex[cx][cy], x, y, glRect);
+                // Contain-fit the icon inside the cell, preserving its aspect ratio,
+                // and centre it (rather than stretching to fill the cell).
+                float imgAspect = cellAspect[cx][cy];
+                float cellScreenW = cellWidth;
+                float cellScreenH = cellHeight * sy;
+
+                float iconScreenW, iconScreenH;
+                if(cellScreenW / cellScreenH > imgAspect) // cell wider than image -> limit by height
+                {
+                    iconScreenH = cellScreenH;
+                    iconScreenW = iconScreenH * imgAspect;
+                }
+                else                                       // limit by width
+                {
+                    iconScreenW = cellScreenW;
+                    iconScreenH = iconScreenW / imgAspect;
+                }
+
+                float iconW = iconScreenW;        // back to grid units (sx == 1)
+                float iconH = iconScreenH / sy;
+                float offX = (cellWidth - iconW) * 0.5f;
+                float offY = (cellHeight - iconH) * 0.5f;
+
+                GLRect iconRect;
+                iconRect.resize(iconW, iconH);
+                gl_drawRect(cellGlTex[cx][cy], x + offX, y + offY, iconRect);
             }
         }
 
