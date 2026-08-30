@@ -1,6 +1,8 @@
 
 #include "GLheader_TC.h"
 
+#include <algorithm>
+
 #include "TouchControlsContainer.h"
 
 
@@ -71,11 +73,7 @@ void TouchControlsContainer::finishEditing()
 {
     if(editingControls)
     {
-        if(uiControls != NULL && uiControls->getEnabled())
-        {
-            uiControls->setEnabled(false);
-        }
-        else
+        if(!uiWindowBack()) // Back goes through the UI windows first
         {
             editingControls->stopEdit();
             editingControls = 0;
@@ -95,6 +93,29 @@ void TouchControlsContainer::hideUIWindow(bool andDelete)
         uiHide = 2;
     else
         uiHide = 1;
+}
+
+// Restore the window underneath the one just closed, if there is one
+void TouchControlsContainer::popUIWindow()
+{
+    if(uiStack.empty())
+        return;
+
+    uiControls = uiStack.back();
+    uiStack.pop_back();
+
+    uiControls->initGL();
+    uiControls->setEnabled(true);
+    uiControls->fade(touchcontrols::FADE_IN, 10);
+}
+
+bool TouchControlsContainer::uiWindowBack()
+{
+    if(uiControls == NULL || !uiControls->getEnabled())
+        return false;
+
+    hideUIWindow();
+    return true;
 }
 
 bool TouchControlsContainer::gamepadInput(bool down, GamePadKey key)
@@ -265,6 +286,13 @@ int TouchControlsContainer::draw()
 
     if(uiControlsTemp != NULL)
     {
+        // Never have the same window twice in the stack
+        uiStack.erase(std::remove(uiStack.begin(), uiStack.end(), uiControlsTemp), uiStack.end());
+
+        // Keep the window we are covering so back returns to it
+        if(uiControls != NULL && uiControls != uiControlsTemp && uiControls->getEnabled())
+            uiStack.push_back(uiControls);
+
         uiControls = uiControlsTemp;
         uiControlsTemp = NULL;
         uiControls->initGL();
@@ -279,12 +307,14 @@ int TouchControlsContainer::draw()
         {
             uiControls->setEnabled(false);
             uiHide = 0;
+            popUIWindow();
         }
         else if(uiHide == 2)   // We want to hide and delete the element
         {
             delete (uiControls);
             uiControls = NULL;
             uiHide = 0;
+            popUIWindow();
         }
         else if(uiControls->getEnabled())
         {

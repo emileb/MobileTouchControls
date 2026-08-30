@@ -238,7 +238,7 @@ namespace touchcontrols
     {
         if(state == 0 && code == UI_WINDOW_BUTTON_BACK)
         {
-            rootControls->setEnabled(false);    // controlsEnabled will get called automatically
+            container->hideUIWindow();    // controlsEnabled will get called automatically
             LOGTOUCH("Window close");
         }
 

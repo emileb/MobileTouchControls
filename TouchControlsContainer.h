@@ -38,6 +38,10 @@ namespace touchcontrols
         UI_Controls *uiControlsTemp = NULL; // To try and avoid threading issues this is set then copied to uiControls
         uint32_t uiHide = 0; // Set to 1 to hide the cureent UI, set to 2 to also delete it
 
+        std::vector<UI_Controls *> uiStack; // Windows covered by the current one, so back can return to them
+
+        void popUIWindow();
+
         uint32_t defaultColor = COLOUR_WHITE; // Default white
         float alpha;
 
@@ -82,6 +86,8 @@ namespace touchcontrols
         void showUIWindow(UI_Controls *uiControls);
 
         void hideUIWindow(bool andDelete = false);
+
+        bool uiWindowBack(); // Close the top window, returning to the one below. False if no window was open
 
         void showMouse(bool show);
 
