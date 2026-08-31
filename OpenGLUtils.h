@@ -62,6 +62,9 @@ namespace touchcontrols
 
     void gl_color4f(uint32_t rgb, GLfloat a);
 
+    // Scales the alpha of everything drawn from here on, on top of the colour set by gl_color4f
+    void gl_setGlobalAlpha(GLfloat a);
+
     // Current colour last set via gl_color4f (used to e.g. scale alpha relative to it).
     void gl_getColor(GLfloat &r, GLfloat &g, GLfloat &b, GLfloat &a);
 

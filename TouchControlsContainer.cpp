@@ -316,19 +316,21 @@ int TouchControlsContainer::draw()
             uiHide = 0;
             popUIWindow();
         }
-        else if(uiControls->getEnabled())
-        {
-            //Grey out background
-            GLRect rect;
-            rect.resize(1, 1);
-            gl_loadIdentity();
-            gl_scalef(GLScaleWidth, GLScaleHeight, 1);
-            gl_drawRect((GLfloat) 0, (GLfloat) 0, (GLfloat) 0, (GLfloat) 0.7, 0.f, 0.f, rect);
+    }
 
-            gl_setFixAspect(false);
-            uiControls->draw();
-            gl_setFixAspect(true);
-        }
+    // Drawn after the hide/pop above, so a restored window appears on the same frame it was popped
+    if(uiControls != NULL && uiControls->getEnabled())
+    {
+        //Grey out background
+        GLRect rect;
+        rect.resize(1, 1);
+        gl_loadIdentity();
+        gl_scalef(GLScaleWidth, GLScaleHeight, 1);
+        gl_drawRect((GLfloat) 0, (GLfloat) 0, (GLfloat) 0, (GLfloat) 0.7, 0.f, 0.f, rect);
+
+        gl_setFixAspect(false);
+        uiControls->draw();
+        gl_setFixAspect(true);
     }
 
     if(mouseShow)

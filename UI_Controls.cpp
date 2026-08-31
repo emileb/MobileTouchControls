@@ -181,6 +181,8 @@ bool UI_Controls::processPointer(int action, int pid, float x, float y)
 
 int UI_Controls::draw()
 {
+    float drawAlpha = 1.0f;
+
     if(fading)
     {
         if(fadeDir == FADE_IN)  //Fading in
@@ -188,8 +190,10 @@ int UI_Controls::draw()
             fadePos += fadeStep;
 
             if(fadePos >= 1)
+            {
+                fadePos = 1;
                 fading = false;
-
+            }
         }
         else //Fading out
         {
@@ -197,15 +201,19 @@ int UI_Controls::draw()
 
             if(fadePos <= 0)
             {
+                fadePos = 0;
                 fading = false;
                 setEnabled(false); //now also disable the control
             }
         }
 
-        gl_color4f(1, 1, 1, fadePos);
+        drawAlpha = fadePos;
     }
-    else
-        gl_color4f(1, 1, 1, 1);
+
+    gl_color4f(1, 1, 1, 1);
+
+    // Fade the whole UI, even the controls that set their own colour while drawing
+    gl_setGlobalAlpha(drawAlpha);
 
 
     uint64_t timeNow = getMS();
@@ -278,6 +286,8 @@ int UI_Controls::draw()
 
     // The UI window enables this
     gl_disable(GL_SCISSOR_TEST);
+
+    gl_setGlobalAlpha(1.0f);
 
     lastDrawTime = getMS();
 

@@ -453,6 +453,10 @@ namespace touchcontrols
 
     static float glColorR, glColorG, glColorB, glColorA;
 
+    // Scales the alpha of everything drawn, on top of the colour the caller set. Used to fade a
+    // whole UI in/out, so controls that set their own colour still fade.
+    static float glGlobalAlpha = 1.0f;
+
     void gl_color4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
     {
         glColorR = r;
@@ -462,7 +466,17 @@ namespace touchcontrols
 
         if(isGLES2 == false)
         {
-            glColor4f(r, g, b, a);
+            glColor4f(r, g, b, a * glGlobalAlpha);
+        }
+    }
+
+    void gl_setGlobalAlpha(GLfloat a)
+    {
+        glGlobalAlpha = a;
+
+        if(isGLES2 == false) // GLES1 sets the colour up front, so re-issue it with the new scale
+        {
+            glColor4f(glColorR, glColorG, glColorB, glColorA * glGlobalAlpha);
         }
     }
 
@@ -797,7 +811,7 @@ GLfloat mTexVertices[] =
 
             glUniformMatrix4fv(mModelMatrixLoc, 1, false, mModelMatrixGLSL);
             glUniform4f(mPositionTranslateLoc, translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
-            glUniform4f(mColorLoc, glColorR, glColorG, glColorB, glColorA);
+            glUniform4f(mColorLoc, glColorR, glColorG, glColorB, glColorA * glGlobalAlpha);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
@@ -870,7 +884,7 @@ GLfloat mTexVertices[] =
 
             glUniformMatrix4fv(mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
             glUniform4f(mPositionTranslateLocColor, translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
-            glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA);
+            glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA * glGlobalAlpha);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
@@ -881,13 +895,13 @@ GLfloat mTexVertices[] =
             glPushMatrix();
 
             glDisable(GL_TEXTURE_2D);
-            glColor4f(r, g, b, a);
+            glColor4f(r, g, b, a * glGlobalAlpha);
 
             glVertexPointer(3, GL_FLOAT, 0, rect.vertices);
             glTranslatef(x, -y, 0);
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-            glColor4f(1, 1, 1, 1);
+            glColor4f(1, 1, 1, glGlobalAlpha);
             glEnable(GL_TEXTURE_2D);
 
             glPopMatrix();
@@ -913,7 +927,7 @@ GLfloat mTexVertices[] =
 
             glUniformMatrix4fv(mModelMatrixColorLoc, 1, false, mModelMatrixGLSL);
             glUniform4f(mPositionTranslateLocColor, translateX(x + glTranslateX), translateY(y + glTranslateY), 0, 0);
-            glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA);
+            glUniform4f(mColorLocColor, glColorR, glColorG, glColorB, glColorA * glGlobalAlpha);
 
             glDrawArrays(GL_LINES, 0, lines.len);
         }
