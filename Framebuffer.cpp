@@ -676,7 +676,7 @@ namespace touchcontrols
 
         if(m_fb_config.vidWidthReal == 0 || m_fb_config.vidHeightReal == 0 || m_fb_config.vidWidth == 0 || m_fb_config.vidHeight == 0)
         {
-            LOG("ERROR, framebuffer config not set");
+            LOG("INFO, framebuffer config not set");
             return;
         }
 
