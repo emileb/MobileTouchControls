@@ -56,6 +56,13 @@ namespace touchcontrols
         void saveXML(TiXmlDocument &doc);
 
         void loadXML(TiXmlDocument &doc);
+
+        // A touch released without sliding sends this (press then release), instead of showing the demo arrows.
+        void setTapValue(int32_t value) { valueTap = value; }
+
+    private:
+        int32_t valueTap;
+        bool slid;
     };
 
 }

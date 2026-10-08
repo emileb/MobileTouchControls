@@ -21,6 +21,8 @@ QuadSlide::QuadSlide(std::string tag, RectF pos, std::string bgImage, std::strin
     arrowSlideTime = 0;
     valueCurrent = 0;
     showDemoArrowsTime = 0;
+    valueTap = 0;
+    slid = false;
 
     this->hidden = hidden;
     this->description = description;
@@ -56,6 +58,7 @@ void QuadSlide::valueOutput(bool down, int32_t value)
 {
     if(down)
     {
+        slid = true;
         if(value != valueCurrent)   // Check if change
         {
             if(valueCurrent != 0)   // If pressing a button then release it first
@@ -91,6 +94,7 @@ bool QuadSlide::processPointer(int action, int pid, float x, float y)
             anchorPoint.y = y;
             slideState = STATE_DOWN;
             showDemoArrowsTime = 0;
+            slid = false;
             return true;
         }
         else
@@ -104,7 +108,12 @@ bool QuadSlide::processPointer(int action, int pid, float x, float y)
     {
         if(pid == this->pid)
         {
-            if(valueCurrent == 0)   // This means we pressed it but didn't slide, so show demo arrows
+            if(valueCurrent == 0 && !slid && valueTap)
+            {
+                signal.emit(1, valueTap);
+                signal.emit(0, valueTap);
+            }
+            else if(valueCurrent == 0)   // This means we pressed it but didn't slide, so show demo arrows
             {
                 showDemoArrowsTime = 100; // Number of frames to show demo arrows
             }
