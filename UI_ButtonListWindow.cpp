@@ -80,7 +80,8 @@ namespace touchcontrols
             {
                 if((editing->getControls()->at(n)->type == TC_TYPE_BUTTON) ||
                    (editing->getControls()->at(n)->type == TC_TYPE_QUADSLIDE) ||
-                   (editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID))
+                   (editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID) ||
+                   (editing->getControls()->at(n)->type == TC_TYPE_MOUSE))
                 {
                     // This is the button in the touch controls
                     ControlSuper *control = (editing->getControls()->at(n));
@@ -98,6 +99,9 @@ namespace touchcontrols
 
                         if(editing->getControls()->at(n)->type == TC_TYPE_BUTTONGRID)
                             imagePng = ((ButtonGrid *) control)->getPrimaryImage().c_str();
+
+                        if(editing->getControls()->at(n)->type == TC_TYPE_MOUSE)
+                            imagePng = ((Mouse *) control)->image.c_str();
 
                         //This is a button for the UI controls, just used for the image
                         Button *image = new Button("", touchcontrols::RectF(windowLeft, yPos, windowLeft + ROW_HEIGHT, yPos + ROW_HEIGHT), imagePng, -1);

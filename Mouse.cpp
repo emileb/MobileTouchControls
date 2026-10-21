@@ -55,6 +55,9 @@ void Mouse::emit(int action, float x, float y, float dx, float dy)
 
 bool Mouse::processPointer(int action, int pid, float x, float y)
 {
+    if(hidden)  //Hidden controls do not respond to inputs
+        return false;
+
     if(action == P_DOWN)
     {
         if(id == -1)  //Only process if not active
@@ -158,6 +161,9 @@ bool Mouse::initGL()
 
 bool Mouse::drawGL(bool editor)
 {
+    if(hidden)
+        return false;
+
     bool fa = gl_getFixAspect();
     gl_setFixAspect(false);   // Fill the mouse screen with the graphic
 

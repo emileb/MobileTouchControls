@@ -28,8 +28,6 @@ namespace touchcontrols
 
         int id2;
 
-        std::string image;
-
         GLuint glTex;
 
         GLRect glRect;
@@ -47,6 +45,8 @@ namespace touchcontrols
         void emit(int, float, float, float, float);
 
     public:
+        std::string image; // Public so button list can access
+
         sigc::signal<void, int, float, float, float, float> signal_action;
 
         Mouse(std::string tag, RectF pos, std::string image_filename);
