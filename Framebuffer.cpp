@@ -697,7 +697,13 @@ namespace touchcontrols
 
         m_fb_config.isGles2 = m_glesVersion > 1;
 
-        m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot");
+#ifndef GL_RENDERER
+#define GL_RENDERER 0x1F01
+#endif
+        // PowerVR (Honor 8A GE8320, GLES1) faults in glReadPixels on an FBO with an NPOT texture: use a POT one there.
+        const char *glRenderer = (const char *) glGetString(GL_RENDERER);
+        bool isPowerVR = glRenderer && strstr(glRenderer, "PowerVR");
+        m_fb_config.npotAvailable = checkExtension("GL_OES_texture_npot") && !isPowerVR;
         m_fb_config.depthStencilAvailable = checkExtension("GL_OES_packed_depth_stencil");
         m_fb_config.filter = 0;
 
